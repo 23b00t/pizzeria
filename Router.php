@@ -32,16 +32,12 @@ class Router
     {
         if (isset($_POST['login'])) {
             Helper::checkCSRFToken();
-            // Print debug output to file
-            // file_put_contents('/opt/lampp/logs/custom_log', print_r($_POST['login']));
             $username = $_POST['username'];  
             $password = $_POST['password'];      
 
             $userController = new UserController();
             $userController->login($username, $password);
 
-            // // https://stackoverflow.com/questions/1055728/php-session-with-an-incomplete-object
-            // $_SESSION['user'] = serialize($user);
             exit();
         }
 
@@ -73,7 +69,7 @@ class Router
             // Die show-Methode des UserControllers aufrufen
             $userController->show($userId);
         } else {
-            header('Location: ./Views/login_form.php');
+            header('Location: ../Views/login_form.php');
         }
     }
 }
