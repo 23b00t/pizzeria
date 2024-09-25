@@ -58,7 +58,7 @@ class Router
 
                 exit();
             } else {
-                header('Location: Views/register_form.php?error=Passwörter%20stimmen%20nicht%20überein');
+                header('Location: Views/register_form.php?error=Passwörter%20stimmen%20nicht%20überein%20oder%20Passwort%20zu%20schwach');
                 exit();
             }
         }

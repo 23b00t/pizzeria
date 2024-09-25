@@ -32,7 +32,15 @@ class Helper
 
     public static function validatePassword($password, $confirm_password)
     {
-        return $password === $confirm_password; //&&
-        // preg_match('/[]/', $password);
+        // Regex to check password strength
+        // minimum length should be 8.
+        // at least one uppercase letter.
+        // at least one lowercase letter.
+        // at least one digits, and
+        // at least one special character.
+        $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/';
+
+        return $password === $confirm_password &&
+        preg_match($pattern, $password);
     }
 }
