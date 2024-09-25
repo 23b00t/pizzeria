@@ -4,7 +4,8 @@ require_once '/opt/lampp/htdocs/oop/Helpers/DatabaseHelper.php';
 
 class UserController
 {
-    public function show($id) {
+    public function show($id)
+    {
         $user = User::findById($id);
 
         if ($user) {
@@ -15,7 +16,8 @@ class UserController
         }
     }
 
-    public function login($username, $password) {
+    public function login($username, $password)
+    {
         $user = User::findByUsername($username);
 
         if ($user && password_verify($password, $user->getPassword())) {
@@ -31,10 +33,11 @@ class UserController
         }
     }
 
-    public function store($username, $password) {
-		// Hash Password with default value according to:
-		// https://www.php.net/manual/de/function.password-hash.php
-		// and benchmarked costs according to Beispiel #3
+    public function store($username, $password)
+    {
+        // Hash Password with default value according to:
+        // https://www.php.net/manual/de/function.password-hash.php
+        // and benchmarked costs according to Beispiel #3
         $password_hashed = password_hash($password, PASSWORD_DEFAULT, ["cost" => 12]);
 
         // Neues User-Objekt erstellen

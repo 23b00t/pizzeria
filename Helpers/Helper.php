@@ -30,7 +30,8 @@ class Helper
         return $_SESSION['csrf_token'];
     }
 
-    public static function validatePassword($password, $confirm_password) {
+    public static function validatePassword($password, $confirm_password)
+    {
         return $password === $confirm_password; //&&
         // preg_match('/[]/', $password);
     }

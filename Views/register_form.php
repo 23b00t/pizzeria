@@ -35,7 +35,7 @@ $csrf_token = Helper::generateCSRFToken()
                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
               </div>
               <!-- csrf_token einfügen -->
-              <input type="hidden" name="csrf_token" value="<?= $csrf_token; ?>">
+              <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
               <div class="form-group">
                 <button type="submit" name="register" class="btn btn-primary btn-block mt-2">Registrieren</button>
               </div>

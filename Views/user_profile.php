@@ -18,8 +18,8 @@ if (!isset($_SESSION["login"])) {
   </form>
 </div>
 
-<?php if ($user): ?>
-    <h1><?= $user->getUsername(); ?></h1>
+<?php if ($user) : ?>
+    <h1><?php echo $user->getUsername(); ?></h1>
 <?php else: ?>
     <p>Benutzer nicht gefunden.</p>
 <?php endif; ?>
