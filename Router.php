@@ -1,8 +1,8 @@
 <?php
 
-require_once '/opt/lampp/htdocs/oop/Models/User.php';
-require_once '/opt/lampp/htdocs/oop/Controllers/UserController.php';
-require_once '/opt/lampp/htdocs/oop/Helpers/Helper.php';
+require_once __DIR__ . '/Models/User.php';
+require_once __DIR__ . '/Controllers/UserController.php';
+require_once __DIR__ . '/Helpers/Helper.php';
 
 /*
 * Klasse zum handhaben von Requests
@@ -73,7 +73,7 @@ class Router
             // Die show-Methode des UserControllers aufrufen
             $userController->show($userId);
         } else {
-            header('Location: Views/login_form.php');
+            header('Location: ./Views/login_form.php');
         }
     }
 }

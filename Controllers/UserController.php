@@ -1,6 +1,6 @@
 <?php
 
-require_once '/opt/lampp/htdocs/oop/Helpers/DatabaseHelper.php';
+require_once __DIR__ . '/../Helpers/DatabaseHelper.php';
 
 class UserController
 {
@@ -10,7 +10,7 @@ class UserController
 
         if ($user) {
             // Die View für das Benutzerprofil einbinden und das User-Objekt übergeben
-            include 'Views/user_profile.php';
+            include './Views/user_profile.php';
         } else {
             echo "Benutzer nicht gefunden.";
         }
@@ -24,11 +24,11 @@ class UserController
             // Login erfolgreich, Session starten
             // session_start();
             $_SESSION["login"] = "true";
-            header('Location: /oop/index.php?user_id=' . $user->getId());
+            header('Location: ./index.php?user_id=' . $user->getId());
             exit();
         } else {
             // Login fehlgeschlagen
-            header('Location: Views/login_form.php?error=Ungültige%20Anmeldedaten');
+            header('Location: ./Views/login_form.php?error=Ungültige%20Anmeldedaten');
             exit();
         }
     }
@@ -44,7 +44,7 @@ class UserController
             // Neues User-Objekt erstellen
             $user = new User($username, $password_hashed);
         } else {
-            header('Location: Views/register_form.php?error=Passwörter%20stimmen%20nicht%20überein%20oder%20Passwort%20zu%20schwach');
+            header('Location: ./Views/register_form.php?error=Passwörter%20stimmen%20nicht%20überein%20oder%20Passwort%20zu%20schwach');
             exit();
         }
     }
@@ -56,15 +56,15 @@ class UserController
             $user->save();
 
             // Erfolgreiches Einfügen
-            header('Location: Views/login_form.php?msg=Account%20erfolgreich%20erstellt');
+            header('Location: ./Views/login_form.php?msg=Account%20erfolgreich%20erstellt');
             exit();
         } catch (mysqli_sql_exception $e) {
             if ($e->getCode() === 1062) {
                 // Fehler 1062: Duplicate entry (Datenbankfehler für UNIQUE-Constraint)
-                header('Location: Views/register_form.php?error=Benutzername%20nicht%20mehr%20verfügbar');
+                header('Location: ./Views/register_form.php?error=Benutzername%20nicht%20mehr%20verfügbar');
             } else {
                 // Andere Fehler
-                header('Location: Views/register_form.php?error=Unbekannter%20Fehler');
+                header('Location: ./Views/register_form.php?error=Unbekannter%20Fehler');
             }
             exit();
         }

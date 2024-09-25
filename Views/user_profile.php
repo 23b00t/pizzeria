@@ -2,7 +2,7 @@
 session_status() === PHP_SESSION_NONE && session_start();
 
 if (!isset($_SESSION["login"])) {
-    header("Location: /opt/lampp/htdocs/oop/index.php");
+    header("Location: ./index.php");
     exit();
 } else {
     session_regenerate_id(true);
@@ -11,7 +11,7 @@ if (!isset($_SESSION["login"])) {
 ?>
 <!-- Ausloggen --> 
 <div class="container mt-2 d-flex justify-content-end">
-  <form action="/oop/index.php" method="post">
+  <form action="./index.php" method="post">
     <button type="submit" name='signout' class=" btn btn-warning mb-3"> 
       <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout 
     </button>

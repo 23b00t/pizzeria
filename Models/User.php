@@ -1,6 +1,6 @@
 <?php
 
-require_once '/opt/lampp/htdocs/oop/Helpers/DatabaseHelper.php';
+require_once __DIR__ . '/../Helpers/DatabaseHelper.php';
 
 /**
  * User class

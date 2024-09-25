@@ -1,7 +1,7 @@
 <!-- INFO: User login -->
 
 <?php 
-require_once '/opt/lampp/htdocs/oop/Helpers/Helper.php';
+require_once __DIR__ . '/../Helpers/Helper.php';
 
 $csrf_token = Helper::generateCSRFToken(); 
 ?>
@@ -22,7 +22,7 @@ $csrf_token = Helper::generateCSRFToken();
       <div class="row justify-content-center">
         <div class="col-md-4">
           <h2 class="text-center mt-5">Login</h2>
-          <form action="/oop/index.php" method="POST">
+          <form action="../index.php" method="POST">
             <div class="form-group">
               <label for="username">Benutzername</label>
               <input type="text" class="form-control" id="username" name="username" required>

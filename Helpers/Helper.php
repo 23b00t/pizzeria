@@ -5,7 +5,7 @@ class Helper
     {
         session_unset();
         session_destroy();
-        header("Location: /oop/index.php");
+        header("Location: ./index.php");
         exit();
     }
 
