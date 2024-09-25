@@ -52,15 +52,10 @@ class Router
             $password = $_POST['password'];      
             $confirm_password = $_POST['confirm_password'];
 
-            if (Helper::validatePassword($password, $confirm_password)) {
-                $userController = new UserController();
-                $userController->store($username, $password);
+            $userController = new UserController();
+            $userController->create($username, $password);
 
-                exit();
-            } else {
-                header('Location: Views/register_form.php?error=Passwörter%20stimmen%20nicht%20überein%20oder%20Passwort%20zu%20schwach');
-                exit();
-            }
+            exit();
         }
 
         isset($_POST["signout"]) && Helper::signOut();
@@ -78,7 +73,7 @@ class Router
             // Die show-Methode des UserControllers aufrufen
             $userController->show($userId);
         } else {
-            header('location: ./Views/login_form.php');
+            header('Location: Views/login_form.php');
         }
     }
 }

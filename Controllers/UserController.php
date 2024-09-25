@@ -33,16 +33,24 @@ class UserController
         }
     }
 
-    public function store($username, $password)
+    public function create($username, $password) 
     {
-        // Hash Password with default value according to:
-        // https://www.php.net/manual/de/function.password-hash.php
-        // and benchmarked costs according to Beispiel #3
-        $password_hashed = password_hash($password, PASSWORD_DEFAULT, ["cost" => 12]);
+        if (Helper::validatePassword($password, $confirm_password)) {
+            // Hash Password with default value according to:
+            // https://www.php.net/manual/de/function.password-hash.php
+            // and benchmarked costs according to Beispiel #3
+            $password_hashed = password_hash($password, PASSWORD_DEFAULT, ["cost" => 12]);
 
-        // Neues User-Objekt erstellen
-        $user = new User($username, $password_hashed);
+            // Neues User-Objekt erstellen
+            $user = new User($username, $password_hashed);
+        } else {
+            header('Location: Views/register_form.php?error=Passwörter%20stimmen%20nicht%20überein%20oder%20Passwort%20zu%20schwach');
+            exit();
+        }
+    }
 
+    private function store($user)
+    {
         try {
             // Versuch, den Benutzer zu speichern
             $user->save();
