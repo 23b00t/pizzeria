@@ -29,18 +29,14 @@ class DatabaseHelper
 
     public function prepareAndExecute($sql, $params)
     {
-        try {
-            // Die SQL-Abfrage vorbereiten
-            $stmt = $this->_conn->prepare($sql);
+        // Die SQL-Abfrage vorbereiten
+        $stmt = $this->_conn->prepare($sql);
 
-            // Die vorbereitete Anweisung ausführen
-            $stmt->execute($params);
+        // Die vorbereitete Anweisung ausführen
+        $stmt->execute($params);
 
-            // Das Ergebnis abrufen
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            die("Fehler bei der Abfrage: " . $e->getMessage() . "\n");
-        }
+        // Das Ergebnis abrufen
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function __destruct()

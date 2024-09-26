@@ -26,7 +26,7 @@ class User
 
         // SQL-Abfrage und Parameter definieren
         $sql = 'INSERT INTO user (username, password) VALUES (?, ?)';
-        $params = [$this->username, $this->password_hashed];  // 'ss' steht für zwei Strings
+        $params = [$this->username, $this->password_hashed];  
 
         // Benutzer in die Datenbank einfügen
         return $db->prepareAndExecute($sql, $params);  

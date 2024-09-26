@@ -60,9 +60,9 @@ class UserController
             // Erfolgreiches Einfügen
             header('Location: ./Views/login_form.php?msg=Account%20erfolgreich%20erstellt');
             exit();
-        } catch (mysqli_sql_exception $e) {
-            if ($e->getCode() === 1062) {
-                // Fehler 1062: Duplicate entry (Datenbankfehler für UNIQUE-Constraint)
+        } catch (PDOException $e) {
+            // Fehler 1062: Duplicate entry (Datenbankfehler für UNIQUE-Constraint)
+            if ($e->getCode() === '23000') { 
                 header('Location: ./Views/register_form.php?error=Benutzername%20nicht%20mehr%20verfügbar');
             } else {
                 // Andere Fehler
