@@ -49,12 +49,12 @@ class Router
             $confirm_password = $_POST['confirm_password'];
 
             $userController = new UserController();
-            $userController->create($username, $password);
+            $userController->create($username, $password, $confirm_password);
 
             exit();
         }
 
-        isset($_POST["signout"]) && Helper::signOut();
+        isset($_POST["signout"]) && UserController::signOut();
     }
 
     private function handleGet()
@@ -69,7 +69,7 @@ class Router
             // Die show-Methode des UserControllers aufrufen
             $userController->show($userId);
         } else {
-            header('Location: ../Views/login_form.php');
+            header('Location: ./Views/login_form.php');
         }
     }
 }

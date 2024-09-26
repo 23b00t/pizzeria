@@ -33,7 +33,7 @@ class UserController
         }
     }
 
-    public function create($username, $password) 
+    public function create($username, $password, $confirm_password) 
     {
         if (Helper::validatePassword($password, $confirm_password)) {
             // Hash Password with default value according to:
@@ -43,6 +43,8 @@ class UserController
 
             // Neues User-Objekt erstellen
             $user = new User($username, $password_hashed);
+            // Neuen User in Datenbank speichern
+            $this->store($user);
         } else {
             header('Location: ./Views/register_form.php?error=Passwörter%20stimmen%20nicht%20überein%20oder%20Passwort%20zu%20schwach');
             exit();
@@ -69,4 +71,13 @@ class UserController
             exit();
         }
     }
+
+    public static function signOut()
+    {
+        session_unset();
+        session_destroy();
+        header("Location: ./index.php");
+        exit();
+    }
+
 }

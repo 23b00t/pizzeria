@@ -1,14 +1,6 @@
 <?php
 class Helper
 {
-    public static function signOut()
-    {
-        session_unset();
-        session_destroy();
-        header("Location: ./index.php");
-        exit();
-    }
-
     // CSRF-Token überprüfen
     public static function checkCSRFToken()
     {
