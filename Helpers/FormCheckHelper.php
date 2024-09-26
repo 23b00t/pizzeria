@@ -13,18 +13,13 @@ class FormCheckHelper
     // die mit der Objekt-Instanz gleich mit konstruiert werden
     public function __construct($formData)
     {
-        // Fallunterscheidung: 
-        // ist die Schlüsselstelle 'name', 'pw' oder 'pw_repeat' 
-        // im Superglobalen Formular-Daten-Array: $_POST ?
-        // Wenn ja, dann weise den Wert der Schlüsselstelle der Objekt-Eigenschaft zu
-        // z.B.: 
         // WENN die Schlüsselstelle 'name' gesetzt ist UND der Wert sich von NULL unterscheidet,
         // DANN weise den Wert der Schlüsselstelle 'name' der Objekt-Eigenschaft ($this-Eigenschaft) name zu
         isset($formData['username']) && $this->setName($formData['username']);
         
         // Das ursprüngliche Passwort (zweckgebunden an der Passwortrichtlinie) 
         // einmalig speichern. 
-        // WENN der Zweck erfüllt ist, die Objekt-Eigenschaft zurücksetzen, z.b.: null         { 
+        // WENN der Zweck erfüllt ist, die Objekt-Eigenschaft zurücksetzen, z.b.: null 
         if (isset($formData['password'])) 
         {
             $password = $formData['password'];
@@ -32,7 +27,6 @@ class FormCheckHelper
             $this->setHashedPassword($password); 
         }
         isset($formData['confirm_password']) && $this->setRepeatPassword($formData['confirm_password']);
-        print_r($this->password);
     }
 
     // Methode: validierePasswortRichtlinie
@@ -66,7 +60,6 @@ class FormCheckHelper
     {
         // PHP Funktion password_verify, siehe Referenz php.net
         // hier: durch "!" am Anfang negiert - verneint - nichtzutreffen
-
         if (!password_verify($this->password_repeat, $this->password_hash)) {
             return false;
         }
