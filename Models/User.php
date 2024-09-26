@@ -26,7 +26,7 @@ class User
 
         // SQL-Abfrage und Parameter definieren
         $sql = 'INSERT INTO user (username, password) VALUES (?, ?)';
-        $params = ['ss', $this->username, $this->password_hashed];  // 'ss' steht für zwei Strings
+        $params = [$this->username, $this->password_hashed];  // 'ss' steht für zwei Strings
 
         // Benutzer in die Datenbank einfügen
         return $db->prepareAndExecute($sql, $params);  
@@ -37,12 +37,12 @@ class User
         $db = new DatabaseHelper("user_read", "password");
 
         $sql = 'SELECT * FROM user WHERE username = ?';
-        $params = ['s', $username];
+        $params = [$username];
 
         $result = $db->prepareAndExecute($sql, $params);
-        $userData = $result->fetch_assoc();
 
-        if ($userData) {
+        if ($result) {
+            $userData = $result[0];
             return new User($userData['username'], $userData['password'], $userData['id']);
         }
 
@@ -51,15 +51,14 @@ class User
 
     public static function findById($id)
     {
-        // SQL-Abfrage zum Abrufen des Benutzers nach ID
         $db = new DatabaseHelper("user_read", "password");
         $sql = 'SELECT * FROM user WHERE id = ?';
-        $params = ['i', $id];  // 'i' steht für einen Integer
+        $params = [$id];
 
         $result = $db->prepareAndExecute($sql, $params);
-        $userData = $result->fetch_assoc();
 
-        if ($userData) {
+        if ($result) {
+            $userData = $result[0];
             return new User($userData['username'], $userData['password'], $userData['id']);
         }
 

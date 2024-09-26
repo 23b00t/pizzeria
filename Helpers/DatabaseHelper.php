@@ -1,5 +1,12 @@
 <?php
 
+// INFO: Resourcen:
+// https://www.w3schools.com/php/php_mysql_connect.asp
+// https://www.php.net/manual/en/ref.pdo-mysql.php
+// https://www.ibm.com/docs/en/dscp/10.1.0?topic=ess-preparing-executing-sql-statements
+// https://www.ibm.com/docs/en/dscp/10.1.0?topic=rqrs-fetching-rows-columns-from-result-sets
+// https://www.php.net/manual/de/pdo.constants.php#pdo.constants.fetch-assoc
+
 class DatabaseHelper
 {
     private $_conn;
@@ -8,40 +15,37 @@ class DatabaseHelper
     {
         $servername = "127.0.0.1";
         $dbname = "pizza";
+        $dsn = "mysql:host=$servername;dbname=$dbname;charset=utf8mb4";
 
-        // Verbindung herstellen
-        $this->_conn = new mysqli($servername, $dbuser, $dbpassword, $dbname);
-
-        // Verbindung prüfen
-        if ($this->_conn->connect_error) {
-            die("Verbindung fehlgeschlagen: " . $this->_conn->connect_error . "\n");
+        try {
+            // Verbindung herstellen mit PDO
+            $this->_conn = new PDO($dsn, $dbuser, $dbpassword);
+            // PDO Fehler-Modus auf Exception setzen
+            $this->_conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            die("Verbindung fehlgeschlagen: " . $e->getMessage() . "\n");
         }
     }
 
     public function prepareAndExecute($sql, $params)
     {
-        // Die SQL-Abfrage vorbereiten
-        $stmt = $this->_conn->prepare($sql);
+        try {
+            // Die SQL-Abfrage vorbereiten
+            $stmt = $this->_conn->prepare($sql);
 
-        // Parameter an die vorbereitete Anweisung binden
-        $stmt->bind_param(...$params);
+            // Die vorbereitete Anweisung ausführen
+            $stmt->execute($params);
 
-        // Die vorbereitete Anweisung ausführen
-        $stmt->execute();
-
-        // Das Ergebnis abrufen
-        $result = $stmt->get_result();
-
-        // Ressourcen freigeben
-        $stmt->close();
-
-        return $result;
+            // Das Ergebnis abrufen
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die("Fehler bei der Abfrage: " . $e->getMessage() . "\n");
+        }
     }
 
     public function __destruct()
     {
         // Verbindung zur Datenbank schließen
-        // Null-safe operator
-        $this->_conn?->close();
+        $this->_conn = null;
     }
 }
