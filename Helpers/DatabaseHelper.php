@@ -14,7 +14,7 @@ class DatabaseHelper
     public function __construct($dbuser, $dbpassword)
     {
         $servername = "127.0.0.1";
-        $dbname = "pizza";
+        $dbname = "pizzeria";
         $dsn = "mysql:host=$servername;dbname=$dbname;charset=utf8mb4";
 
         try {

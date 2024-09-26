@@ -4,7 +4,7 @@ class FormCheckHelper
 {
     // Klassen Eigenschaften deklarieren
     // Diese Eigenschaften hat dann auch das instanzierte Objekt der Klasse FormCheck 
-    private $name;
+    private $email;
     private $password;
     private $password_hash;
     private $password_repeat;
@@ -13,9 +13,9 @@ class FormCheckHelper
     // die mit der Objekt-Instanz gleich mit konstruiert werden
     public function __construct($formData)
     {
-        // WENN die Schlüsselstelle 'name' gesetzt ist UND der Wert sich von NULL unterscheidet,
-        // DANN weise den Wert der Schlüsselstelle 'name' der Objekt-Eigenschaft ($this-Eigenschaft) name zu
-        isset($formData['username']) && $this->setName($formData['username']);
+        // WENN die Schlüsselstelle 'email' gesetzt ist UND der Wert sich von NULL unterscheidet,
+        // DANN weise den Wert der Schlüsselstelle 'email' der Objekt-Eigenschaft ($this-Eigenschaft) email zu
+        isset($formData['email']) && $this->setEmail($formData['email']);
         
         // Das ursprüngliche Passwort (zweckgebunden an der Passwortrichtlinie) 
         // einmalig speichern. 
@@ -68,9 +68,9 @@ class FormCheckHelper
         return true;
     }
     
-    private function setName($name)
+    private function setEmail($email)
     {
-        $this->name = $name;
+        $this->email = $email;
     }
 
     private function setPassword($password)
@@ -83,8 +83,8 @@ class FormCheckHelper
         // Hash Password with default value according to:
         // https://www.php.net/manual/de/function.password-hash.php
         // and benchmarked costs according to Beispiel #3
-        $password_hashed = password_hash($password, PASSWORD_DEFAULT, ["cost" => 12]);
-        $this->password_hash = $password_hashed;
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT, ["cost" => 12]);
+        $this->password_hash = $hashed_password;
     }
 
     private function setRepeatPassword($password)
@@ -92,9 +92,9 @@ class FormCheckHelper
         $this->password_repeat = $password;
     }
 
-    public function getUsername()
+    public function getEmail()
     {
-        return $this->name;
+        return $this->email;
     }
 
     public function getHashedPassword()

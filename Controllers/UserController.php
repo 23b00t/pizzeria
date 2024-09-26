@@ -21,9 +21,10 @@ class UserController
     {
         $formCheckHelper = new FormCheckHelper($formData);
 
-        $user = User::findByUsername($formCheckHelper->getUsername());
+        $user = User::findByEmail($formCheckHelper->getEmail());
+file_put_contents('/opt/lampp/logs/custom_log', print_r($user, true));
 
-        if ($user && password_verify($formCheckHelper->getPassword(), $user->getPassword())) {
+        if ($user && password_verify($formCheckHelper->getPassword(), $user->getHashedPassword())) {
             // Login erfolgreich, Session starten
             // session_start();
             $_SESSION["login"] = "true";
@@ -48,7 +49,7 @@ class UserController
             exit();
         } else {
             // Neues User-Objekt erstellen
-            $user = new User($formCheckHelper->getUsername(), $formCheckHelper->getHashedPassword());
+            $user = new User($formCheckHelper->getEmail(), $formCheckHelper->getHashedPassword(), $formData['first_name'], $formData['last_name'], $formData['address']);
             // Neuen User in Datenbank speichern
             $this->store($user);
         }

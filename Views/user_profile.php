@@ -24,7 +24,7 @@ if (!isset($_SESSION["login"])) {
       <div class="col-md-4">
         <h2 class="text-center mt-5">Benutzer</h2>
         <?php if ($user) : ?>
-            <h1><?php echo $user->getUsername(); ?></h1>
+            <h1><?php echo $user->getEmail(); ?></h1>
         <?php else: ?>
             <p>Benutzer nicht gefunden.</p>
         <?php endif; ?>

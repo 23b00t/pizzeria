@@ -12,8 +12,8 @@ $csrf_token = Helper::generateCSRFToken()
         <h2 class="text-center mt-5">Registrierung</h2>
         <form action="../index.php" method="POST">
           <div class="form-group">
-            <label for="username">Benutzername</label>
-            <input type="text" class="form-control" id="username" name="username" required>
+            <label for="email">E-Mail Adresse</label>
+            <input type="text" class="form-control" id="email" name="email" required>
           </div>
           <div class="form-group">
             <label for="password">Passwort</label>
@@ -23,7 +23,18 @@ $csrf_token = Helper::generateCSRFToken()
             <label for="confirm_password">Passwort bestätigen</label>
             <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
           </div>
-
+          <div class="form-group">
+            <label for="first_name">Vorname</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" required>
+          </div>
+          <div class="form-group">
+            <label for="last_name">Nachname</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" required>
+          </div>
+          <div class="form-group">
+            <label for="address">Adresse</label>
+            <input type="text" class="form-control" id="address" name="address" required>
+          </div>
           <!-- CSRF-Token -->
           <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
 
