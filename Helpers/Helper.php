@@ -21,19 +21,4 @@ class Helper
 
         return $_SESSION['csrf_token'];
     }
-
-    public static function validatePassword($password, $confirm_password)
-    {
-        // Regex to check password strength
-        // minimum length should be 8: {8,}
-        // at least one uppercase letter: [A-Z]
-        // at least one lowercase letter: [a-z]
-        // at least one digits: \d
-        // at least one special character: [\W_]
-        // ?= matches without consuming
-        $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/';
-
-        return $password === $confirm_password &&
-        preg_match($pattern, $password);
-    }
 }

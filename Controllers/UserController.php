@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../Helpers/DatabaseHelper.php';
+require_once __DIR__ . '/../Helpers/FormCheckHelper.php';
 
 class UserController
 {
@@ -16,11 +17,13 @@ class UserController
         }
     }
 
-    public function login($username, $password)
+    public function login($formData)
     {
-        $user = User::findByUsername($username);
+        $formCheckHelper = new FormCheckHelper($formData);
 
-        if ($user && password_verify($password, $user->getPassword())) {
+        $user = User::findByUsername($formCheckHelper->getUsername());
+
+        if ($user && password_verify($formCheckHelper->getPassword(), $user->getPassword())) {
             // Login erfolgreich, Session starten
             // session_start();
             $_SESSION["login"] = "true";
@@ -33,21 +36,21 @@ class UserController
         }
     }
 
-    public function create($username, $password, $confirm_password) 
+    public function create($formData) 
     {
-        if (Helper::validatePassword($password, $confirm_password)) {
-            // Hash Password with default value according to:
-            // https://www.php.net/manual/de/function.password-hash.php
-            // and benchmarked costs according to Beispiel #3
-            $password_hashed = password_hash($password, PASSWORD_DEFAULT, ["cost" => 12]);
+        $formCheckHelper = new FormCheckHelper($formData);
 
+        if (!$formCheckHelper->validatePasswordEquality()) {
+            header('Location: ./Views/register_form.php?error=Passwörter%20stimmen%20nicht%20überein');
+            exit();
+        } elseif (!$formCheckHelper->validatePasswordPolicy()) {
+            header('Location: ./Views/register_form.php?error=Passwort%20zu%20schwach');
+            exit();
+        } else {
             // Neues User-Objekt erstellen
-            $user = new User($username, $password_hashed);
+            $user = new User($formCheckHelper->getUsername(), $formCheckHelper->getHashedPassword());
             // Neuen User in Datenbank speichern
             $this->store($user);
-        } else {
-            header('Location: ./Views/register_form.php?error=Passwörter%20stimmen%20nicht%20überein%20oder%20Passwort%20zu%20schwach');
-            exit();
         }
     }
 

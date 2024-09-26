@@ -32,11 +32,9 @@ class Router
     {
         if (isset($_POST['login'])) {
             Helper::checkCSRFToken();
-            $username = $_POST['username'];  
-            $password = $_POST['password'];      
 
             $userController = new UserController();
-            $userController->login($username, $password);
+            $userController->login($_POST);
 
             exit();
         }
@@ -44,12 +42,8 @@ class Router
         if (isset($_POST['register'])) {
             Helper::checkCSRFToken();
 
-            $username = $_POST['username'];  
-            $password = $_POST['password'];      
-            $confirm_password = $_POST['confirm_password'];
-
             $userController = new UserController();
-            $userController->create($username, $password, $confirm_password);
+            $userController->create($_POST);
 
             exit();
         }
