@@ -22,7 +22,6 @@ class UserController
         $formCheckHelper = new FormCheckHelper($formData);
 
         $user = User::findByEmail($formCheckHelper->getEmail());
-file_put_contents('/opt/lampp/logs/custom_log', print_r($user, true));
 
         if ($user && password_verify($formCheckHelper->getPassword(), $user->getHashedPassword())) {
             // Login erfolgreich, Session starten
