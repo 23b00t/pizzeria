@@ -1,5 +1,8 @@
 <?php
 
+// INFO: Return types
+// https://dev.to/karleb/return-types-in-php-3fip
+
 require_once __DIR__ . '/Models/User.php';
 require_once __DIR__ . '/Controllers/UserController.php';
 require_once __DIR__ . '/Helpers/Helper.php';
@@ -17,7 +20,7 @@ class Router
 
     // Überprüfe, um welchen Request es sich handelt und rufe die entsprechende 
     // Methode auf
-    public function handleRequest()
+    public function handleRequest(): void 
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->handlePost();
@@ -28,7 +31,7 @@ class Router
         }
     }
 
-    private function handlePost()
+    private function handlePost(): void
     {
         if (isset($_POST['login'])) {
             Helper::checkCSRFToken();
@@ -51,7 +54,7 @@ class Router
         isset($_POST["signout"]) && UserController::signOut();
     }
 
-    private function handleGet()
+    private function handleGet(): void
     {
         if (isset($_GET['user_id'])) {
             // UserController instanziieren

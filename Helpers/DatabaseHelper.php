@@ -27,7 +27,7 @@ class DatabaseHelper
         }
     }
 
-    public function prepareAndExecute($sql, $params)
+    public function prepareAndExecute($sql, $params): array
     {
         // Die SQL-Abfrage vorbereiten
         $stmt = $this->_conn->prepare($sql);

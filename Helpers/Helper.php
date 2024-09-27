@@ -2,7 +2,7 @@
 class Helper
 {
     // CSRF-Token überprüfen
-    public static function checkCSRFToken()
+    public static function checkCSRFToken(): void
     {
         if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
             // Token ungültig oder nicht vorhanden
@@ -10,7 +10,7 @@ class Helper
         }
     }
 
-    public static function generateCSRFToken()
+    public static function generateCSRFToken(): string
     {
         // Session starten
         session_status() === PHP_SESSION_NONE && session_start();

@@ -4,7 +4,7 @@ require_once __DIR__ . '/../Helpers/DatabaseHelper.php';
 
 class MigrateDatabase
 {
-	function executeSqlFile($filePath, $dbUser, $dbPassword)
+	function executeSqlFile($filePath, $dbUser, $dbPassword): void
 	{
 		// Erstellen einer Instanz des DatabaseHelper
 		$dbHelper = new DatabaseHelper($dbUser, $dbPassword);

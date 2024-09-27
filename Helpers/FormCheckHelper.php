@@ -32,7 +32,7 @@ class FormCheckHelper
     // Methode: validierePasswortRichtlinie
     // Zweck: PasswortBestandteile, gemäß Passwort-Richtlinie auf Vorhandenheit prüfen
     // Rückgabewert: BOOLEAN true/false
-    public function validatePasswordPolicy()
+    public function validatePasswordPolicy(): bool
     {
         // Regex to check password strength
         // minimum length should be 8: {8,}
@@ -56,7 +56,7 @@ class FormCheckHelper
     // Zweck: Bei der Registrierung die beiden Passwort-Eingaben auf Gleichheit prüfen, 
     //        ob sie übereinstimmen
     // Rückgabewert: BOOLEAN true/false
-    public function validatePasswordEquality()
+    public function validatePasswordEquality(): bool
     {
         // PHP Funktion password_verify, siehe Referenz php.net
         // hier: durch "!" am Anfang negiert - verneint - nichtzutreffen
@@ -68,17 +68,17 @@ class FormCheckHelper
         return true;
     }
 
-    private function setEmail($email)
+    private function setEmail($email): void
     {
         $this->email = $email;
     }
 
-    private function setPassword($password)
+    private function setPassword($password): void
     {
         $this->password = $password;
     }
 
-    private function setHashedPassword($password)
+    private function setHashedPassword($password): void
     {
         // Hash Password with default value according to:
         // https://www.php.net/manual/de/function.password-hash.php
@@ -87,22 +87,22 @@ class FormCheckHelper
         $this->password_hash = $hashed_password;
     }
 
-    private function setRepeatPassword($password)
+    private function setRepeatPassword($password): void
     {
         $this->password_repeat = $password;
     }
 
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function getHashedPassword()
+    public function getHashedPassword(): string
     {
         return $this->password_hash;
     }
 
-    public function getPassword()
+    public function getPassword(): string
     {
         return $this->password;
     }

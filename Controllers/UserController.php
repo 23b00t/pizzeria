@@ -5,7 +5,7 @@ require_once __DIR__ . '/../Helpers/FormCheckHelper.php';
 
 class UserController
 {
-    public function show($id)
+    public function show($id): void
     {
         $user = User::findById($id);
 
@@ -17,7 +17,7 @@ class UserController
         }
     }
 
-    public function login($formData)
+    public function login($formData): void
     {
         $formCheckHelper = new FormCheckHelper($formData);
 
@@ -36,7 +36,7 @@ class UserController
         }
     }
 
-    public function create($formData) 
+    public function create($formData): void 
     {
         $formCheckHelper = new FormCheckHelper($formData);
 
@@ -54,7 +54,7 @@ class UserController
         }
     }
 
-    private function store($user)
+    private function store($user): void
     {
         try {
             // Versuch, den Benutzer zu speichern
@@ -75,12 +75,11 @@ class UserController
         }
     }
 
-    public static function signOut()
+    public static function signOut(): void
     {
         session_unset();
         session_destroy();
         header("Location: ./index.php");
         exit();
     }
-
 }

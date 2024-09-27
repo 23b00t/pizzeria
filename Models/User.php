@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__ . '/../Helpers/DatabaseHelper.php';
-include_once __DIR__ . '/../.env.php';
 
 /**
  * User class
@@ -26,7 +25,7 @@ class User
         $this->address = $address;
     }
 
-    public function save()
+    public function save(): array
     {
         // Verbindung zur Datenbank herstellen
         $db = new DatabaseHelper("writer", getenv('PW_WRITER'));
@@ -39,7 +38,7 @@ class User
         return $db->prepareAndExecute($sql, $params);  
     }
 
-    public static function findByEmail($email)
+    public static function findByEmail($email): ?User
     {
         $db = new DatabaseHelper("reader", getenv('PW_READER'));
 
@@ -56,7 +55,7 @@ class User
         return null;
     }
 
-    public static function findById($id)
+    public static function findById($id): ?User
     {
         $db = new DatabaseHelper("reader", "reader_password");
         $sql = 'SELECT * FROM user WHERE id = ?';
@@ -72,32 +71,32 @@ class User
         return null;
     }
 
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function getHashedPassword()
+    public function getHashedPassword(): string
     {
         return $this->hashed_password;
     }
 
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getFirstName()
+    public function getFirstName(): string
     {
         return $this->first_name;
     }
 
-    public function getLastName()
+    public function getLastName(): string
     {
         return $this->last_name;
     }
 
-    public function getAddress()
+    public function getAddress(): string
     {
         return $this->address;
     }
