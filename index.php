@@ -1,11 +1,13 @@
 <?php
 
-require_once __DIR__ . '/Router.php';
 /*
-* Hier her finden all POST und GET requests statt, die dann
-* vom Router verarbeitet werden. 
+* All POST and GET requests are handled here,
+* which are then processed by the Router.
 */
-// Instanziiere die Router-Klasse
+
+require_once __DIR__ . '/Router.php';
+
+// Instantiate the Router class
 $router = new Router();
 $router->handleRequest();
 

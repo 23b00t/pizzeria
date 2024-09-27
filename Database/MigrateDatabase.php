@@ -2,36 +2,50 @@
 
 require_once __DIR__ . '/../Helpers/DatabaseHelper.php';
 
+/**
+ * Class MigrateDatabase
+ * 
+ * This class is responsible for executing SQL commands from a specified SQL file 
+ * against a database using the DatabaseHelper class.
+ */
 class MigrateDatabase
 {
-	function executeSqlFile($filePath, $dbUser, $dbPassword): void
-	{
-		// Erstellen einer Instanz des DatabaseHelper
-		$dbHelper = new DatabaseHelper($dbUser, $dbPassword);
+    /**
+     * Executes SQL commands from the specified file.
+     *
+     * @param string $filePath The path to the SQL file.
+     * @param string $dbUser The database username.
+     * @param string $dbPassword The database password.
+     * @return void
+     */
+    function executeSqlFile($filePath, $dbUser, $dbPassword): void
+    {
+        // Create an instance of the DatabaseHelper
+        $dbHelper = new DatabaseHelper($dbUser, $dbPassword);
 
-		// SQL-Datei lesen
-		// https://www.php.net/manual/de/function.file-get-contents.php
-		$sql = file_get_contents($filePath);
-		if ($sql === false) {
-			die("Fehler beim Lesen der Datei: $filePath\n");
-		}
+        // Read the SQL file
+        // https://www.php.net/manual/en/function.file-get-contents.php
+        $sql = file_get_contents($filePath);
+        if ($sql === false) {
+            die("Error reading the file: $filePath\n");
+        }
 
-		// SQL-Befehle aufteilen
-		// https://www.php.net/manual/de/function.explode.php
-		$sqlCommands = explode(";", $sql);
+        // Split SQL commands
+        // https://www.php.net/manual/en/function.explode.php
+        $sqlCommands = explode(";", $sql);
 
-		foreach ($sqlCommands as $command) {
-			$command = trim($command);
-			if (!empty($command)) {
-				try {
-					// SQL-Befehl ausführen
-					$dbHelper->prepareAndExecute($command, []);
-					echo "Ausgeführt: $command\n";
-				} catch (PDOException $e) {
-					echo "Fehler bei der Ausführung des Befehls: $command\n";
-					echo "Fehler: " . $e->getMessage() . "\n";
-				}
-			}
-		}
-	}
+        foreach ($sqlCommands as $command) {
+            $command = trim($command);
+            if (!empty($command)) {
+                try {
+                    // Execute the SQL command
+                    $dbHelper->prepareAndExecute($command, []);
+                    echo "Executed: $command\n";
+                } catch (PDOException $e) {
+                    echo "Error executing the command: $command\n";
+                    echo "Error: " . $e->getMessage() . "\n";
+                }
+            }
+        }
+    }
 }

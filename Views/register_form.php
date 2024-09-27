@@ -5,7 +5,7 @@ require_once __DIR__ . '/../Helpers/Helper.php';
 $csrf_token = Helper::generateCSRFToken() 
 ?>
 
-<?php $pageTitle = 'Registrieren'; include('head.php'); ?>
+<?php $pageTitle = 'Registrieren'; require 'head.php'; ?>
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-4">
@@ -64,4 +64,4 @@ $csrf_token = Helper::generateCSRFToken()
       </div>
     </div>
   </div>
-<?php include('tail.php'); ?>
+<?php require 'tail.php'; ?>

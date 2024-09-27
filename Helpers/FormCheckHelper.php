@@ -2,31 +2,59 @@
 
 require_once __DIR__ . '/../BaseClass.php';
 
+/**
+ * FormCheckHelper class for handling form data, especially related to password validation.
+ * 
+ * This class extends BaseClass and provides mechanisms to validate passwords against a 
+ * defined policy and check the equality of passwords during registration.
+ *
+ * Properties:
+ * 
+ * - $email: Stores the user's email address.
+ * - $password: Stores the original password entered by the user.
+ * - $password_hash: Stores the hashed version of the password.
+ * - $password_repeat: Stores the repeated password for confirmation.
+ *
+ * Static Properties:
+ * 
+ * - $noGetters: Disallows access to the 'password_repeat' property via a getter.
+ * - $noSetters: Disallows setting the 'password_hash' property via a setter.
+ *
+ * Methods:
+ * 
+ * @method __construct(array $formData) Initializes the class with form data, setting 
+ *        email, password, and confirm_password (if provided).
+ * 
+ * @method bool validatePasswordPolicy() Validates the password against a security policy
+ *        requiring a minimum length, uppercase, lowercase, digits, and special characters.
+ * 
+ * @method bool validatePasswordEquality() Verifies that the repeated password matches the hashed password.
+ * 
+ * @method void setHashedPassword(string $password) Hashes the given password using the 
+ *        default algorithm and stores it in the $password_hash property.
+ */
 class FormCheckHelper extends BaseClass
 {
-    // Klassen Eigenschaften deklarieren
-    // Diese Eigenschaften hat dann auch das instanzierte Objekt der Klasse FormCheck 
     private $email;
     private $password;
     private $password_hash;
     private $password_repeat;
 
-	protected static $noGetters = ['password_repeat'];
+    protected static $noGetters = ['password_repeat'];
     protected static $noSetters = ['password_hash'];
 
-    // DER KONSTRUKTOR, hier werden Bedürfnisse formuliert, 
-    // die mit der Objekt-Instanz gleich mit konstruiert werden
-    public function __construct($formData)
+    /**
+     * Constructor that initializes the form data.
+     * 
+     * @param array $formData Data from the form including email, password, and confirmation password.
+     */
+    public function __construct(array $formData)
     {
-        // WENN die Schlüsselstelle 'email' gesetzt ist UND der Wert sich von NULL unterscheidet,
-        // DANN weise den Wert der Schlüsselstelle 'email' der Objekt-Eigenschaft ($this-Eigenschaft) email zu
+        // Check if 'email' key is set and not null, then assign it to the object property
         isset($formData['email']) && $this->email($formData['email']);
         
-        // Das ursprüngliche Passwort (zweckgebunden an der Passwortrichtlinie) 
-        // einmalig speichern. 
-        // WENN der Zweck erfüllt ist, die Objekt-Eigenschaft zurücksetzen, z.b.: null 
-        if (isset($formData['password'])) 
-        {
+        // Store the original password (according to the password policy)
+        if (isset($formData['password'])) {
             $password = $formData['password'];
             $this->password($password);
             $this->setHashedPassword($password); 
@@ -34,21 +62,23 @@ class FormCheckHelper extends BaseClass
         isset($formData['confirm_password']) && $this->password_repeat($formData['confirm_password']);
     }
 
-    // Methode: validierePasswortRichtlinie
-    // Zweck: PasswortBestandteile, gemäß Passwort-Richtlinie auf Vorhandenheit prüfen
-    // Rückgabewert: BOOLEAN true/false
+    /**
+     * Validates the password against security policy requirements.
+     * 
+     * @return bool True if the password meets the criteria, false otherwise.
+     */
     public function validatePasswordPolicy(): bool
     {
         // Regex to check password strength
         // minimum length should be 8: {8,}
         // at least one uppercase letter: [A-Z]
         // at least one lowercase letter: [a-z]
-        // at least one digits: \d
+        // at least one digit: \d
         // at least one special character: [\W_]
         // ?= matches without consuming
         $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/';
 
-        // PHP Funktion preg_match, siehe Referenz php.net
+        // Use PHP function preg_match
         if (preg_match($pattern, $this->password)) {
             $this->setPassword(null);
             return true; 
@@ -57,14 +87,15 @@ class FormCheckHelper extends BaseClass
         return false;
     }
 
-    // Methode: validierePasswortGleichheit
-    // Zweck: Bei der Registrierung die beiden Passwort-Eingaben auf Gleichheit prüfen, 
-    //        ob sie übereinstimmen
-    // Rückgabewert: BOOLEAN true/false
+    /**
+     * Validates that the repeated password matches the original password.
+     * 
+     * @return bool True if the passwords match, false otherwise.
+     */
     public function validatePasswordEquality(): bool
     {
-        // PHP Funktion password_verify, siehe Referenz php.net
-        // hier: durch "!" am Anfang negiert - verneint - nichtzutreffen
+        // Use PHP function password_verify
+        // here: negated by "!" at the beginning
         if (!password_verify($this->password_repeat, $this->password_hash)) {
             return false;
         }
@@ -73,11 +104,16 @@ class FormCheckHelper extends BaseClass
         return true;
     }
 
-    private function setHashedPassword($password): void
+    /**
+     * Hashes the given password and stores it in the $password_hash property.
+     * 
+     * @param string $password The password to hash.
+     */
+    private function setHashedPassword(string $password): void
     {
         // Hash Password with default value according to:
         // https://www.php.net/manual/de/function.password-hash.php
-        // and benchmarked costs according to Beispiel #3
+        // and benchmarked costs according to Example #3
         $hashed_password = password_hash($password, PASSWORD_DEFAULT, ["cost" => 12]);
         $this->password_hash = $hashed_password;
     }

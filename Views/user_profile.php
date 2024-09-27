@@ -10,7 +10,7 @@ if (!isset($_SESSION["login"])) {
 }
 ?>
 
-<?php $pageTitle = 'Dashboard'; include('./Views/head.php'); ?>
+<?php $pageTitle = 'Dashboard'; require './Views/head.php'; ?>
   <div class="container">
     <!-- Ausloggen --> 
     <div class="container mt-2 d-flex justify-content-end">
@@ -31,4 +31,4 @@ if (!isset($_SESSION["login"])) {
       </div>
     </div>
   </div>
-<?php include('./Views/tail.php'); ?>
+<?php require './Views/tail.php'; ?>

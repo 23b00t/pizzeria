@@ -4,9 +4,22 @@ require_once __DIR__ . '/../Helpers/DatabaseHelper.php';
 require_once __DIR__ . '/../BaseClass.php';
 
 /**
- * User class
+ * User class responsible for representing and managing user data.
+ * 
+ * Properties:
+ * 
+ * - $id: The unique identifier of the user.
+ * - $email: The email address of the user.
+ * - $hashed_password: The hashed password of the user.
+ * - $first_name: The first name of the user.
+ * - $last_name: The last name of the user.
+ * - $address: The address of the user.
+ * 
+ * Static Properties:
+ * 
+ * - $noSetters: Disallows setting the values of 'id', 'email', 'hashed_password', 'first_name', 
+ *               'last_name', and 'address' via setters.
  */
-
 class User extends BaseClass
 {
     private $id;
@@ -16,8 +29,18 @@ class User extends BaseClass
     private $last_name;
     private $address;
 
-	protected static $noSetters = ['id', 'email', 'hashed_password', 'first_name', 'last_name', 'address'];
+    protected static $noSetters = ['id', 'email', 'hashed_password', 'first_name', 'last_name', 'address'];
 
+    /**
+     * User constructor.
+     *
+     * @param string   $email           The email address of the user.
+     * @param string   $hashed_password The hashed password of the user.
+     * @param string   $first_name      The first name of the user.
+     * @param string   $last_name       The last name of the user.
+     * @param string   $address         The address of the user.
+     * @param int|null $id              The unique identifier of the user (optional).
+     */
     public function __construct($email, $hashed_password, $first_name, $last_name, $address, $id = null)
     {
         $this->id = $id; 
@@ -28,26 +51,40 @@ class User extends BaseClass
         $this->address = $address;
     }
 
+    /**
+     * Saves the current user object to the database.
+     *
+     * @return array The result of the database operation.
+     */
     public function save(): array
     {
-        // Verbindung zur Datenbank herstellen
+        // Establish database connection
         $db = new DatabaseHelper("writer", getenv('PW_WRITER'));
 
-        // SQL-Abfrage und Parameter definieren
+        // Define SQL query and parameters
         $sql = 'INSERT INTO user (email, hashed_password, first_name, last_name, address) VALUES (?, ?, ?, ?, ?)';
         $params = [$this->email, $this->hashed_password, $this->first_name, $this->last_name, $this->address];  
 
-        // Benutzer in die Datenbank einfügen
+        // Insert the user into the database
         return $db->prepareAndExecute($sql, $params);  
     }
 
+    /**
+     * Finds a user by their email address.
+     *
+     * @param  string $email The email address of the user to find.
+     * @return User|null The User object if found, null otherwise.
+     */
     public static function findByEmail($email): ?User
     {
+        // Establish database connection
         $db = new DatabaseHelper("reader", getenv('PW_READER'));
 
+        // Define SQL query and parameters
         $sql = 'SELECT * FROM user WHERE email = ?';
         $params = [$email];
 
+        // Execute the query
         $result = $db->prepareAndExecute($sql, $params);
 
         if ($result) {
@@ -58,12 +95,22 @@ class User extends BaseClass
         return null;
     }
 
+    /**
+     * Finds a user by their ID.
+     *
+     * @param  int $id The ID of the user to find.
+     * @return User|null The User object if found, null otherwise.
+     */
     public static function findById($id): ?User
     {
+        // Establish database connection
         $db = new DatabaseHelper("reader", "reader_password");
+        
+        // Define SQL query and parameters
         $sql = 'SELECT * FROM user WHERE id = ?';
         $params = [$id];
 
+        // Execute the query
         $result = $db->prepareAndExecute($sql, $params);
 
         if ($result) {
