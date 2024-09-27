@@ -12,7 +12,7 @@ $csrf_token = Helper::generateCSRFToken()
         <h2 class="text-center mt-5">Registrierung</h2>
         <form action="../index.php" method="POST">
           <div class="form-group">
-            <label for="email">E-Mail Adresse</label>
+            <label for="email">E-Mail</label>
             <input type="email" class="form-control" id="email" name="email" required>
           </div>
           <div class="form-group">
@@ -49,7 +49,7 @@ $csrf_token = Helper::generateCSRFToken()
       </div>
     </div>
 
-    <div class="row justify-content-center mt-4">
+    <div class="row justify-content-center mt-4 mb-4">
       <div class="col-md-6">
         <div class="alert alert-info" role="alert">
           <strong>Passwortanforderungen:</strong>

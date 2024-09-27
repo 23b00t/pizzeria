@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../Helpers/DatabaseHelper.php';
+include_once __DIR__ . '/../.env.php';
 
 /**
  * User class
@@ -28,7 +29,7 @@ class User
     public function save()
     {
         // Verbindung zur Datenbank herstellen
-        $db = new DatabaseHelper("writer", "writer_password");
+        $db = new DatabaseHelper("writer", $GLOBALS['pw_writer']);
 
         // SQL-Abfrage und Parameter definieren
         $sql = 'INSERT INTO user (email, hashed_password, first_name, last_name, address) VALUES (?, ?, ?, ?, ?)';
@@ -40,7 +41,7 @@ class User
 
     public static function findByEmail($email)
     {
-        $db = new DatabaseHelper("reader", "reader_password");
+        $db = new DatabaseHelper("reader", $GLOBALS['pw_reader']);
 
         $sql = 'SELECT * FROM user WHERE email = ?';
         $params = [$email];

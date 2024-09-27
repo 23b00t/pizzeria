@@ -1,8 +1,9 @@
 <?php
 require_once __DIR__ . '/MigrateDatabase.php';
+include_once __DIR__ . '/../.env.php';
 
-$dbUser = "root"; 
-$dbPassword = "q1w2e3r4";
+$dbUser = $GLOBALS['db_user']; 
+$dbPassword = $GLOBALS['pw_db'];
 
 $migrateDatabase = new MigrateDatabase();
 
@@ -10,6 +11,7 @@ $migrateDatabase = new MigrateDatabase();
 $directory = __DIR__;
 
 // Alle .sql-Dateien im Verzeichnis finden
+// https://www.php.net/manual/de/function.glob.php
 $sqlFiles = glob($directory . '/*.sql');
 
 if (empty($sqlFiles)) {

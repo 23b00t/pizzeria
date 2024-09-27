@@ -13,7 +13,7 @@ $csrf_token = Helper::generateCSRFToken();
         <h2 class="text-center mt-5">Login</h2>
         <form action="../index.php" method="POST">
           <div class="form-group">
-            <label for="email">E-Mail Adresse</label>
+            <label for="email">E-Mail</label>
             <input type="email" class="form-control" id="email" name="email" required>
           </div>
           <div class="form-group">
