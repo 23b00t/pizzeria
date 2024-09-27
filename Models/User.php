@@ -1,12 +1,13 @@
 <?php
 
 require_once __DIR__ . '/../Helpers/DatabaseHelper.php';
+require_once __DIR__ . '/../BaseClass.php';
 
 /**
  * User class
  */
 
-class User
+class User extends BaseClass
 {
     private $id;
     private $email;
@@ -14,6 +15,8 @@ class User
     private $first_name;
     private $last_name;
     private $address;
+
+	protected static $noSetters = ['id', 'email', 'hashed_password', 'first_name', 'last_name', 'address'];
 
     public function __construct($email, $hashed_password, $first_name, $last_name, $address, $id = null)
     {
@@ -69,35 +72,5 @@ class User
         }
 
         return null;
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function getHashedPassword(): string
-    {
-        return $this->hashed_password;
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function getFirstName(): string
-    {
-        return $this->first_name;
-    }
-
-    public function getLastName(): string
-    {
-        return $this->last_name;
-    }
-
-    public function getAddress(): string
-    {
-        return $this->address;
     }
 }

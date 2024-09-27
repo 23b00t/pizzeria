@@ -21,13 +21,15 @@ class UserController
     {
         $formCheckHelper = new FormCheckHelper($formData);
 
-        $user = User::findByEmail($formCheckHelper->getEmail());
+        $user = User::findByEmail($formCheckHelper->email());
+        // $pwr = $formCheckHelper->password_repeat();
+        // $user->id('23');
 
-        if ($user && password_verify($formCheckHelper->getPassword(), $user->getHashedPassword())) {
+        if ($user && password_verify($formCheckHelper->password(), $user->hashed_password())) {
             // Login erfolgreich, Session starten
             // session_start();
             $_SESSION["login"] = "true";
-            header('Location: ./index.php?user_id=' . $user->getId());
+            header('Location: ./index.php?user_id=' . $user->id());
             exit();
         } else {
             // Login fehlgeschlagen
@@ -48,7 +50,7 @@ class UserController
             exit();
         } else {
             // Neues User-Objekt erstellen
-            $user = new User($formCheckHelper->getEmail(), $formCheckHelper->getHashedPassword(), $formData['first_name'], $formData['last_name'], $formData['address']);
+            $user = new User($formCheckHelper->email(), $formCheckHelper->password_hash(), $formData['first_name'], $formData['last_name'], $formData['address']);
             // Neuen User in Datenbank speichern
             $this->store($user);
         }
