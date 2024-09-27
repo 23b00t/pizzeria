@@ -67,7 +67,7 @@ class FormCheckHelper
         $this->setRepeatPassword(null);
         return true;
     }
-    
+
     private function setEmail($email)
     {
         $this->email = $email;
