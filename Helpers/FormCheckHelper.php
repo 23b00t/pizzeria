@@ -1,6 +1,8 @@
 <?php
 
-class FormCheckHelper
+require_once __DIR__ . '/../BaseClass.php';
+
+class FormCheckHelper extends BaseClass
 {
     // Klassen Eigenschaften deklarieren
     // Diese Eigenschaften hat dann auch das instanzierte Objekt der Klasse FormCheck 
@@ -9,13 +11,16 @@ class FormCheckHelper
     private $password_hash;
     private $password_repeat;
 
+	protected static $noGetters = ['password_repeat'];
+    protected static $noSetters = ['password_hash'];
+
     // DER KONSTRUKTOR, hier werden Bedürfnisse formuliert, 
     // die mit der Objekt-Instanz gleich mit konstruiert werden
     public function __construct($formData)
     {
         // WENN die Schlüsselstelle 'email' gesetzt ist UND der Wert sich von NULL unterscheidet,
         // DANN weise den Wert der Schlüsselstelle 'email' der Objekt-Eigenschaft ($this-Eigenschaft) email zu
-        isset($formData['email']) && $this->setEmail($formData['email']);
+        isset($formData['email']) && $this->email($formData['email']);
         
         // Das ursprüngliche Passwort (zweckgebunden an der Passwortrichtlinie) 
         // einmalig speichern. 
@@ -23,10 +28,10 @@ class FormCheckHelper
         if (isset($formData['password'])) 
         {
             $password = $formData['password'];
-            $this->setPassword($password);
+            $this->password($password);
             $this->setHashedPassword($password); 
         }
-        isset($formData['confirm_password']) && $this->setRepeatPassword($formData['confirm_password']);
+        isset($formData['confirm_password']) && $this->password_repeat($formData['confirm_password']);
     }
 
     // Methode: validierePasswortRichtlinie
@@ -68,16 +73,6 @@ class FormCheckHelper
         return true;
     }
 
-    private function setEmail($email): void
-    {
-        $this->email = $email;
-    }
-
-    private function setPassword($password): void
-    {
-        $this->password = $password;
-    }
-
     private function setHashedPassword($password): void
     {
         // Hash Password with default value according to:
@@ -86,25 +81,4 @@ class FormCheckHelper
         $hashed_password = password_hash($password, PASSWORD_DEFAULT, ["cost" => 12]);
         $this->password_hash = $hashed_password;
     }
-
-    private function setRepeatPassword($password): void
-    {
-        $this->password_repeat = $password;
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function getHashedPassword(): string
-    {
-        return $this->password_hash;
-    }
-
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
 }
-?>
