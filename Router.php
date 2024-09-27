@@ -26,8 +26,6 @@ class Router
             $this->handlePost();
         } elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
             $this->handleGet();
-        } else {
-            echo "Nur POST und GET";
         }
     }
 
