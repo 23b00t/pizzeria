@@ -29,7 +29,7 @@ class User
     public function save()
     {
         // Verbindung zur Datenbank herstellen
-        $db = new DatabaseHelper("writer", $GLOBALS['pw_writer']);
+        $db = new DatabaseHelper("writer", getenv('PW_WRITER'));
 
         // SQL-Abfrage und Parameter definieren
         $sql = 'INSERT INTO user (email, hashed_password, first_name, last_name, address) VALUES (?, ?, ?, ?, ?)';
@@ -41,7 +41,7 @@ class User
 
     public static function findByEmail($email)
     {
-        $db = new DatabaseHelper("reader", $GLOBALS['pw_reader']);
+        $db = new DatabaseHelper("reader", getenv('PW_READER'));
 
         $sql = 'SELECT * FROM user WHERE email = ?';
         $params = [$email];

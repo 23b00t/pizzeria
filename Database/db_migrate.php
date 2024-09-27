@@ -2,8 +2,8 @@
 require_once __DIR__ . '/MigrateDatabase.php';
 include_once __DIR__ . '/../.env.php';
 
-$dbUser = $GLOBALS['db_user']; 
-$dbPassword = $GLOBALS['pw_db'];
+$dbUser = getenv('DB_USER'); 
+$dbPassword = getenv('PW_DB');
 
 $migrateDatabase = new MigrateDatabase();
 
