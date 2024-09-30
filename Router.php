@@ -66,20 +66,11 @@ class Router
      */
     private function handlePost(): void
     {
-        if (isset($_POST['login'])) {
+        if (isset($_POST['login']) || isset($_POST['register'])) {
             Helper::checkCSRFToken();
 
             $userController = new UserController();
             $userController->login($_POST);
-
-            exit();
-        }
-
-        if (isset($_POST['register'])) {
-            Helper::checkCSRFToken();
-
-            $userController = new UserController();
-            $userController->create($_POST);
 
             exit();
         }
