@@ -12,8 +12,8 @@
  *
  * Properties:
  *
- * - static array $noGetters: List of disallowed getter methods.
- * - static array $noSetters: List of disallowed setter methods.
+ * - static array $getters: List of allowed getter methods.
+ * - static array $setters: List of allowed setter methods.
  *
  * Methods:
  *
@@ -23,15 +23,14 @@
  *
  * Private Methods:
  *
- * @method static void checkDissallowed(string $func, array $exceptions)
- *         Checks if a method is disallowed and throws an exception if it is.
+ * @method static void checkAllowed(string $func, array $exceptions)
+ *         Checks if a method is allowed and throws an exception if it is not.
  */
 class BaseClass
 {
-    // To fill in child class to disallow construction of specific getters and setters
-    // protected (not private) as the content of the arrays is changed in the child classes
-    protected static $noGetters = [];
-    protected static $noSetters = [];
+    // Set allowed methods for getters and setters in child class
+    protected static $getters = [];
+    protected static $setters = [];
 
     /**
      * Dynamically handles calls to getter and setter methods.
@@ -57,12 +56,12 @@ class BaseClass
             // Create getters, to params with getters
             if ($prop->getName() === $func && empty($params)) {
                 // Check for not allowed getters
-                self::checkDissallowed($func, static::$noGetters);
+                self::checkAllowed($func, static::$getters);
                 return $prop->getValue($this);
                 // create setters, if params are set
             } elseif ($prop->getName() === $func && isset($params)) {
                 // Check for not allowed setters
-                self::checkDissallowed($func, static::$noSetters);
+                self::checkAllowed($func, static::$setters);
                 return $prop->setValue($this, ...$params);
             }
         }
@@ -78,9 +77,9 @@ class BaseClass
      * @param  array  $exceptions The list of disallowed methods.
      * @throws BadMethodCallException If the method is disallowed.
      */
-    private static function checkDissallowed($func, $exceptions)
+    private static function checkAllowed($func, $exceptions)
     {
-        if (in_array($func, $exceptions)) {
+        if (!in_array($func, $exceptions)) {
             throw new BadMethodCallException("{$func} is not allowed.");
         }
     }

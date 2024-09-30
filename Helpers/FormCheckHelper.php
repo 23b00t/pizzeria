@@ -40,8 +40,8 @@ class FormCheckHelper extends BaseClass
     private $password_hash;
     private $password_repeat;
 
-    protected static $noGetters = ['password_repeat'];
-    protected static $noSetters = ['password_hash'];
+    protected static $getters = [ 'email', 'password', 'password_hash' ];
+    protected static $setters = [ 'email', 'password', 'password_repeat' ];
 
     /**
      * Constructor that initializes the form data.
@@ -80,7 +80,7 @@ class FormCheckHelper extends BaseClass
 
         // Use PHP function preg_match
         if (preg_match($pattern, $this->password)) {
-            $this->setPassword(null);
+            $this->password(null);
             return true; 
         }
 
@@ -100,7 +100,7 @@ class FormCheckHelper extends BaseClass
             return false;
         }
 
-        $this->setRepeatPassword(null);
+        $this->password_repeat(null);
         return true;
     }
 

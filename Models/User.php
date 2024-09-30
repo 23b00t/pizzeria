@@ -28,8 +28,9 @@ class User extends BaseClass
     private $first_name;
     private $last_name;
     private $address;
+    private $role;
 
-    protected static $noSetters = ['id', 'email', 'hashed_password', 'first_name', 'last_name', 'address', 'role'];
+    protected static $getters = ['id', 'email', 'hashed_password', 'first_name', 'last_name', 'address', 'role'];
 
     /**
      * User constructor.
