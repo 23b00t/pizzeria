@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS user (
     first_name VARCHAR(255),
     last_name VARCHAR(255) NOT NULL,
     address VARCHAR(255) NOT NULL,
-    role VARCHAR(255) DEFAULT 'user'
+    role VARCHAR(255) DEFAULT 'customer'
 );

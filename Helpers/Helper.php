@@ -49,4 +49,15 @@ class Helper
 
         return $_SESSION['csrf_token'];
     }
+
+    public static function validateSession(): void
+    {
+        // https://stackoverflow.com/questions/22965067/when-and-why-i-should-use-session-regenerate-id#22965580
+        if (!isset($_SESSION["login"])) {
+            header("Location: ./index.php");
+            exit();
+        } else {
+            session_regenerate_id(true);
+        }
+    }
 }

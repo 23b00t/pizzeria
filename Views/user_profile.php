@@ -1,13 +1,7 @@
 <?php 
-session_status() === PHP_SESSION_NONE && session_start();
+require_once __DIR__ . '/../Helpers/Helper.php';
 
-// https://stackoverflow.com/questions/22965067/when-and-why-i-should-use-session-regenerate-id#22965580
-if (!isset($_SESSION["login"])) {
-    header("Location: ./index.php");
-    exit();
-} else {
-    session_regenerate_id(true);
-}
+Helper::validateSession();
 ?>
 
 <?php $pageTitle = 'Dashboard'; require './Views/head.php'; ?>

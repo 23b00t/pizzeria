@@ -94,7 +94,7 @@ class UserController
             header('Location: ./Views/login_form.php?msg=Account%20successfully%20created');
             exit();
         } catch (PDOException $e) {
-            // Error 1062: Duplicate entry (database error for UNIQUE constraint)
+            // Error 23000: Duplicate entry (database error for UNIQUE constraint)
             if ($e->getCode() === '23000') { 
                 header('Location: ./Views/register_form.php?error=Username%20not%20available');
             } else {

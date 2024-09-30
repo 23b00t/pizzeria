@@ -14,11 +14,7 @@ require_once __DIR__ . '/../BaseClass.php';
  * - $first_name: The first name of the user.
  * - $last_name: The last name of the user.
  * - $address: The address of the user.
- * 
- * Static Properties:
- * 
- * - $noSetters: Disallows setting the values of 'id', 'email', 'hashed_password', 'first_name', 
- *               'last_name', and 'address' via setters.
+ * - $role: The role of the user.
  */
 class User extends BaseClass
 {
@@ -41,7 +37,7 @@ class User extends BaseClass
      * @param string      $last_name       The last name of the user.
      * @param string      $address         The address of the user.
      * @param int|null    $id              The unique identifier of the user (optional).
-     * @param string|null $role         The user role ['user', 'admin']. Defaults by DB to 'user';
+     * @param string|null $role            The user role ['customer', 'admin']. Defaults in DB to 'customer';
      */
     public function __construct($email, $hashed_password, $first_name, $last_name, $address, $id = null, $role = null)
     {
