@@ -45,9 +45,8 @@ class UserController
         $user = User::findByEmail($formCheckHelper->email());
 
         if ($user && password_verify($formCheckHelper->password(), $user->hashed_password())) {
-            // Successful login, start session
-            // session_start();
-            $_SESSION["login"] = "true";
+            // save user id to session to authenticate it
+            $_SESSION["login"] = $user->id();
             header('Location: ./index.php?user_id=' . $user->id());
             exit();
         } else {
