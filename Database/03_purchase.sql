@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS purchase (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    date DATETIME NOT NULL,
-    placed BOOLEAN DEFAULT FALSE,
-    delivered BOOLEAN DEFAULT FALSE,
+    purchased_at TIMESTAMP,
+    delivered_at TIMESTAMP,
+    status ENUM('pending', 'placed', 'delivered') DEFAULT 'pending',
     FOREIGN KEY (user_id) REFERENCES user(id)
 );

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS purchase_item (
+CREATE TABLE IF NOT EXISTS card (
     id INT AUTO_INCREMENT PRIMARY KEY,
     purchase_id INT NOT NULL,
     item_id INT NOT NULL,
