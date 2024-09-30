@@ -29,19 +29,20 @@ class User extends BaseClass
     private $last_name;
     private $address;
 
-    protected static $noSetters = ['id', 'email', 'hashed_password', 'first_name', 'last_name', 'address'];
+    protected static $noSetters = ['id', 'email', 'hashed_password', 'first_name', 'last_name', 'address', 'role'];
 
     /**
      * User constructor.
      *
-     * @param string   $email           The email address of the user.
-     * @param string   $hashed_password The hashed password of the user.
-     * @param string   $first_name      The first name of the user.
-     * @param string   $last_name       The last name of the user.
-     * @param string   $address         The address of the user.
-     * @param int|null $id              The unique identifier of the user (optional).
+     * @param string      $email           The email address of the user.
+     * @param string      $hashed_password The hashed password of the user.
+     * @param string      $first_name      The first name of the user.
+     * @param string      $last_name       The last name of the user.
+     * @param string      $address         The address of the user.
+     * @param int|null    $id              The unique identifier of the user (optional).
+     * @param string|null $role         The user role ['user', 'admin']. Defaults by DB to 'user';
      */
-    public function __construct($email, $hashed_password, $first_name, $last_name, $address, $id = null)
+    public function __construct($email, $hashed_password, $first_name, $last_name, $address, $id = null, $role = null)
     {
         $this->id = $id; 
         $this->email = $email;
@@ -49,6 +50,7 @@ class User extends BaseClass
         $this->first_name = $first_name;
         $this->last_name = $last_name;
         $this->address = $address;
+        $this->role = $role;
     }
 
     /**
