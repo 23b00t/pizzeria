@@ -28,7 +28,7 @@ class UserController
 
         if ($user) {
             // Include the user profile view and pass the user object
-            include './Views/user_profile.php';
+            include './Views/User/user_profile.php';
         } else {
             echo "User not found.";
         }
@@ -54,7 +54,7 @@ class UserController
             exit();
         } else {
             // Failed login
-            header('Location: ./Views/login_form.php?error=Invalid%20login%20credentials');
+            header('Location: ./Views/User/login_form.php?error=Invalid%20login%20credentials');
             exit();
         }
     }
@@ -69,10 +69,10 @@ class UserController
         $formCheckHelper = new FormCheckHelper($formData);
 
         if (!$formCheckHelper->validatePasswordEquality()) {
-            header('Location: ./Views/register_form.php?error=Passwords%20do%20not%20match');
+            header('Location: ./Views/User/register_form.php?error=Passwords%20do%20not%20match');
             exit();
         } elseif (!$formCheckHelper->validatePasswordPolicy()) {
-            header('Location: ./Views/register_form.php?error=Weak%20password');
+            header('Location: ./Views/User/register_form.php?error=Weak%20password');
             exit();
         } else {
             // Create a new user object
@@ -95,15 +95,15 @@ class UserController
             $user->save();
 
             // Successful insertion
-            header('Location: ./Views/login_form.php?msg=Account%20successfully%20created');
+            header('Location: ./Views/User/login_form.php?msg=Account%20successfully%20created');
             exit();
         } catch (PDOException $e) {
             // Error 23000: Duplicate entry (database error for UNIQUE constraint)
             if ($e->getCode() === '23000') { 
-                header('Location: ./Views/register_form.php?error=Username%20not%20available');
+                header('Location: ./Views/User/register_form.php?error=Username%20not%20available');
             } else {
                 // Other errors
-                header('Location: ./Views/register_form.php?error=Unknown%20error' . $e->getCode());
+                header('Location: ./Views/User/register_form.php?error=Unknown%20error' . $e->getCode());
             }
             exit();
         }

@@ -1,5 +1,5 @@
 <?php 
-require_once __DIR__ . '/../Helpers/Helper.php';
+require_once __DIR__ . '/../../Helpers/Helper.php';
 
 Helper::validateSession();
 ?>

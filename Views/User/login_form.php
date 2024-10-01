@@ -1,17 +1,17 @@
 <!-- INFO: User login -->
 
 <?php 
-require_once __DIR__ . '/../Helpers/Helper.php';
+require_once __DIR__ . '/../../Helpers/Helper.php';
 
 $csrf_token = Helper::generateCSRFToken(); 
 ?>
 
-<?php $pageTitle = 'Login'; require 'head.php'; ?>
+<?php $pageTitle = 'Login'; require '../head.php'; ?>
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-4">
         <h2 class="text-center mt-5">Login</h2>
-        <form action="../index.php" method="POST">
+        <form action="../../index.php" method="POST">
           <div class="form-group">
             <label for="email">E-Mail</label>
             <input type="email" class="form-control" id="email" name="email" required>
@@ -34,4 +34,4 @@ $csrf_token = Helper::generateCSRFToken();
       </div>
     </div>
   </div>
-<?php require 'tail.php'; ?>
+<?php require '../tail.php'; ?>

@@ -119,7 +119,7 @@ class Router
     private function handleGet(string $uri): void
     {
         // To avoid missmatches of the preg_match statement
-        $uri === '' && header('Location: ./Views/login_form.php') && exit();
+        $uri === '' && header('Location: ./Views/User/login_form.php') && exit();
 
         switch ($uri) {
             // Pizza routes
@@ -160,7 +160,7 @@ class Router
                 break;
 
             default:
-                header('Location: ./Views/login_form.php');
+                header('Location: ./Views/User/login_form.php');
                 break;
         }
     }
