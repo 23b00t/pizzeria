@@ -35,13 +35,15 @@ require_once __DIR__ . '/Helpers/Helper.php';
  */
 class Router
 {
+    private $route;
     /**
      * Constructor that starts a session if none is active.
      */
-    public function __construct()
+    public function __construct($route)
     {
         // Check if a session is active, otherwise start one
         session_status() === PHP_SESSION_NONE && session_start();
+        $this->route = $route;
     }
 
     /**
@@ -50,14 +52,17 @@ class Router
      * 
      * @return void
      */
-    public function handleRequest(string $uri): void 
+    public function handleRequest(): void 
     {
 
-// file_put_contents('/opt/lampp/logs/custom_log', "handleRequest: " . print_r($uri, true), FILE_APPEND);
+// file_put_contents('/opt/lampp/logs/custom_log', "handleRequest: " . print_r($this->route, true), FILE_APPEND);
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $this->handlePost($uri);
+            $this->handlePost();
         } elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
-            $this->handleGet($uri);
+            // To avoid missmatches of the preg_match statement
+            $this->route === '' && header('Location: ./Views/User/login_form.php') && exit();
+
+            $this->handleGet();
         }
     }
 
@@ -67,7 +72,7 @@ class Router
      * 
      * @return void
      */
-    private function handlePost($uri): void
+    private function handlePost(): void
     {
         // User routes
         if (isset($_POST['login'])) {
@@ -92,7 +97,7 @@ class Router
 
         // Pizza routes
         // Store Pizza Route (Pizza erstellen)
-        if ($uri === 'Pizza/store') {
+        if ($this->route === 'Pizza/store') {
             Helper::checkCSRFToken();
             $pizzaController = new PizzaController();
             $pizzaController->store($_POST);  // Übergabe der Formulardaten
@@ -100,7 +105,7 @@ class Router
         }
 
         // Update Pizza Route (Pizza aktualisieren)
-        if (preg_match('/Pizza\/update\/(\d+)$/', $uri, $matches)) {
+        if (preg_match('/Pizza\/update\/(\d+)$/', $this->route, $matches)) {
             Helper::checkCSRFToken();
             $pizzaId = $matches[1];
             $pizzaController = new PizzaController();
@@ -116,26 +121,23 @@ class Router
      * @return void
      */
 
-    private function handleGet(string $uri): void
+    private function handleGet(): void
     {
-        // To avoid missmatches of the preg_match statement
-        $uri === '' && header('Location: ./Views/User/login_form.php') && exit();
-
-        switch ($uri) {
+        switch ($this->route) {
             // Pizza routes
             case 'Pizza/index': 
                 $pizzaController = new PizzaController();
                 $pizzaController->index(); 
                 break;
 
-            case (preg_match('/Pizza\/show\/(\d+)$/', $uri, $matches) && !empty($matches[1])):
+            case (preg_match('/Pizza\/show\/(\d+)$/', $this->route, $matches) && !empty($matches[1])):
                 // file_put_contents('/opt/lampp/logs/custom_log', "match: " . print_r($matches, true), FILE_APPEND);
                 $pizzaId = $matches[1];
                 $pizzaController = new PizzaController();
                 $pizzaController->show($pizzaId);
                 break;
 
-            case (preg_match('/Pizza\/edit\/(\d+)$/', $uri, $matches) && !empty($matches[1])):
+            case (preg_match('/Pizza\/edit\/(\d+)$/', $this->route, $matches) && !empty($matches[1])):
                 $pizzaId = $matches[1];
                 $pizzaController = new PizzaController();
                 $pizzaController->edit($pizzaId);
@@ -146,14 +148,14 @@ class Router
                 $pizzaController->create();
                 break;
 
-            case (preg_match('/Pizza\/delete\/(\d+)$/', $uri, $matches) && !empty($matches[1])):
+            case (preg_match('/Pizza\/delete\/(\d+)$/', $this->route, $matches) && !empty($matches[1])):
                 $pizzaId = $matches[1];
                 $pizzaController = new PizzaController();
                 $pizzaController->delete($pizzaId);
                 break;
         
             // User route
-            case (preg_match('/user_id=(\d+)$/', $uri, $matches) && !empty($matches[1])):
+            case (preg_match('/user_id=(\d+)$/', $this->route, $matches) && !empty($matches[1])):
                 $userId = $matches[1];
                 $userController = new UserController();
                 $userController->show($userId); 
