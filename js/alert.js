@@ -1,7 +1,13 @@
 function showAlertFromUrl()
 {
-    // Create hash from window.location.search (?key=value) 
-    const urlParams = new URLSearchParams(window.location.search);
+    // Create hash from window.location.href
+    const url = window.location.href;
+    // Split the URL at the first '?'
+    const message = url.split('?').at(-1);
+
+    // Create URLSearchParams from the second part
+    const urlParams = new URLSearchParams(message);
+
     // Get value from key error or msg
     const param = urlParams.get('error') || urlParams.get('msg');
     

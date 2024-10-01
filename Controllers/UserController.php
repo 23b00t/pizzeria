@@ -44,15 +44,12 @@ class UserController
         $formCheckHelper = new FormCheckHelper($formData);
         $user = User::findByEmail($formCheckHelper->email());
 
-file_put_contents('/opt/lampp/logs/custom_log', "form: " . print_r($formData, true), FILE_APPEND);
-
-file_put_contents('/opt/lampp/logs/custom_log', "user: " . print_r($user, true), FILE_APPEND);
         if ($user && password_verify($formCheckHelper->password(), $user->hashed_password())) {
 
             // save user id to session to authenticate it
             $_SESSION["login"] = $user->id();
-
-            header('Location: ./index.php?user_id=' . $user->id());
+            header('Location: ./index.php?Pizza/index');
+            // header('Location: ./index.php?user_id=' . $user->id());
 
             exit();
         } else {

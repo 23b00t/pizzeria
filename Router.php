@@ -5,6 +5,7 @@
 
 require_once __DIR__ . '/Models/User.php';
 require_once __DIR__ . '/Controllers/UserController.php';
+require_once __DIR__ . '/Controllers/PizzaController.php';
 require_once __DIR__ . '/Helpers/Helper.php';
 
 /**
@@ -49,12 +50,14 @@ class Router
      * 
      * @return void
      */
-    public function handleRequest(): void 
+    public function handleRequest(string $uri): void 
     {
+
+// file_put_contents('/opt/lampp/logs/custom_log', "handleRequest: " . print_r($uri, true), FILE_APPEND);
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $this->handlePost();
+            $this->handlePost($uri);
         } elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
-            $this->handleGet();
+            $this->handleGet($uri);
         }
     }
 
@@ -64,11 +67,12 @@ class Router
      * 
      * @return void
      */
-    private function handlePost(): void
+    private function handlePost($uri): void
     {
         if (isset($_POST['login'])) {
             Helper::checkCSRFToken();
 
+// file_put_contents('/opt/lampp/logs/custom_log', "handlePost: " , FILE_APPEND);
             $userController = new UserController();
             $userController->login($_POST);
 
@@ -84,6 +88,23 @@ class Router
             exit();
         }
 
+        // Store Pizza Route (Pizza erstellen)
+        if ($uri === 'Pizza/store') {
+            // Helper::checkCSRFToken();
+            $pizzaController = new PizzaController();
+            $pizzaController->store($_POST);  // Übergabe der Formulardaten
+            exit();
+        }
+
+        // Update Pizza Route (Pizza aktualisieren)
+        if (preg_match('/Pizza\/update\/(\d+)$/', $uri, $matches)) {
+            // Helper::checkCSRFToken();
+            $pizzaId = $matches[1];
+            $pizzaController = new PizzaController();
+            $pizzaController->update($pizzaId, $_POST);  // Übergabe der Formulardaten
+            exit();
+        }
+
         isset($_POST["signout"]) && UserController::signOut();
     }
 
@@ -93,19 +114,51 @@ class Router
      * 
      * @return void
      */
-    private function handleGet(): void
+
+    private function handleGet(string $uri): void
     {
-        if (isset($_GET['user_id'])) {
-            // Instantiate UserController
-            $userController = new UserController();
+        // To avoid missmatches of the preg_match statement
+        $uri === '' && header('Location: ./Views/login_form.php') && exit();
 
-            // Retrieve user ID from the URL
-            $userId = $_GET['user_id'];
+        switch ($uri) {
+            case 'Pizza/index': 
+                $pizzaController = new PizzaController();
+                $pizzaController->index(); 
+                break;
 
-            // Call the show method of UserController
-            $userController->show($userId);
-        } else {
-            header('Location: ./Views/login_form.php');
+            case (preg_match('/user_id=(\d+)$/', $uri, $matches) && !empty($matches[1])):
+                $userId = $matches[1];
+                $userController = new UserController();
+                $userController->show($userId); 
+                break;
+
+            case (preg_match('/Pizza\/show\/(\d+)$/', $uri, $matches) && !empty($matches[1])):
+                // file_put_contents('/opt/lampp/logs/custom_log', "match: " . print_r($matches, true), FILE_APPEND);
+                $pizzaId = $matches[1];
+                $pizzaController = new PizzaController();
+                $pizzaController->show($pizzaId);
+                break;
+
+            case (preg_match('/Pizza\/edit\/(\d+)$/', $uri, $matches) && !empty($matches[1])):
+                $pizzaId = $matches[1];
+                $pizzaController = new PizzaController();
+                $pizzaController->edit($pizzaId);
+                break;
+
+            case 'Pizza/create':
+                $pizzaController = new PizzaController();
+                $pizzaController->create();
+                break;
+
+            case (preg_match('/Pizza\/delete\/(\d+)$/', $uri, $matches) && !empty($matches[1])):
+                $pizzaId = $matches[1];
+                $pizzaController = new PizzaController();
+                $pizzaController->delete($pizzaId);
+                break;
+
+            default:
+                header('Location: ./Views/login_form.php');
+                break;
         }
     }
 }
