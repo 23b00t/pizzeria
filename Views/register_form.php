@@ -32,8 +32,20 @@ $csrf_token = Helper::generateCSRFToken()
             <input type="text" class="form-control" id="last_name" name="last_name" required>
           </div>
           <div class="form-group">
-            <label for="address">Adresse</label>
-            <input type="text" class="form-control" id="address" name="address" required>
+            <label for="street">Straße</label>
+            <input type="text" class="form-control" id="street" name="street" required>
+          </div>
+          <div class="form-group">
+            <label for="str_no">Hausnummer</label>
+            <input type="number" class="form-control" id="str_no" name="str_no" required>
+          </div>
+          <div class="form-group">
+            <label for="zip">PLZ</label>
+            <input type="number" class="form-control" id="zip" name="zip" required>
+          </div>
+          <div class="form-group">
+            <label for="city">Stadt</label>
+            <input type="text" class="form-control" id="city" name="city" required>
           </div>
           <!-- CSRF-Token -->
           <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">

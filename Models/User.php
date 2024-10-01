@@ -23,10 +23,13 @@ class User extends BaseClass
     private $hashed_password;
     private $first_name;
     private $last_name;
-    private $address;
+    private $street;
+    private $str_no;
+    private $zip;
+    private $city;
     private $role;
 
-    protected static $getters = ['id', 'email', 'hashed_password', 'first_name', 'last_name', 'address', 'role'];
+    protected static $getters = ['id', 'email', 'hashed_password', 'first_name', 'last_name', 'street', 'str_no', 'zip', 'city', 'role'];
 
     /**
      * User constructor.
@@ -39,14 +42,17 @@ class User extends BaseClass
      * @param int|null    $id              The unique identifier of the user (optional).
      * @param string|null $role            The user role ['customer', 'admin']. Defaults in DB to 'customer';
      */
-    public function __construct($email, $hashed_password, $first_name, $last_name, $address, $id = null, $role = null)
+    public function __construct($email, $hashed_password, $first_name, $last_name, $street, $str_no, $zip, $city, $id = null, $role = null)
     {
         $this->id = $id; 
         $this->email = $email;
         $this->hashed_password = $hashed_password;
         $this->first_name = $first_name;
         $this->last_name = $last_name;
-        $this->address = $address;
+        $this->street = $street;
+        $this->str_no = $str_no;
+        $this->zip = $zip;
+        $this->city = $city;
         $this->role = $role;
     }
 
@@ -61,8 +67,8 @@ class User extends BaseClass
         $db = new DatabaseHelper("writer", getenv('PW_WRITER'));
 
         // Define SQL query and parameters
-        $sql = 'INSERT INTO user (email, hashed_password, first_name, last_name, address) VALUES (?, ?, ?, ?, ?)';
-        $params = [$this->email, $this->hashed_password, $this->first_name, $this->last_name, $this->address];  
+        $sql = 'INSERT INTO user (email, hashed_password, first_name, last_name, street, str_no, zip, city) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+        $params = [$this->email, $this->hashed_password, $this->first_name, $this->last_name, $this->street, $this->str_no, $this->zip, $this->city];  
 
         // Insert the user into the database
         return $db->prepareAndExecute($sql, $params);  
@@ -88,7 +94,8 @@ class User extends BaseClass
 
         if ($result) {
             $userData = $result[0];
-            return new User($userData['email'], $userData['hashed_password'], $userData['first_name'], $userData['last_name'], $userData['address'], $userData['id']);
+
+            return new User($userData['email'], $userData['hashed_password'], $userData['first_name'], $userData['last_name'], $userData['street'], $userData['str_no'], $userData['zip'], $userData['city'], $userData['id'], $userData['role']);
         }
 
         return null;
@@ -103,7 +110,7 @@ class User extends BaseClass
     public static function findById($id): ?User
     {
         // Establish database connection
-        $db = new DatabaseHelper("reader", "reader_password");
+        $db = new DatabaseHelper("reader", getenv('PW_READER'));
         
         // Define SQL query and parameters
         $sql = 'SELECT * FROM user WHERE id = ?';
@@ -114,7 +121,7 @@ class User extends BaseClass
 
         if ($result) {
             $userData = $result[0];
-            return new User($userData['email'], $userData['hashed_password'], $userData['first_name'], $userData['last_name'], $userData['address'], $userData['id']);
+            return new User($userData['email'], $userData['hashed_password'], $userData['first_name'], $userData['last_name'], $userData['street'], $userData['str_no'], $userData['zip'], $userData['role'], $userData['role'], $userData['id']);
         }
 
         return null;

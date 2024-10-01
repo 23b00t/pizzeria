@@ -44,7 +44,11 @@ class UserController
         $formCheckHelper = new FormCheckHelper($formData);
         $user = User::findByEmail($formCheckHelper->email());
 
+file_put_contents('/opt/lampp/logs/custom_log', "form: " . print_r($formData, true), FILE_APPEND);
+
+file_put_contents('/opt/lampp/logs/custom_log', "user: " . print_r($user, true), FILE_APPEND);
         if ($user && password_verify($formCheckHelper->password(), $user->hashed_password())) {
+
             // save user id to session to authenticate it
             $_SESSION["login"] = $user->id();
 
@@ -75,7 +79,8 @@ class UserController
             exit();
         } else {
             // Create a new user object
-            $user = new User($formCheckHelper->email(), $formCheckHelper->password_hash(), $formData['first_name'], $formData['last_name'], $formData['address']);
+            $user = new User($formCheckHelper->email(), $formCheckHelper->password_hash(), $formData['first_name'], $formData['last_name'], $formData['street'], $formData['str_no'], $formData['zip'], $formData['city']);
+
             // Save the new user to the database
             $this->store($user);
         }
@@ -101,7 +106,7 @@ class UserController
                 header('Location: ./Views/register_form.php?error=Username%20not%20available');
             } else {
                 // Other errors
-                header('Location: ./Views/register_form.php?error=Unknown%20error');
+                header('Location: ./Views/register_form.php?error=Unknown%20error' . $e->getCode());
             }
             exit();
         }

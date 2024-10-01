@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/MigrateDatabase.php';
-require_once __DIR__ . '/../.env.php';
 
 $dbUser = getenv('DB_USER'); 
 $dbPassword = getenv('PW_DB');
@@ -22,4 +21,3 @@ if (empty($sqlFiles)) {
         $migrateDatabase->executeSqlFile($file, $dbUser, $dbPassword);
     }
 }
-?>
