@@ -39,10 +39,17 @@ class Router
     /**
      * Constructor that starts a session if none is active.
      */
-    public function __construct($route)
+    public function __construct()
     {
         // Check if a session is active, otherwise start one
         session_status() === PHP_SESSION_NONE && session_start();
+
+        $requestUri = $_SERVER['REQUEST_URI'];
+
+        // Extract query param if present, else ''
+        $route = explode('?', $requestUri)[1] ?? ''; 
+        $route = rtrim($route, '/'); 
+        // $requestUri = parse_url($requestUri, PHP_URL_PATH);
         $this->route = $route;
     }
 
