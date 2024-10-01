@@ -46,10 +46,9 @@ class Router
 
         $requestUri = $_SERVER['REQUEST_URI'];
 
-        // Extract query param if present, else ''
+        // Extract query param if present, else '' (?? null coalescing operator)
         $route = explode('?', $requestUri)[1] ?? ''; 
         $route = rtrim($route, '/'); 
-        // $requestUri = parse_url($requestUri, PHP_URL_PATH);
         $this->route = $route;
     }
 
@@ -61,8 +60,6 @@ class Router
      */
     public function handleRequest(): void 
     {
-
-// file_put_contents('/opt/lampp/logs/custom_log', "handleRequest: " . print_r($this->route, true), FILE_APPEND);
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->handlePost();
         } elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
@@ -79,46 +76,28 @@ class Router
      * 
      * @return void
      */
-    private function handlePost(): void
+    private function handlePost(): mixed
     {
-        // User routes
-        if (isset($_POST['login'])) {
-            Helper::checkCSRFToken();
-
-            $userController = new UserController();
-            $userController->login($_POST);
-
-            exit();
-        }
-
-        if (isset($_POST['register'])) {
-            Helper::checkCSRFToken();
-
-            $userController = new UserController();
-            $userController->create($_POST);
-
-            exit();
-        }
-
+        // Logout user
         isset($_POST["signout"]) && UserController::signOut();
 
+        // Check if valid CSRF Token is present
+        Helper::checkCSRFToken();
+
+        // User routes
+        if (isset($_POST['login'])) { return (new UserController())->login($_POST); }
+        if (isset($_POST['register'])) { return (new UserController())->create($_POST); }
+
         // Pizza routes
-        // Store Pizza Route (Pizza erstellen)
-        if ($this->route === 'Pizza/store') {
-            Helper::checkCSRFToken();
-            $pizzaController = new PizzaController();
-            $pizzaController->store($_POST);  // Übergabe der Formulardaten
-            exit();
+        if ($this->route === 'Pizza/store') { 
+            return (new PizzaController())->store($_POST); 
+        }
+        if (preg_match('/Pizza\/update\/(\d+)$/', $this->route, $matches)) { 
+            return (new PizzaController())->update($matches[1], $_POST); 
         }
 
-        // Update Pizza Route (Pizza aktualisieren)
-        if (preg_match('/Pizza\/update\/(\d+)$/', $this->route, $matches)) {
-            Helper::checkCSRFToken();
-            $pizzaId = $matches[1];
-            $pizzaController = new PizzaController();
-            $pizzaController->update($pizzaId, $_POST);  // Übergabe der Formulardaten
-            exit();
-        }
+        // If no condition is met exit(); Destroys pointers on stack and GC cleans up heap
+        exit();
     }
 
     /**
@@ -128,49 +107,28 @@ class Router
      * @return void
      */
 
-    private function handleGet(): void
+    private function handleGet(): mixed 
     {
-        switch ($this->route) {
-            // Pizza routes
-            case 'Pizza/index': 
-                $pizzaController = new PizzaController();
-                $pizzaController->index(); 
-                break;
+        switch (true) {
+            case $this->route === 'Pizza/index': 
+                return (new PizzaController())->index();
 
-            case (preg_match('/Pizza\/show\/(\d+)$/', $this->route, $matches) && !empty($matches[1])):
-                // file_put_contents('/opt/lampp/logs/custom_log', "match: " . print_r($matches, true), FILE_APPEND);
-                $pizzaId = $matches[1];
-                $pizzaController = new PizzaController();
-                $pizzaController->show($pizzaId);
-                break;
+            case preg_match('/Pizza\/show\/(\d+)$/', $this->route, $matches):
+                return (new PizzaController())->show($matches[1]);
 
-            case (preg_match('/Pizza\/edit\/(\d+)$/', $this->route, $matches) && !empty($matches[1])):
-                $pizzaId = $matches[1];
-                $pizzaController = new PizzaController();
-                $pizzaController->edit($pizzaId);
-                break;
+            case preg_match('/Pizza\/edit\/(\d+)$/', $this->route, $matches):
+                return (new PizzaController())->edit($matches[1]);
 
-            case 'Pizza/create':
-                $pizzaController = new PizzaController();
-                $pizzaController->create();
-                break;
+            case $this->route === 'Pizza/create':
+                return (new PizzaController())->create();
 
-            case (preg_match('/Pizza\/delete\/(\d+)$/', $this->route, $matches) && !empty($matches[1])):
-                $pizzaId = $matches[1];
-                $pizzaController = new PizzaController();
-                $pizzaController->delete($pizzaId);
-                break;
-        
-            // User route
-            case (preg_match('/user_id=(\d+)$/', $this->route, $matches) && !empty($matches[1])):
-                $userId = $matches[1];
-                $userController = new UserController();
-                $userController->show($userId); 
-                break;
+            case preg_match('/Pizza\/delete\/(\d+)$/', $this->route, $matches):
+                return (new PizzaController())->delete($matches[1]);
 
-            default:
-                header('Location: ./Views/User/login_form.php');
-                break;
+            case preg_match('/user_id=(\d+)$/', $this->route, $matches):
+                return (new UserController())->show($matches[1]);
         }
+
+        exit();
     }
 }
