@@ -1,6 +1,7 @@
 <?php 
 require_once __DIR__ . '/../../Helpers/Helper.php';
 Helper::validateSession();
+$csrf_token = Helper::generateCSRFToken(); 
 ?>
 
 <?php 
@@ -21,6 +22,9 @@ require __DIR__ . '/../head.php';
                 <input type="number" step="0.01" name="price" id="price" class="form-control" value="<?= isset($pizza) ? htmlspecialchars($pizza->price()) : '' ?>" required>
             </div>
             
+            <!-- csrf_token einfügen -->
+            <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+
             <button type="submit" class="btn btn-primary"><?= isset($pizza) ? 'Pizza aktualisieren' : 'Pizza erstellen' ?></button>
             <a href="./index.php?Pizza/index" class="btn btn-secondary">Abbrechen</a>
         </form>
