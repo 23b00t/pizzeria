@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../Helpers/DatabaseHelper.php';
-require_once __DIR__ . '/../BaseClass.php';
+require_once __DIR__ . '/BaseModel.php';
 
 /**
  * User class responsible for representing and managing user data.
@@ -16,7 +16,7 @@ require_once __DIR__ . '/../BaseClass.php';
  * - $address: The address of the user.
  * - $role: The role of the user.
  */
-class User extends BaseClass
+class User extends BaseModel
 {
     private $id;
     private $email;
@@ -63,15 +63,11 @@ class User extends BaseClass
      */
     public function save(): array
     {
-        // Establish database connection
-        $db = new DatabaseHelper("writer", getenv('PW_WRITER'));
-
         // Define SQL query and parameters
-        $sql = 'INSERT INTO user (email, hashed_password, first_name, last_name, street, str_no, zip, city) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-        $params = [$this->email, $this->hashed_password, $this->first_name, $this->last_name, $this->street, $this->str_no, $this->zip, $this->city];  
+        self::$sql = 'INSERT INTO user (email, hashed_password, first_name, last_name, street, str_no, zip, city) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+        self::$params = [$this->email, $this->hashed_password, $this->first_name, $this->last_name, $this->street, $this->str_no, $this->zip, $this->city];  
 
-        // Insert the user into the database
-        return $db->prepareAndExecute($sql, $params);  
+        return parent::save();
     }
 
     /**
@@ -109,15 +105,7 @@ class User extends BaseClass
      */
     public static function findById($id): ?User
     {
-        // Establish database connection
-        $db = new DatabaseHelper("reader", getenv('PW_READER'));
-        
-        // Define SQL query and parameters
-        $sql = 'SELECT * FROM user WHERE id = ?';
-        $params = [$id];
-
-        // Execute the query
-        $result = $db->prepareAndExecute($sql, $params);
+        $result = parent::findById($id);
 
         if ($result) {
             $userData = $result[0];

@@ -42,7 +42,6 @@ class PizzaController
 
         if ($pizza) {
             // Include the pizza detail view and pass the pizza object
-			// TODO: id übergeben und wie in UserController über Router handeln
             include './Views/Pizza/show.php'; 
         } 
     }
@@ -53,7 +52,6 @@ class PizzaController
 
         if ($pizza) {
             // Include the pizza detail view and pass the pizza object
-			// TODO: id übergeben und wie in UserController über Router handeln
             include './Views/Pizza/form.php'; 
         } 
     }
@@ -65,7 +63,6 @@ class PizzaController
      */
     public function create(): void
     {
-        // Zeige das Formular zur Eingabe der Pizza-Daten
         include __DIR__ . '/../Views/Pizza/form.php';
     }
 

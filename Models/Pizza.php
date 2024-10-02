@@ -1,9 +1,9 @@
 <?php
 
 require_once __DIR__ . '/../Helpers/DatabaseHelper.php';
-require_once __DIR__ . '/../BaseClass.php';
+require_once __DIR__ . '/BaseModel.php';
 
-class Pizza extends BaseClass
+class Pizza extends BaseModel
 {
     private $id;
     private $name;
@@ -21,41 +21,21 @@ class Pizza extends BaseClass
 
     public function save(): array
     {
-        // Establish database connection
-        $db = new DatabaseHelper("writer", getenv('PW_WRITER'));
-
         // Define SQL query and parameters
-        $sql = 'INSERT INTO pizza (name, price) VALUES (?, ?)';
-        $params = [$this->name, $this->price];  
+        self::$sql = 'INSERT INTO pizza (name, price) VALUES (?, ?)';
+        self::$params = [$this->name, $this->price];  
 
-        // Insert the pizza into the database
-        return $db->prepareAndExecute($sql, $params);  
+        return parent::save();
     }
 
     public function update(): array
     {
-        // Establish database connection
-        $db = new DatabaseHelper("writer", getenv('PW_WRITER'));
-
         // Define SQL query and parameters for updating the pizza
-        $sql = 'UPDATE pizza SET name = ?, price = ? WHERE id = ?';
-        $params = [$this->name(), $this->price(), $this->id()];  
+        self::$sql = 'UPDATE pizza SET name = ?, price = ? WHERE id = ?';
+        self::$params = [$this->name(), $this->price(), $this->id()];
 
-        // Update the pizza in the database
-        return $db->prepareAndExecute($sql, $params);  
-    }
-
-    public function delete(): array
-    {
-        // Establish database connection
-        $db = new DatabaseHelper("writer", getenv('PW_WRITER'));
-
-        // Define SQL query and parameters for updating the pizza
-        $sql = 'DELETE FROM pizza WHERE id = ?';
-        $params = [$this->id()];  
-
-        // Update the pizza in the database
-        return $db->prepareAndExecute($sql, $params);  
+        // Call the parent update method
+        return parent::update();
     }
 
     /**
@@ -66,15 +46,7 @@ class Pizza extends BaseClass
      */
     public static function findById($id): ?Pizza
     {
-        // Establish database connection
-        $db = new DatabaseHelper("reader", getenv('PW_READER'));
-        
-        // Define SQL query and parameters
-        $sql = 'SELECT * FROM pizza WHERE id = ?';
-        $params = [$id];
-
-        // Execute the query
-        $result = $db->prepareAndExecute($sql, $params);
+        $result = parent::findById($id);
 
         if ($result) {
             $pizzaData = $result[0];
@@ -84,17 +56,9 @@ class Pizza extends BaseClass
         return null;
     }
 
-    public static function findAll()
+    public static function findAll(): array
     {
-        // Establish database connection
-        $db = new DatabaseHelper("reader", getenv('PW_READER'));
-        
-        // Define SQL query and parameters
-        $sql = 'SELECT * FROM pizza';
-        $params = [];
-
-        // Execute the query
-        $result = $db->prepareAndExecute($sql, $params);
+        $result = parent::findAll();
 
         $pizzas = [];
         if ($result) {
