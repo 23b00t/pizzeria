@@ -67,7 +67,7 @@ abstract class BaseClass
         }
 
         // attribute not found
-        throw new BadMethodCallException("Method {$func} does not exist.");
+        throw new BadMethodCallException('Method {$func} does not exist.');
     }
 
     /**
@@ -80,7 +80,7 @@ abstract class BaseClass
     private static function checkAllowed($func, $exceptions)
     {
         if (!in_array($func, $exceptions)) {
-            throw new BadMethodCallException("{$func} is not allowed.");
+            throw new BadMethodCallException('{$func} is not allowed.');
         }
     }
 }

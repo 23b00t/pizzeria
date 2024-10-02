@@ -34,7 +34,7 @@ abstract class BaseModel extends BaseClass
 
         // Build the SQL INSERT query
         $sql = 'INSERT INTO ' . $tableName . ' (' . implode(',', $columns) . ') VALUES (' . implode(',', $placeholders) . ')';
-        $db = new DatabaseHelper("writer", getenv('PW_WRITER'));
+        $db = new DatabaseHelper('writer', getenv('PW_WRITER'));
 
         // Execute the query and return the result
         return $db->prepareAndExecute($sql, $values);
@@ -74,7 +74,7 @@ abstract class BaseModel extends BaseClass
 
         // Build the SQL UPDATE query
         $sql = 'UPDATE ' . $tableName . ' SET ' . implode(', ', $columns) . ' WHERE id = ?';
-        $db = new DatabaseHelper("writer", getenv('PW_WRITER'));
+        $db = new DatabaseHelper('writer', getenv('PW_WRITER'));
 
         // Execute the query and return the result
         return $db->prepareAndExecute($sql, $values);
@@ -88,7 +88,7 @@ abstract class BaseModel extends BaseClass
     public function delete(): array
     {
         // Establish database connection
-        $db = new DatabaseHelper("writer", getenv('PW_WRITER'));
+        $db = new DatabaseHelper('writer', getenv('PW_WRITER'));
 
         $tableName = self::getTableName();
 
@@ -101,17 +101,20 @@ abstract class BaseModel extends BaseClass
     }
 
     /**
-     * Finds an object by its ID.
-     * This method dynamically maps the database result to the appropriate model instance.
-     * @param int $id The ID of the object to find.
-     * @return static|null The object instance if found, null otherwise.
+     * Finds an object by a specified attribute.
+     * @param string $attribute The name of the attribute to search by.
+     * @param mixed $value The value of the attribute to search for.
+     * @return static|null The object if found, null otherwise.
      */
-    public static function findById($id): ?self
+    public static function findBy($value, string $attribute): ?self
     {
-        $db = new DatabaseHelper("reader", getenv('PW_READER'));
+        // Establish database connection
+        $db = new DatabaseHelper('reader', getenv('PW_READER'));
         $tableName = self::getTableName();
-        $sql = 'SELECT * FROM ' . $tableName . ' WHERE id = ?';
-        $result = $db->prepareAndExecute($sql, [$id]);
+
+        // Prepare the SQL query using the attribute name
+        $sql = 'SELECT * FROM ' . $tableName . ' WHERE ' . $attribute . ' = ?';
+        $result = $db->prepareAndExecute($sql, [$value]);
 
         if ($result && count($result) > 0) {
             $data = $result[0];
@@ -128,7 +131,7 @@ abstract class BaseModel extends BaseClass
      */
     public static function findAll(): array
     {
-        $db = new DatabaseHelper("reader", getenv('PW_READER'));
+        $db = new DatabaseHelper('reader', getenv('PW_READER'));
         $tableName = self::getTableName();
         $sql = 'SELECT * FROM ' . $tableName;
         $result = $db->prepareAndExecute($sql, []);

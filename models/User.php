@@ -55,31 +55,4 @@ class User extends BaseModel
         $this->city = $city;
         $this->role = $role;
     }
-
-    /**
-     * Finds a user by their email address.
-     *
-     * @param  string $email The email address of the user to find.
-     * @return User|null The User object if found, null otherwise.
-     */
-    public static function findByEmail($email): ?User
-    {
-        // Establish database connection
-        $db = new DatabaseHelper("reader", getenv('PW_READER'));
-
-        // Define SQL query and parameters
-        $sql = 'SELECT * FROM user WHERE email = ?';
-        $params = [$email];
-
-        // Execute the query
-        $result = $db->prepareAndExecute($sql, $params);
-
-        if ($result) {
-            $userData = $result[0];
-
-            return new User($userData['email'], $userData['hashed_password'], $userData['first_name'], $userData['last_name'], $userData['street'], $userData['str_no'], $userData['zip'], $userData['city'], $userData['id'], $userData['role']);
-        }
-
-        return null;
-    }
 }
