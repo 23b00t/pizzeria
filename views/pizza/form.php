@@ -2,9 +2,7 @@
 require_once __DIR__ . '/../../helpers/Helper.php';
 Helper::validateSession();
 $csrf_token = Helper::generateCSRFToken(); 
-?>
 
-<?php 
 $pageTitle = isset($pizza) ? 'Pizza bearbeiten' : 'Neue Pizza erstellen'; 
 require __DIR__ . '/../head.php'; 
 ?>
@@ -23,7 +21,7 @@ require __DIR__ . '/../head.php';
             </div>
             
             <!-- csrf_token einfügen -->
-            <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+            <input type="hidden" name="csrf_token" value="<?= $csrf_token; ?>">
 
             <button type="submit" class="btn btn-primary"><?= isset($pizza) ? 'Pizza aktualisieren' : 'Pizza erstellen' ?></button>
             <a href="./index.php?pizza/index" class="btn btn-secondary">Abbrechen</a>

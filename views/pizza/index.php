@@ -16,8 +16,7 @@ Helper::validateSession();
                 </tr>
             </thead>
             <tbody>
-                <?php
-                foreach ($pizzas as $pizza): ?>
+                <?php foreach ($pizzas as $pizza): ?>
                     <tr>
                         <td><?= htmlspecialchars($pizza->id()) ?></td>
                         <td><a href="./index.php?pizza/show/<?= htmlspecialchars($pizza->id()) ?>"><?= htmlspecialchars($pizza->name()) ?></a></td>

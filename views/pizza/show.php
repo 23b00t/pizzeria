@@ -5,7 +5,7 @@ Helper::validateSession();
 
 <?php $pageTitle = 'Pizzen'; require __DIR__ . '/../head.php'; ?>
     <div class="container">
-        <h1><?php echo htmlspecialchars($pizza->name()); ?></h1>
+        <h1><?= htmlspecialchars($pizza->name()); ?></h1>
         <div class="pizza-details">
             <p><strong>Name:</strong> <?= htmlspecialchars($pizza->name()); ?></p>
             <p><strong>Preis:</strong> <?= htmlspecialchars($pizza->price()); ?> €</p>

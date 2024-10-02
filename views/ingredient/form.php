@@ -29,7 +29,7 @@ require __DIR__ . '/../head.php';
                 <label class="form-check-label" for="vegetarian">Diese Zutat ist vegetarisch</label>
             </div>
             <!-- csrf_token einfügen -->
-            <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+            <input type="hidden" name="csrf_token" value="<?= $csrf_token; ?>">
 
             <button type="submit" class="btn btn-primary"><?= isset($ingredient) ? 'Zutaten aktualisieren' : 'Zutaten erstellen' ?></button>
             <a href="./index.php?ingredient/index" class="btn btn-secondary">Abbrechen</a>

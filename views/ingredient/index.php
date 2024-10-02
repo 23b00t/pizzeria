@@ -17,11 +17,10 @@ Helper::validateSession();
                 </tr>
             </thead>
             <tbody>
-                <?php
-                foreach ($ingredients as $ingredient): ?>
+                <?php foreach ($ingredients as $ingredient): ?>
                     <tr>
                         <td><?= htmlspecialchars($ingredient->id()) ?></td>
-                        <td><a href="./index.php?ingredient/show/<?= htmlspecialchars($ingredient->id()) ?>"><?= htmlspecialchars($ingredient->name()) ?></a></td>
+                        <td><?= htmlspecialchars($ingredient->name()) ?></td>
                         <td><?= htmlspecialchars($ingredient->price()) ?> €</td>
                         <td><?= htmlspecialchars($ingredient->vegetarian() === 1) ? 'X' : ''; ?> </td>
                         <td>
