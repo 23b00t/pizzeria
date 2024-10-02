@@ -26,7 +26,7 @@
  * @method static void checkAllowed(string $func, array $exceptions)
  *         Checks if a method is allowed and throws an exception if it is not.
  */
-class BaseClass
+abstract class BaseClass
 {
     // Set allowed methods for getters and setters in child class
     protected static $getters = [];
