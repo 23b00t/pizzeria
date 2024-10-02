@@ -10,7 +10,7 @@ Helper::validateSession();
       <div class="col-md-4">
         <h2 class="text-center mt-5">Benutzer</h2>
         <?php if ($user) : ?>
-            <h1><?php echo $user->email(); ?></h1>
+            <h1><?= $user->email(); ?></h1>
         <?php else: ?>
             <p>Benutzer nicht gefunden.</p>
         <?php endif; ?>

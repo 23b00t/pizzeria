@@ -100,7 +100,7 @@ class IngredientController
      * form data, updates the ingredient's properties, and saves the changes
      * to the database. It also manages redirection upon success or failure.
      *
-     * @param int $id The ingredient ID to update.
+     * @param int   $id       The ingredient ID to update.
      * @param array $formData The form data submitted for updating the ingredient.
      */
     public function update($id, $formData): void

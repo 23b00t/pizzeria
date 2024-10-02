@@ -22,7 +22,7 @@ $csrf_token = Helper::generateCSRFToken();
           </div>
 
           <!-- csrf_token einfügen -->
-          <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+          <input type="hidden" name="csrf_token" value="<?= $csrf_token; ?>">
 
           <div class="form-group">
             <button type="submit" name="login" class="btn btn-primary btn-block mt-2">Login</button>

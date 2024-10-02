@@ -86,8 +86,10 @@ class Router
         Helper::checkCSRFToken();
 
         // User routes
-        if (isset($_POST['login'])) { return (new UserController())->login($_POST); }
-        if (isset($_POST['register'])) { return (new UserController())->create($_POST); }
+        if (isset($_POST['login'])) { return (new UserController())->login($_POST); 
+        }
+        if (isset($_POST['register'])) { return (new UserController())->create($_POST); 
+        }
 
         // Pizza routes
         if ($this->route === 'pizza/store') { 
@@ -115,42 +117,41 @@ class Router
      * 
      * @return void
      */
-
     private function handleGet(): mixed 
     {
         switch (true) {
             // Pizza routes
-            case $this->route === 'pizza/index': 
-                return (new PizzaController())->index();
+        case $this->route === 'pizza/index': 
+            return (new PizzaController())->index();
 
-            case preg_match('/pizza\/show\/(\d+)$/', $this->route, $matches):
-                return (new PizzaController())->show($matches[1]);
+        case preg_match('/pizza\/show\/(\d+)$/', $this->route, $matches):
+            return (new PizzaController())->show($matches[1]);
 
-            case preg_match('/pizza\/edit\/(\d+)$/', $this->route, $matches):
-                return (new PizzaController())->edit($matches[1]);
+        case preg_match('/pizza\/edit\/(\d+)$/', $this->route, $matches):
+            return (new PizzaController())->edit($matches[1]);
 
-            case $this->route === 'pizza/create':
-                return (new PizzaController())->create();
+        case $this->route === 'pizza/create':
+            return (new PizzaController())->create();
 
-            case preg_match('/pizza\/delete\/(\d+)$/', $this->route, $matches):
-                return (new PizzaController())->delete($matches[1]);
+        case preg_match('/pizza\/delete\/(\d+)$/', $this->route, $matches):
+            return (new PizzaController())->delete($matches[1]);
 
             // Ingredient routes
-            case $this->route === 'ingredient/index': 
-                return (new IngredientController())->index();
+        case $this->route === 'ingredient/index': 
+            return (new IngredientController())->index();
 
-            case preg_match('/ingredient\/edit\/(\d+)$/', $this->route, $matches):
-                return (new IngredientController())->edit($matches[1]);
+        case preg_match('/ingredient\/edit\/(\d+)$/', $this->route, $matches):
+            return (new IngredientController())->edit($matches[1]);
 
-            case $this->route === 'ingredient/create':
-                return (new IngredientController())->create();
+        case $this->route === 'ingredient/create':
+            return (new IngredientController())->create();
 
-            case preg_match('/ingredient\/delete\/(\d+)$/', $this->route, $matches):
-                return (new IngredientController())->delete($matches[1]);
+        case preg_match('/ingredient\/delete\/(\d+)$/', $this->route, $matches):
+            return (new IngredientController())->delete($matches[1]);
 
             // User routes
-            case preg_match('/user_id=(\d+)$/', $this->route, $matches):
-                return (new UserController())->show($matches[1]);
+        case preg_match('/user_id=(\d+)$/', $this->route, $matches):
+            return (new UserController())->show($matches[1]);
         }
 
         exit();

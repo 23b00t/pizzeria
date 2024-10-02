@@ -118,7 +118,7 @@ class PizzaController
      * form data, updates the pizza's properties, and saves the changes
      * to the database. It also manages redirection upon success or failure.
      *
-     * @param int $id The pizza ID to update.
+     * @param int   $id       The pizza ID to update.
      * @param array $formData The form data submitted for updating the pizza.
      */
     public function update($id, $formData): void

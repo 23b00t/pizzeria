@@ -10,27 +10,37 @@ require_once __DIR__ . '/BaseModel.php';
  */
 class Pizza extends BaseModel
 {
-    /** @var int|null The ID of the pizza. */
+    /**
+     * @var int|null The ID of the pizza. 
+     */
     private $id;
 
-    /** @var string The name of the pizza. */
+    /**
+     * @var string The name of the pizza. 
+     */
     private $name;
 
-    /** @var float The price of the pizza. */
+    /**
+     * @var float The price of the pizza. 
+     */
     private $price;
 
-    /** @var array List of getter methods for Pizza properties. */
+    /**
+     * @var array List of getter methods for Pizza properties. 
+     */
     protected static $getters = ['id', 'name', 'price'];
 
-    /** @var array List of setter methods for Pizza properties. */
+    /**
+     * @var array List of setter methods for Pizza properties. 
+     */
     protected static $setters = ['name', 'price'];
 
     /**
      * Pizza constructor.
      *
-     * @param string $name The name of the pizza.
-     * @param float $price The price of the pizza.
-     * @param int|null $id The ID of the pizza (optional).
+     * @param string   $name  The name of the pizza.
+     * @param float    $price The price of the pizza.
+     * @param int|null $id    The ID of the pizza (optional).
      */
     public function __construct($name, $price, $id = null)
     {
@@ -42,7 +52,7 @@ class Pizza extends BaseModel
     /**
      * Finds all ingredients for a specific pizza by its ID.
      *
-     * @param int $pizzaId The ID of the pizza to find ingredients for.
+     * @param  int $pizzaId The ID of the pizza to find ingredients for.
      * @return array An array of ingredients and their quantities.
      * Example return: [['ingredient' => $ingredientObject, 'quantity' => $quantity]]
      */

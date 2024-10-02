@@ -7,6 +7,7 @@ abstract class BaseModel extends BaseClass
     /**
      * Saves the current object to the database.
      * It dynamically generates an SQL INSERT statement based on the properties of the calling child class.
+     *
      * @return array The result of the database operation.
      */
     public function save(): array
@@ -43,6 +44,7 @@ abstract class BaseModel extends BaseClass
     /**
      * Updates the current object in the database.
      * It dynamically generates an SQL UPDATE statement based on the properties of the calling child class.
+     *
      * @return array The result of the database operation.
      */
     public function update(): array
@@ -83,6 +85,7 @@ abstract class BaseModel extends BaseClass
     /**
      * Deletes the current object from the database.
      * This method generates an SQL DELETE query based on the object's ID.
+     *
      * @return array The result of the delete operation.
      */
     public function delete(): array
@@ -102,8 +105,9 @@ abstract class BaseModel extends BaseClass
 
     /**
      * Finds an object by a specified attribute.
-     * @param string $attribute The name of the attribute to search by.
-     * @param mixed $value The value of the attribute to search for.
+     *
+     * @param  string $attribute The name of the attribute to search by.
+     * @param  mixed  $value     The value of the attribute to search for.
      * @return static|null The object if found, null otherwise.
      */
     public static function findBy($value, string $attribute): ?self
@@ -127,6 +131,7 @@ abstract class BaseModel extends BaseClass
     /**
      * Finds all objects in the table.
      * This method dynamically maps all database results to their respective model instances.
+     *
      * @return array An array of all model instances.
      */
     public static function findAll(): array
@@ -148,7 +153,8 @@ abstract class BaseModel extends BaseClass
      * Maps database result data to the appropriate model instance.
      * This method dynamically creates the model object using reflection, 
      * matching the database data to the constructor parameters of the child class.
-     * @param array $data The data from the database.
+     *
+     * @param  array $data The data from the database.
      * @return static The model instance with mapped data.
      */
     private static function mapDataToModel(array $data): self
@@ -183,6 +189,7 @@ abstract class BaseModel extends BaseClass
     /**
      * Retrieves the table name based on the calling class name.
      * Converts the class name to lowercase to match the database table naming convention.
+     *
      * @return string The table name.
      */
     private static function getTableName()

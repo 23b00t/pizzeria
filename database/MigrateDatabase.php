@@ -13,9 +13,9 @@ class MigrateDatabase
     /**
      * Executes SQL commands from the specified file.
      *
-     * @param string $filePath The path to the SQL file.
-     * @param string $dbUser The database username.
-     * @param string $dbPassword The database password.
+     * @param  string $filePath   The path to the SQL file.
+     * @param  string $dbUser     The database username.
+     * @param  string $dbPassword The database password.
      * @return void
      */
     function executeSqlFile($filePath, $dbUser, $dbPassword): void
