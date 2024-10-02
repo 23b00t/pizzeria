@@ -3,10 +3,11 @@
 // INFO: Return types
 // https://dev.to/karleb/return-types-in-php-3fip
 
+require_once __DIR__ . '/../helpers/Helper.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../controllers/UserController.php';
 require_once __DIR__ . '/../controllers/PizzaController.php';
-require_once __DIR__ . '/../helpers/Helper.php';
+require_once __DIR__ . '/../controllers/IngredientController.php';
 
 /**
  * Router class for processing and handling HTTP requests.
@@ -96,6 +97,14 @@ class Router
             return (new PizzaController())->update($matches[1], $_POST); 
         }
 
+        // Ingredient routes
+        if ($this->route === 'ingredient/store') { 
+            return (new IngredientController())->store($_POST); 
+        }
+        if (preg_match('/ingredient\/update\/(\d+)$/', $this->route, $matches)) { 
+            return (new IngredientController())->update($matches[1], $_POST); 
+        }
+
         // If no condition is met exit(); Destroys pointers on stack and GC cleans up heap
         exit();
     }
@@ -125,6 +134,19 @@ class Router
 
             case preg_match('/pizza\/delete\/(\d+)$/', $this->route, $matches):
                 return (new PizzaController())->delete($matches[1]);
+
+            // Ingredient routes
+            case $this->route === 'ingredient/index': 
+                return (new IngredientController())->index();
+
+            case preg_match('/ingredient\/edit\/(\d+)$/', $this->route, $matches):
+                return (new IngredientController())->edit($matches[1]);
+
+            case $this->route === 'ingredient/create':
+                return (new IngredientController())->create();
+
+            case preg_match('/ingredient\/delete\/(\d+)$/', $this->route, $matches):
+                return (new IngredientController())->delete($matches[1]);
 
             // User routes
             case preg_match('/user_id=(\d+)$/', $this->route, $matches):
