@@ -1,10 +1,10 @@
 <?php 
-require_once __DIR__ . '/../../Helpers/Helper.php';
+require_once __DIR__ . '/../../helpers/Helper.php';
 
 Helper::validateSession();
 ?>
 
-<?php $pageTitle = 'Dashboard'; require './Views/head.php'; ?>
+<?php $pageTitle = 'Dashboard'; require './views/head.php'; ?>
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-4">
@@ -17,4 +17,4 @@ Helper::validateSession();
       </div>
     </div>
   </div>
-<?php require './Views/tail.php'; ?>
+<?php require './views/tail.php'; ?>

@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../Helpers/DatabaseHelper.php';
-require_once __DIR__ . '/../Helpers/FormCheckHelper.php';
-require_once __DIR__ . '/../Models/Pizza.php';
+require_once __DIR__ . '/../helpers/DatabaseHelper.php';
+require_once __DIR__ . '/../helpers/FormCheckHelper.php';
+require_once __DIR__ . '/../models/Pizza.php';
 
 /**
  * PizzaController class responsible for managing pizza-related actions, such as
@@ -28,7 +28,7 @@ class PizzaController
         $pizzas = Pizza::findAll(); 
 
         // Include the view to display all pizzas
-        include __DIR__ . '/../Views/Pizza/index.php'; 
+        include __DIR__ . '/../views/Pizza/index.php'; 
     }
 
     /**
@@ -42,7 +42,7 @@ class PizzaController
 
         if ($pizza) {
             // Include the pizza detail view and pass the pizza object
-            include './Views/Pizza/show.php'; 
+            include './views/Pizza/show.php'; 
         } 
     }
 
@@ -52,7 +52,7 @@ class PizzaController
 
         if ($pizza) {
             // Include the pizza detail view and pass the pizza object
-            include './Views/Pizza/form.php'; 
+            include './views/Pizza/form.php'; 
         } 
     }
 
@@ -63,7 +63,7 @@ class PizzaController
      */
     public function create(): void
     {
-        include __DIR__ . '/../Views/Pizza/form.php';
+        include __DIR__ . '/../views/Pizza/form.php';
     }
 
     /**

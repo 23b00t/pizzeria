@@ -3,10 +3,10 @@
 // INFO: Return types
 // https://dev.to/karleb/return-types-in-php-3fip
 
-require_once __DIR__ . '/Models/User.php';
-require_once __DIR__ . '/Controllers/UserController.php';
-require_once __DIR__ . '/Controllers/PizzaController.php';
-require_once __DIR__ . '/Helpers/Helper.php';
+require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../controllers/UserController.php';
+require_once __DIR__ . '/../controllers/PizzaController.php';
+require_once __DIR__ . '/../helpers/Helper.php';
 
 /**
  * Router class for processing and handling HTTP requests.
@@ -64,7 +64,7 @@ class Router
             $this->handlePost();
         } elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
             // To avoid missmatches of the preg_match statement
-            $this->route === '' && header('Location: ./Views/User/login_form.php') && exit();
+            $this->route === '' && header('Location: ./views/User/login_form.php') && exit();
 
             $this->handleGet();
         }

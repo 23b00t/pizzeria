@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../BaseClass.php';
+require_once __DIR__ . '/../core/BaseClass.php';
 
 abstract class BaseModel extends BaseClass
 {

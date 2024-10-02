@@ -1,7 +1,7 @@
 <!-- INFO: User login -->
 
 <?php 
-require_once __DIR__ . '/../../Helpers/Helper.php';
+require_once __DIR__ . '/../../helpers/Helper.php';
 
 $csrf_token = Helper::generateCSRFToken(); 
 ?>

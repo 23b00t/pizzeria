@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../Helpers/DatabaseHelper.php';
+require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 
 $db = new DatabaseHelper('root', '');
 

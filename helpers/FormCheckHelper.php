@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../BaseClass.php';
+require_once __DIR__ . '/../core/BaseClass.php';
 
 /**
  * FormCheckHelper class for handling form data, especially related to password validation.
