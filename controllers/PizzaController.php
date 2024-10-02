@@ -39,6 +39,7 @@ class PizzaController
     public function show($id): void
     {
         $pizza = Pizza::findById($id);
+        $ingredients = Pizza::findIngredientsByPizzaId($id);
 
         if ($pizza) {
             // Include the pizza detail view and pass the pizza object
