@@ -24,13 +24,13 @@ class UserController
      */
     public function show($id): void
     {
-        $user = User::findById($id);
+        $user = User::findBy($id, 'id');
 
         if ($user) {
             // Include the user profile view and pass the user object
             include './views/user/user_profile.php';
         } else {
-            echo "User not found.";
+            echo 'User not found.';
         }
     }
 
@@ -42,12 +42,13 @@ class UserController
     public function login($formData): void
     {
         $formCheckHelper = new FormCheckHelper($formData);
-        $user = User::findByEmail($formCheckHelper->email());
+        $email = $formCheckHelper->email();
+        $user = User::findBy($email, 'email');
 
         if ($user && password_verify($formCheckHelper->password(), $user->hashed_password())) {
 
             // save user id to session to authenticate it
-            $_SESSION["login"] = $user->id();
+            $_SESSION['login'] = $user->id();
             header('Location: ./index.php?pizza/index');
             // header('Location: ./index.php?user_id=' . $user->id());
 
@@ -116,7 +117,7 @@ class UserController
     {
         session_unset();
         session_destroy();
-        header("Location: ./index.php");
+        header('Location: ./index.php');
         exit();
     }
 }

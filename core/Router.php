@@ -61,9 +61,9 @@ class Router
      */
     public function handleRequest(): void 
     {
-        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->handlePost();
-        } elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
             // To avoid missmatches of the preg_match statement
             $this->route === '' && header('Location: ./views/user/login_form.php') && exit();
 
@@ -80,7 +80,7 @@ class Router
     private function handlePost(): mixed
     {
         // Logout user
-        isset($_POST["signout"]) && UserController::signOut();
+        isset($_POST['signout']) && UserController::signOut();
 
         // Check if valid CSRF Token is present
         Helper::checkCSRFToken();

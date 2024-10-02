@@ -38,7 +38,7 @@ class PizzaController
      */
     public function show($id): void
     {
-        $pizza = Pizza::findById($id);
+        $pizza = Pizza::findBy($id, 'id');
         $ingredients = Pizza::findIngredientsByPizzaId($id);
 
         if ($pizza) {
@@ -49,7 +49,7 @@ class PizzaController
 
     public function edit($id): void
     {
-        $pizza = Pizza::findById($id);
+        $pizza = Pizza::findBy($id, 'id');
 
         if ($pizza) {
             // Include the pizza detail view and pass the pizza object
@@ -99,7 +99,7 @@ class PizzaController
      */
     public function update($id, $formData): void
     {
-        $pizza = Pizza::findById($id);
+        $pizza = Pizza::findBy($id, 'id');
 
         if ($pizza) {
             // Update the pizza properties
@@ -125,7 +125,7 @@ class PizzaController
      */
     public function delete($id): void
     {
-        $pizza = Pizza::findById($id);
+        $pizza = Pizza::findBy($id, 'id');
 
         if ($pizza) {
             try {

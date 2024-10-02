@@ -33,7 +33,7 @@ class IngredientController
 
     public function edit($id): void
     {
-        $ingredient = Ingredient::findById($id);
+        $ingredient = Ingredient::findBy($id, 'id');
 
         if ($ingredient) {
             // Include the ingredient detail view and pass the ingredient object
@@ -84,7 +84,7 @@ class IngredientController
      */
     public function update($id, $formData): void
     {
-        $ingredient = Ingredient::findById($id);
+        $ingredient = Ingredient::findBy($id, 'id');
 
         if ($ingredient) {
             // Update the ingredient properties
@@ -111,7 +111,7 @@ class IngredientController
      */
     public function delete($id): void
     {
-        $ingredient = Ingredient::findById($id);
+        $ingredient = Ingredient::findBy($id, 'id');
 
         if ($ingredient) {
             try {

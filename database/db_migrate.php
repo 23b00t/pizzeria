@@ -14,10 +14,10 @@ $directory = __DIR__;
 $sqlFiles = glob($directory . '/*.sql');
 
 if (empty($sqlFiles)) {
-    echo "No SQL files found in the directory.\n";
+    echo 'No SQL files found in the directory.\n';
 } else {
     foreach ($sqlFiles as $file) {
-        echo "Processing: $file\n";
+        echo 'Processing: $file\n';
         $migrateDatabase->executeSqlFile($file, $dbUser, $dbPassword);
     }
 }
