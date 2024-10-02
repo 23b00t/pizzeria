@@ -28,7 +28,7 @@ class PizzaController
         $pizzas = Pizza::findAll(); 
 
         // Include the view to display all pizzas
-        include __DIR__ . '/../views/Pizza/index.php'; 
+        include __DIR__ . '/../views/pizza/index.php'; 
     }
 
     /**
@@ -42,7 +42,7 @@ class PizzaController
 
         if ($pizza) {
             // Include the pizza detail view and pass the pizza object
-            include './views/Pizza/show.php'; 
+            include './views/pizza/show.php'; 
         } 
     }
 
@@ -52,7 +52,7 @@ class PizzaController
 
         if ($pizza) {
             // Include the pizza detail view and pass the pizza object
-            include './views/Pizza/form.php'; 
+            include './views/pizza/form.php'; 
         } 
     }
 
@@ -63,7 +63,7 @@ class PizzaController
      */
     public function create(): void
     {
-        include __DIR__ . '/../views/Pizza/form.php';
+        include __DIR__ . '/../views/pizza/form.php';
     }
 
     /**
@@ -81,11 +81,11 @@ class PizzaController
             $pizza->save();
 
             // Redirect to the pizza list with a success message
-            header('Location: ./index.php?Pizza/index?msg=Pizza%20successfully%20created');
+            header('Location: ./index.php?pizza/index?msg=Pizza%20successfully%20created');
             exit();
         } catch (PDOException $e) {
             // Handle the error and redirect back to the form
-            header('Location: ./index.php?Pizza/show/' . $id . '?error=Could%20not%20create%20pizza');
+            header('Location: ./index.php?pizza/show/' . $id . '?error=Could%20not%20create%20pizza');
             exit();
         }
     }
@@ -108,10 +108,10 @@ class PizzaController
             try {
                 // Save the updated pizza to the database
                 $pizza->update(); 
-                header('Location: ./index.php?Pizza/show/' . $id . '?msg=Pizza%20erfolgreich%20aktualisiert');
+                header('Location: ./index.php?pizza/show/' . $id . '?msg=Pizza%20erfolgreich%20aktualisiert');
                 exit();
             } catch (PDOException $e) {
-                header('Location: ./index.php?Pizza/show/' . $id . '?msg=Fehler');
+                header('Location: ./index.php?pizza/show/' . $id . '?msg=Fehler');
                 exit();
             }
         } 
@@ -129,11 +129,11 @@ class PizzaController
         if ($pizza) {
             try {
                 $pizza->delete(); // Assuming a delete method exists in the Pizza class
-                header('Location: ./index.php?Pizza/index?msg=Pizza%20successfully%20deleted');
+                header('Location: ./index.php?pizza/index?msg=Pizza%20successfully%20deleted');
                 exit();
             } catch (PDOException $e) {
                 // Handle errors as needed
-                header('Location: ./index.php?Pizza/index?msg=error');
+                header('Location: ./index.php?pizza/index?msg=error');
                 exit();
             }
         }

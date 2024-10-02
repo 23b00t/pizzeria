@@ -28,7 +28,7 @@ class UserController
 
         if ($user) {
             // Include the user profile view and pass the user object
-            include './views/User/user_profile.php';
+            include './views/user/user_profile.php';
         } else {
             echo "User not found.";
         }
@@ -48,13 +48,13 @@ class UserController
 
             // save user id to session to authenticate it
             $_SESSION["login"] = $user->id();
-            header('Location: ./index.php?Pizza/index');
+            header('Location: ./index.php?pizza/index');
             // header('Location: ./index.php?user_id=' . $user->id());
 
             exit();
         } else {
             // Failed login
-            header('Location: ./views/User/login_form.php?error=Invalid%20login%20credentials');
+            header('Location: ./views/user/login_form.php?error=Invalid%20login%20credentials');
             exit();
         }
     }
@@ -69,10 +69,10 @@ class UserController
         $formCheckHelper = new FormCheckHelper($formData);
 
         if (!$formCheckHelper->validatePasswordEquality()) {
-            header('Location: ./views/User/register_form.php?error=Passwords%20do%20not%20match');
+            header('Location: ./views/user/register_form.php?error=Passwords%20do%20not%20match');
             exit();
         } elseif (!$formCheckHelper->validatePasswordPolicy()) {
-            header('Location: ./views/User/register_form.php?error=Weak%20password');
+            header('Location: ./views/user/register_form.php?error=Weak%20password');
             exit();
         } else {
             // Create a new user object
@@ -95,15 +95,15 @@ class UserController
             $user->save();
 
             // Successful insertion
-            header('Location: ./views/User/login_form.php?msg=Account%20successfully%20created');
+            header('Location: ./views/user/login_form.php?msg=Account%20successfully%20created');
             exit();
         } catch (PDOException $e) {
             // Error 23000: Duplicate entry (database error for UNIQUE constraint)
             if ($e->getCode() === '23000') { 
-                header('Location: ./views/User/register_form.php?error=Username%20not%20available');
+                header('Location: ./views/user/register_form.php?error=Username%20not%20available');
             } else {
                 // Other errors
-                header('Location: ./views/User/register_form.php?error=Unknown%20error' . $e->getCode());
+                header('Location: ./views/user/register_form.php?error=Unknown%20error' . $e->getCode());
             }
             exit();
         }

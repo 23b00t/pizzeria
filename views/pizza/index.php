@@ -20,16 +20,16 @@ Helper::validateSession();
                 foreach ($pizzas as $pizza): ?>
                     <tr>
                         <td><?= htmlspecialchars($pizza->id()) ?></td>
-                        <td><a href="./index.php?Pizza/show/<?= htmlspecialchars($pizza->id()) ?>"><?= htmlspecialchars($pizza->name()) ?></a></td>
+                        <td><a href="./index.php?pizza/show/<?= htmlspecialchars($pizza->id()) ?>"><?= htmlspecialchars($pizza->name()) ?></a></td>
                         <td><?= htmlspecialchars($pizza->price()) ?> €</td>
                         <td>
-                            <a href="./index.php?Pizza/edit/<?= htmlspecialchars($pizza->id()) ?>" class="btn btn-warning btn-sm">Bearbeiten</a>
-                            <a href="./index.php?Pizza/delete/<?= htmlspecialchars($pizza->id()) ?>" class="btn btn-danger btn-sm">Löschen</a>
+                            <a href="./index.php?pizza/edit/<?= htmlspecialchars($pizza->id()) ?>" class="btn btn-warning btn-sm">Bearbeiten</a>
+                            <a href="./index.php?pizza/delete/<?= htmlspecialchars($pizza->id()) ?>" class="btn btn-danger btn-sm">Löschen</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
-        <a href="./index.php?Pizza/create" class="btn btn-primary">Neue Pizza hinzufügen</a>
+        <a href="./index.php?pizza/create" class="btn btn-primary">Neue Pizza hinzufügen</a>
     </div>
 <?php require __DIR__ . '/../tail.php'; ?>

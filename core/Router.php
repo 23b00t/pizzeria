@@ -64,7 +64,7 @@ class Router
             $this->handlePost();
         } elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
             // To avoid missmatches of the preg_match statement
-            $this->route === '' && header('Location: ./views/User/login_form.php') && exit();
+            $this->route === '' && header('Location: ./views/user/login_form.php') && exit();
 
             $this->handleGet();
         }
@@ -89,10 +89,10 @@ class Router
         if (isset($_POST['register'])) { return (new UserController())->create($_POST); }
 
         // Pizza routes
-        if ($this->route === 'Pizza/store') { 
+        if ($this->route === 'pizza/store') { 
             return (new PizzaController())->store($_POST); 
         }
-        if (preg_match('/Pizza\/update\/(\d+)$/', $this->route, $matches)) { 
+        if (preg_match('/pizza\/update\/(\d+)$/', $this->route, $matches)) { 
             return (new PizzaController())->update($matches[1], $_POST); 
         }
 
@@ -110,19 +110,19 @@ class Router
     private function handleGet(): mixed 
     {
         switch (true) {
-            case $this->route === 'Pizza/index': 
+            case $this->route === 'pizza/index': 
                 return (new PizzaController())->index();
 
-            case preg_match('/Pizza\/show\/(\d+)$/', $this->route, $matches):
+            case preg_match('/pizza\/show\/(\d+)$/', $this->route, $matches):
                 return (new PizzaController())->show($matches[1]);
 
-            case preg_match('/Pizza\/edit\/(\d+)$/', $this->route, $matches):
+            case preg_match('/pizza\/edit\/(\d+)$/', $this->route, $matches):
                 return (new PizzaController())->edit($matches[1]);
 
-            case $this->route === 'Pizza/create':
+            case $this->route === 'pizza/create':
                 return (new PizzaController())->create();
 
-            case preg_match('/Pizza\/delete\/(\d+)$/', $this->route, $matches):
+            case preg_match('/pizza\/delete\/(\d+)$/', $this->route, $matches):
                 return (new PizzaController())->delete($matches[1]);
 
             case preg_match('/user_id=(\d+)$/', $this->route, $matches):

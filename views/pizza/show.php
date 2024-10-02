@@ -10,6 +10,6 @@ Helper::validateSession();
             <p><strong>Name:</strong> <?= htmlspecialchars($pizza->name()); ?></p>
             <p><strong>Preis:</strong> <?= htmlspecialchars($pizza->price()); ?> €</p>
         </div>
-        <a href="./index.php?Pizza/index" class="button">Zurück zur Übersicht</a>
+        <a href="./index.php?pizza/index" class="button">Zurück zur Übersicht</a>
     </div>
 <?php require __DIR__ . '/../tail.php'; ?>
