@@ -110,6 +110,7 @@ class Router
     private function handleGet(): mixed 
     {
         switch (true) {
+            // Pizza routes
             case $this->route === 'pizza/index': 
                 return (new PizzaController())->index();
 
@@ -125,6 +126,7 @@ class Router
             case preg_match('/pizza\/delete\/(\d+)$/', $this->route, $matches):
                 return (new PizzaController())->delete($matches[1]);
 
+            // User routes
             case preg_match('/user_id=(\d+)$/', $this->route, $matches):
                 return (new UserController())->show($matches[1]);
         }
