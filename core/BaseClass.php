@@ -71,10 +71,10 @@ abstract class BaseClass
     }
 
     /**
-     * Checks if a method is disallowed and throws an exception if it is.
+     * Checks if the method is on the white list
      *
      * @param  string $func       The name of the method to check.
-     * @param  array  $exceptions The list of disallowed methods.
+     * @param  array  $exceptions The list of allowed methods.
      * @throws BadMethodCallException If the method is disallowed.
      */
     private static function checkAllowed($func, $exceptions)

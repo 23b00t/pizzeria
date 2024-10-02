@@ -5,23 +5,27 @@ require_once __DIR__ . '/../helpers/FormCheckHelper.php';
 require_once __DIR__ . '/../models/Pizza.php';
 
 /**
- * PizzaController class responsible for managing pizza-related actions, such as
- * displaying pizza details, handling pizza creation, updating, and deletion.
+ * PizzaController class responsible for managing pizza-related actions,
+ * such as displaying pizza details, handling pizza creation, updating,
+ * and deletion.
  * 
  * Methods:
  * 
- * - index(): void: Displays a list of all pizzas.
- * - show(int $id): void: Displays pizza details based on the given ID.
- * - create(array $formData): void: Validates and creates a new pizza from the provided form data.
- * - store(Pizza $pizza): void: Saves the pizza object to the database.
- * - edit(int $id): void: Displays the edit form for the specified pizza.
- * - update(int $id, array $formData): void: Validates and updates the pizza with the given ID.
- * - delete(int $id): void: Deletes the pizza with the specified ID.
+ * - index(): void: Displays a list of all pizzas available in the system.
+ * - show(int $id): void: Displays detailed information about a specific pizza based on the given ID.
+ * - create(): void: Renders the form for creating a new pizza.
+ * - store(array $formData): void: Validates the provided form data and saves a new pizza to the database.
+ * - edit(int $id): void: Retrieves the specified pizza by ID and renders the edit form for that pizza.
+ * - update(int $id, array $formData): void: Validates the provided form data and updates the pizza with the given ID.
+ * - delete(int $id): void: Deletes the pizza identified by the specified ID from the database.
  */
 class PizzaController
 {
     /**
      * Display a list of all pizzas.
+     *
+     * This method retrieves all pizzas from the database and includes
+     * the corresponding view to display them in a list format.
      */
     public function index(): void
     {
@@ -32,8 +36,11 @@ class PizzaController
     }
 
     /**
-     * Show pizza details.
-     * 
+     * Show detailed information about a specific pizza.
+     *
+     * This method retrieves the pizza by its ID and any associated ingredients,
+     * then includes the pizza detail view to display the information.
+     *
      * @param int $id The pizza ID.
      */
     public function show($id): void
@@ -47,6 +54,14 @@ class PizzaController
         } 
     }
 
+    /**
+     * Render the edit form for a specified pizza.
+     *
+     * This method retrieves the pizza by its ID and includes the 
+     * form view for editing the pizza's details.
+     *
+     * @param int $id The ID of the pizza to edit.
+     */
     public function edit($id): void
     {
         $pizza = Pizza::findBy($id, 'id');
@@ -58,9 +73,10 @@ class PizzaController
     }
 
     /**
-     * Handle the pizza creation process.
-     * 
-     * @param array $formData The form data submitted for creating a pizza.
+     * Display the form for creating a new pizza.
+     *
+     * This method includes the form view for the creation of a new pizza
+     * without any pre-filled data.
      */
     public function create(): void
     {
@@ -69,7 +85,11 @@ class PizzaController
 
     /**
      * Store a new pizza in the database.
-     * 
+     *
+     * This method validates the form data submitted for creating a new
+     * pizza, instantiates the Pizza model, and saves it to the
+     * database. It handles the redirection upon success or failure.
+     *
      * @param array $formData The form data submitted for creating the pizza.
      */
     public function store($formData): void
@@ -92,8 +112,12 @@ class PizzaController
     }
 
     /**
-     * Handle the pizza update process.
-     * 
+     * Handle the update process for an existing pizza.
+     *
+     * This method retrieves the pizza by its ID, validates the provided
+     * form data, updates the pizza's properties, and saves the changes
+     * to the database. It also manages redirection upon success or failure.
+     *
      * @param int $id The pizza ID to update.
      * @param array $formData The form data submitted for updating the pizza.
      */
@@ -109,10 +133,10 @@ class PizzaController
             try {
                 // Save the updated pizza to the database
                 $pizza->update(); 
-                header('Location: ./index.php?pizza/show/' . $id . '?msg=Pizza%20erfolgreich%20aktualisiert');
+                header('Location: ./index.php?pizza/show/' . $id . '?msg=Pizza%20successfully%20updated');
                 exit();
             } catch (PDOException $e) {
-                header('Location: ./index.php?pizza/show/' . $id . '?msg=Fehler');
+                header('Location: ./index.php?pizza/show/' . $id . '?msg=Error');
                 exit();
             }
         } 
@@ -120,7 +144,11 @@ class PizzaController
 
     /**
      * Delete the pizza with the specified ID.
-     * 
+     *
+     * This method retrieves the pizza by its ID and attempts to delete it
+     * from the database. It manages the redirection and handles any errors
+     * that may occur during the deletion process.
+     *
      * @param int $id The pizza ID.
      */
     public function delete($id): void
@@ -129,7 +157,7 @@ class PizzaController
 
         if ($pizza) {
             try {
-                $pizza->delete(); // Assuming a delete method exists in the Pizza class
+                $pizza->delete();
                 header('Location: ./index.php?pizza/index?msg=Pizza%20successfully%20deleted');
                 exit();
             } catch (PDOException $e) {

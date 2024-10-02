@@ -5,23 +5,27 @@ require_once __DIR__ . '/../helpers/FormCheckHelper.php';
 require_once __DIR__ . '/../models/Ingredient.php';
 
 /**
- * IngredientController class responsible for managing ingredient-related actions, such as
- * displaying ingredient details, handling ingredient creation, updating, and deletion.
+ * IngredientController class responsible for managing ingredient-related actions,
+ * such as displaying ingredient details, handling ingredient creation, updating,
+ * and deletion.
  * 
  * Methods:
  * 
- * - index(): void: Displays a list of all ingredients.
- * - show(int $id): void: Displays ingredient details based on the given ID.
- * - create(array $formData): void: Validates and creates a new ingredient from the provided form data.
- * - store(Ingredient $ingredient): void: Saves the ingredient object to the database.
- * - edit(int $id): void: Displays the edit form for the specified ingredient.
- * - update(int $id, array $formData): void: Validates and updates the ingredient with the given ID.
- * - delete(int $id): void: Deletes the ingredient with the specified ID.
+ * - index(): void: Displays a list of all ingredients available in the system.
+ * - show(int $id): void: Displays detailed information about a specific ingredient based on the given ID.
+ * - create(): void: Renders the form for creating a new ingredient.
+ * - store(array $formData): void: Validates the provided form data and saves a new ingredient to the database.
+ * - edit(int $id): void: Retrieves the specified ingredient by ID and renders the edit form for that ingredient.
+ * - update(int $id, array $formData): void: Validates the provided form data and updates the ingredient with the given ID.
+ * - delete(int $id): void: Deletes the ingredient identified by the specified ID from the database.
  */
 class IngredientController
 {
     /**
      * Display a list of all ingredients.
+     *
+     * This method retrieves all ingredients from the database and includes
+     * the corresponding view to display them in a list format.
      */
     public function index(): void
     {
@@ -31,6 +35,14 @@ class IngredientController
         include __DIR__ . '/../views/ingredient/index.php'; 
     }
 
+    /**
+     * Render the edit form for a specified ingredient.
+     *
+     * This method retrieves the ingredient by its ID and includes the 
+     * form view for editing the ingredient's details.
+     *
+     * @param int $id The ID of the ingredient to edit.
+     */
     public function edit($id): void
     {
         $ingredient = Ingredient::findBy($id, 'id');
@@ -42,9 +54,10 @@ class IngredientController
     }
 
     /**
-     * Handle the ingredient creation process.
-     * 
-     * @param array $formData The form data submitted for creating a ingredient.
+     * Display the form for creating a new ingredient.
+     *
+     * This method includes the form view for the creation of a new ingredient
+     * without any pre-filled data.
      */
     public function create(): void
     {
@@ -53,7 +66,11 @@ class IngredientController
 
     /**
      * Store a new ingredient in the database.
-     * 
+     *
+     * This method validates the form data submitted for creating a new
+     * ingredient, instantiates the Ingredient model, and saves it to the
+     * database. It handles the redirection upon success or failure.
+     *
      * @param array $formData The form data submitted for creating the ingredient.
      */
     public function store($formData): void
@@ -77,8 +94,12 @@ class IngredientController
     }
 
     /**
-     * Handle the ingredient update process.
-     * 
+     * Handle the update process for an existing ingredient.
+     *
+     * This method retrieves the ingredient by its ID, validates the provided
+     * form data, updates the ingredient's properties, and saves the changes
+     * to the database. It also manages redirection upon success or failure.
+     *
      * @param int $id The ingredient ID to update.
      * @param array $formData The form data submitted for updating the ingredient.
      */
@@ -95,10 +116,10 @@ class IngredientController
             try {
                 // Save the updated ingredient to the database
                 $ingredient->update(); 
-                header('Location: ./index.php?ingredient/index?msg=Ingredient%20erfolgreich%20aktualisiert');
+                header('Location: ./index.php?ingredient/index?msg=Ingredient%20successfully%20updated');
                 exit();
             } catch (PDOException $e) {
-                header('Location: ./index.php?ingredient/index?msg=Fehler');
+                header('Location: ./index.php?ingredient/index?msg=Error');
                 exit();
             }
         } 
@@ -106,7 +127,11 @@ class IngredientController
 
     /**
      * Delete the ingredient with the specified ID.
-     * 
+     *
+     * This method retrieves the ingredient by its ID and attempts to delete it
+     * from the database. It manages the redirection and handles any errors
+     * that may occur during the deletion process.
+     *
      * @param int $id The ingredient ID.
      */
     public function delete($id): void
