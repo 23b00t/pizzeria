@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../helpers/Helper.php';
 Helper::validateSession();
 $csrf_token = Helper::generateCSRFToken(); 
+// @var controllers\IngredientController $ingredient
 ?>
 
 <?php 

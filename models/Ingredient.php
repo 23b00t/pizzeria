@@ -7,27 +7,17 @@ require_once __DIR__ . '/BaseModel.php';
  * Class Ingredient
  *
  * Represents an ingredient entity with properties and methods for database interactions.
+ *
+ * @method int id()
+ * @method string name()
+ * @method float price()
+ * @method bool vegetarian()
  */
 class Ingredient extends BaseModel
 {
-    /**
-     * @var int|null The ID of the ingredient. 
-     */
     private $id;
-
-    /**
-     * @var string The name of the ingredient. 
-     */
     private $name;
-
-    /**
-     * @var float The price of the ingredient. 
-     */
     private $price;
-
-    /**
-     * @var bool Indicates whether the ingredient is vegetarian (1 for true, 0 for false). 
-     */
     private $vegetarian;
 
     /**

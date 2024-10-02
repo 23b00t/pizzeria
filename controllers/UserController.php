@@ -6,9 +6,9 @@ require_once __DIR__ . '/../helpers/FormCheckHelper.php';
 /**
  * UserController class responsible for managing user-related actions, such as
  * displaying user profiles, handling user login, and processing user registration.
- * 
+ *
  * Methods:
- * 
+ *
  * - show(int $id): void: Displays the user profile based on the given ID.
  * - login(array $formData): void: Processes user login with the provided form data.
  * - create(array $formData): void: Validates and creates a new user from the provided form data.
@@ -19,7 +19,7 @@ class UserController
 {
     /**
      * Show the user profile page.
-     * 
+     *
      * @param int $id The user ID.
      */
     public function show($id): void
@@ -36,7 +36,7 @@ class UserController
 
     /**
      * Handle the user login process.
-     * 
+     *
      * @param array $formData The form data submitted for login.
      */
     public function login($formData): void
@@ -62,10 +62,10 @@ class UserController
 
     /**
      * Handle the user registration process.
-     * 
+     *
      * @param array $formData The form data submitted for registration.
      */
-    public function create($formData): void 
+    public function create($formData): void
     {
         $formCheckHelper = new FormCheckHelper($formData);
 
@@ -86,7 +86,7 @@ class UserController
 
     /**
      * Store a new user in the database.
-     * 
+     *
      * @param User $user The user object to be stored.
      */
     private function store($user): void
@@ -100,7 +100,7 @@ class UserController
             exit();
         } catch (PDOException $e) {
             // Error 23000: Duplicate entry (database error for UNIQUE constraint)
-            if ($e->getCode() === '23000') { 
+            if ($e->getCode() === '23000') {
                 header('Location: ./views/user/register_form.php?error=Username%20not%20available');
             } else {
                 // Other errors

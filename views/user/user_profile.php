@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../helpers/Helper.php';
 
 Helper::validateSession();
+// @var controllers\UserController $user
 ?>
 
 <?php $pageTitle = 'Dashboard'; require './views/head.php'; ?>

@@ -18,22 +18,6 @@
  * Properties:
  * 
  * - $_conn: PDO connection instance for interacting with the database.
- * 
- * Methods:
- * 
- * @method __construct(string $dbuser, string $dbpassword) 
- *         Initializes a new DatabaseHelper instance and establishes a connection 
- *         to the database with the provided user credentials. Throws a PDOException 
- *         if the connection fails.
- * 
- * @method array prepareAndExecute(string $sql, array $params) 
- *         Prepares and executes the given SQL statement with the provided parameters. 
- *         Returns the fetched results as an associative array. Throws a PDOException 
- *         if the execution fails.
- * 
- * @method __destruct() 
- *         Closes the database connection when the DatabaseHelper instance is 
- *         destroyed, ensuring that resources are freed.
  */
 class DatabaseHelper
 {
@@ -93,6 +77,8 @@ class DatabaseHelper
      * 
      * This method is called when the DatabaseHelper instance is destroyed, 
      * ensuring that the connection to the database is properly closed.
+     *
+     * @return void
      */
     public function __destruct()
     {

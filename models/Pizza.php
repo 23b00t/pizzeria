@@ -7,6 +7,10 @@ require_once __DIR__ . '/BaseModel.php';
  * Class Pizza
  *
  * Represents a pizza entity with properties and methods for database interactions.
+ *
+ * @method int id()
+ * @method string name()
+ * @method string price()
  */
 class Pizza extends BaseModel
 {

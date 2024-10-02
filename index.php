@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
 * All POST and GET requests are handled here,
 * which are then processed by the Router.
 */

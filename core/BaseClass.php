@@ -21,11 +21,8 @@
  *         Dynamically handles getter and setter calls for class properties.
  * @throws BadMethodCallException If the method or property is disallowed or does not exist.
  *
- * Private Methods:
- *
- * @method static void checkAllowed(string $func, array $exceptions)
- *         Checks if a method is allowed and throws an exception if it is not.
  */
+
 abstract class BaseClass
 {
     // Set allowed methods for getters and setters in child class
@@ -39,12 +36,12 @@ abstract class BaseClass
      * It checks if the called method corresponds to a property and invokes
      * the appropriate getter or setter based on the parameters provided.
      *
-     * @param  string $func   The name of the method being called.
-     * @param  array  $params The parameters for the setter, if any.
-     * @return mixed The value of the property for getters, or null for setters.
+     * @param  string $func           The name of the method being called.
+     * @param  array  $params         The parameters for the setter, if any.
+     * @return mixed                  The value of the property for getters, or null for setters.
      * @throws BadMethodCallException If the method or property is disallowed or does not exist.
      */
-    public function __call($func, $params)
+    public function __call($func, $params): mixed
     {
         $reflect = new ReflectionClass($this);
         $props = $reflect->getProperties(ReflectionProperty::IS_PRIVATE | ReflectionProperty::IS_PROTECTED);
@@ -77,7 +74,7 @@ abstract class BaseClass
      * @param  array  $exceptions The list of allowed methods.
      * @throws BadMethodCallException If the method is disallowed.
      */
-    private static function checkAllowed($func, $exceptions)
+    private static function checkAllowed(string $func, array $exceptions): void
     {
         if (!in_array($func, $exceptions)) {
             throw new BadMethodCallException('{$func} is not allowed.');

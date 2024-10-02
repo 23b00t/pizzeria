@@ -88,7 +88,7 @@ class IngredientController
             exit();
         } catch (PDOException $e) {
             // Handle the error and redirect back to the form
-            header('Location: ./index.php?ingredient/show/' . $id . '?error=Could%20not%20create%20ingredient');
+            header('Location: ./index.php?ingredient/index?error=Could%20not%20create%20ingredient');
             exit();
         }
     }

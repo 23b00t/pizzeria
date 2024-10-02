@@ -14,25 +14,6 @@ require_once __DIR__ . '/../controllers/IngredientController.php';
  * 
  * This class checks the request type (GET or POST) and calls the corresponding 
  * method to handle the request. It automatically starts a session if none is active.
- *
- * Properties:
- * 
- * Methods:
- * 
- * @method void __construct() 
- *         Starts a session if one is not already active.
- * 
- * @method void handleRequest() 
- *         Checks the request method (POST/GET) and delegates 
- *         the handling to the appropriate method.
- * 
- * @method void handlePost() 
- *         Handles POST requests, specifically for login, 
- *         registration, and signout. Performs CSRF token validation.
- * 
- * @method void handleGet() 
- *         Handles GET requests, specifically for displaying 
- *         user information.
  */
 class Router
 {
@@ -75,9 +56,9 @@ class Router
      * Handles POST requests for login, registration, and signout.
      * Validates the CSRF token before processing.
      * 
-     * @return void
+     * @return void 
      */
-    private function handlePost(): mixed
+    private function handlePost(): void
     {
         // Logout user
         isset($_POST['signout']) && UserController::signOut();
@@ -85,75 +66,66 @@ class Router
         // Check if valid CSRF Token is present
         Helper::checkCSRFToken();
 
-        // User routes
-        if (isset($_POST['login'])) { return (new UserController())->login($_POST); 
-        }
-        if (isset($_POST['register'])) { return (new UserController())->create($_POST); 
+        // Handle user routes
+        if (isset($_POST['login'])) {
+            (new UserController())->login($_POST);
+        } elseif (isset($_POST['register'])) {
+            (new UserController())->create($_POST);
+        } 
+
+        // Handle pizza routes
+        elseif ($this->route === 'pizza/store') { 
+            (new PizzaController())->store($_POST);
+        } elseif (preg_match('/pizza\/update\/(\d+)$/', $this->route, $matches)) { 
+            (new PizzaController())->update($matches[1], $_POST);
         }
 
-        // Pizza routes
-        if ($this->route === 'pizza/store') { 
-            return (new PizzaController())->store($_POST); 
-        }
-        if (preg_match('/pizza\/update\/(\d+)$/', $this->route, $matches)) { 
-            return (new PizzaController())->update($matches[1], $_POST); 
-        }
-
-        // Ingredient routes
-        if ($this->route === 'ingredient/store') { 
-            return (new IngredientController())->store($_POST); 
-        }
-        if (preg_match('/ingredient\/update\/(\d+)$/', $this->route, $matches)) { 
-            return (new IngredientController())->update($matches[1], $_POST); 
-        }
-
-        // If no condition is met exit(); Destroys pointers on stack and GC cleans up heap
+        // Handle ingredient routes
+        elseif ($this->route === 'ingredient/store') { 
+            (new IngredientController())->store($_POST);
+        } elseif (preg_match('/ingredient\/update\/(\d+)$/', $this->route, $matches)) { 
+            (new IngredientController())->update($matches[1], $_POST);
+        } 
+        // exit() to clean up
         exit();
     }
 
     /**
      * Handles GET requests, specifically for displaying user information.
      * Redirects to the login form if no user_id is provided.
-     * 
-     * @return void
+     *
+     * @return void 
      */
-    private function handleGet(): mixed 
+    private function handleGet(): void
     {
-        switch (true) {
-            // Pizza routes
-        case $this->route === 'pizza/index': 
-            return (new PizzaController())->index();
+        // Pizza routes
+        if ($this->route === 'pizza/index') { 
+            (new PizzaController())->index();
+        } elseif (preg_match('/pizza\/show\/(\d+)$/', $this->route, $matches)) {
+            (new PizzaController())->show($matches[1]);
+        } elseif (preg_match('/pizza\/edit\/(\d+)$/', $this->route, $matches)) {
+            (new PizzaController())->edit($matches[1]);
+        } elseif ($this->route === 'pizza/create') {
+            (new PizzaController())->create();
+        } elseif (preg_match('/pizza\/delete\/(\d+)$/', $this->route, $matches)) {
+            (new PizzaController())->delete($matches[1]);
+        } 
 
-        case preg_match('/pizza\/show\/(\d+)$/', $this->route, $matches):
-            return (new PizzaController())->show($matches[1]);
+        // Ingredient routes
+        elseif ($this->route === 'ingredient/index') { 
+            (new IngredientController())->index();
+        } elseif (preg_match('/ingredient\/edit\/(\d+)$/', $this->route, $matches)) {
+            (new IngredientController())->edit($matches[1]);
+        } elseif ($this->route === 'ingredient/create') {
+            (new IngredientController())->create();
+        } elseif (preg_match('/ingredient\/delete\/(\d+)$/', $this->route, $matches)) {
+            (new IngredientController())->delete($matches[1]);
+        } 
 
-        case preg_match('/pizza\/edit\/(\d+)$/', $this->route, $matches):
-            return (new PizzaController())->edit($matches[1]);
-
-        case $this->route === 'pizza/create':
-            return (new PizzaController())->create();
-
-        case preg_match('/pizza\/delete\/(\d+)$/', $this->route, $matches):
-            return (new PizzaController())->delete($matches[1]);
-
-            // Ingredient routes
-        case $this->route === 'ingredient/index': 
-            return (new IngredientController())->index();
-
-        case preg_match('/ingredient\/edit\/(\d+)$/', $this->route, $matches):
-            return (new IngredientController())->edit($matches[1]);
-
-        case $this->route === 'ingredient/create':
-            return (new IngredientController())->create();
-
-        case preg_match('/ingredient\/delete\/(\d+)$/', $this->route, $matches):
-            return (new IngredientController())->delete($matches[1]);
-
-            // User routes
-        case preg_match('/user_id=(\d+)$/', $this->route, $matches):
-            return (new UserController())->show($matches[1]);
-        }
-
+        // User routes
+        elseif (preg_match('/user_id=(\d+)$/', $this->route, $matches)) {
+            (new UserController())->show($matches[1]);
+        } 
         exit();
     }
 }

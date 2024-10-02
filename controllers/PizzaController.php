@@ -24,8 +24,7 @@ class PizzaController
     /**
      * Display a list of all pizzas.
      *
-     * This method retrieves all pizzas from the database and includes
-     * the corresponding view to display them in a list format.
+     * @var $pizzas Variable is used in the included view.
      */
     public function index(): void
     {
@@ -106,7 +105,7 @@ class PizzaController
             exit();
         } catch (PDOException $e) {
             // Handle the error and redirect back to the form
-            header('Location: ./index.php?pizza/show/' . $id . '?error=Could%20not%20create%20pizza');
+            header('Location: ./index.php?pizza/index?error=Could%20not%20create%20pizza');
             exit();
         }
     }

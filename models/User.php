@@ -15,6 +15,17 @@ require_once __DIR__ . '/BaseModel.php';
  * - $last_name: The last name of the user.
  * - $address: The address of the user.
  * - $role: The role of the user.
+ *
+ * @method int id() 
+ * @method string email()
+ * @method string hashed_password()
+ * @method string first_name()
+ * @method string last_name()
+ * @method string street()
+ * @method string str_no()
+ * @method string zip()
+ * @method string city()
+ * @method string role()
  */
 class User extends BaseModel
 {
@@ -38,7 +49,10 @@ class User extends BaseModel
      * @param string      $hashed_password The hashed password of the user.
      * @param string      $first_name      The first name of the user.
      * @param string      $last_name       The last name of the user.
-     * @param string      $address         The address of the user.
+     * @param string      $street          The street name of the user's address.
+     * @param string      $str_no          The street number of the user's address.
+     * @param string      $zip             The zip code of the user's address.
+     * @param string      $city            The city of the user's address.
      * @param int|null    $id              The unique identifier of the user (optional).
      * @param string|null $role            The user role ['customer', 'admin']. Defaults in DB to 'customer';
      */

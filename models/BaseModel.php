@@ -2,6 +2,13 @@
 
 require_once __DIR__ . '/../core/BaseClass.php';
 
+/** 
+ * Abstract Class BaseModel
+ * 
+ * defines generic methods for models 
+ * 
+ * @method int id() inherited from BaseClass
+ */
 abstract class BaseModel extends BaseClass
 {
     /**
@@ -192,7 +199,7 @@ abstract class BaseModel extends BaseClass
      *
      * @return string The table name.
      */
-    private static function getTableName()
+    private static function getTableName(): string
     {
         // Get the name of the calling class and convert it to lowercase
         $calledClass = get_called_class();

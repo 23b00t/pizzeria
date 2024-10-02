@@ -1,6 +1,8 @@
 <?php 
 require_once __DIR__ . '/../../helpers/Helper.php';
 Helper::validateSession();
+
+// @var controllers\IngredientController $ingredients
 ?>
 
 <?php $pageTitle = 'Zutaten'; require __DIR__ . '/../head.php'; ?>

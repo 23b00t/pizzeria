@@ -32,6 +32,11 @@ require_once __DIR__ . '/../core/BaseClass.php';
  * 
  * @method void setHashedPassword(string $password) Hashes the given password using the 
  *        default algorithm and stores it in the $password_hash property.
+ *
+ * @method string email()
+ * @method string password()
+ * @method string password_repeat()
+ * @method string password_hash()
  */
 class FormCheckHelper extends BaseClass
 {
