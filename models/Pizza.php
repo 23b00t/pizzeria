@@ -14,19 +14,8 @@ require_once __DIR__ . '/BaseModel.php';
  */
 class Pizza extends BaseModel
 {
-    /**
-     * @var int|null The ID of the pizza. 
-     */
     private $id;
-
-    /**
-     * @var string The name of the pizza. 
-     */
     private $name;
-
-    /**
-     * @var float The price of the pizza. 
-     */
     private $price;
 
     /**
