@@ -113,6 +113,8 @@ abstract class BaseModel extends BaseClass
     /**
      * Finds an object by a specified attribute.
      *
+     * Use with unique values! Otherwise it will only return the first result!
+     *
      * @param  string $attribute The name of the attribute to search by.
      * @param  mixed  $value     The value of the attribute to search for.
      * @return static|null The object if found, null otherwise.
@@ -133,6 +135,39 @@ abstract class BaseModel extends BaseClass
         }
 
         return null;
+    }
+
+    /**
+     * Finds objects based on a custom WHERE statement.
+     *
+     * Example usage:
+     * 
+     * $whereClause = 'user_id = ? AND date = TODAY() LIMIT 1';
+     * $params = [5];  // param for user_id
+     * $models = Model::where($whereClause, $params);
+     *
+     * @param  string $whereClause The complete WHERE clause, including any conditions.
+     * @param  array  $params      An array of parameters to bind to the SQL statement (optional).
+     * @return array               An array of all model instances matching the condition.
+     */
+    public static function where(string $whereClause, array $params = []): array
+    {
+        // Establish database connection
+        $db = new DatabaseHelper('reader', getenv('PW_READER'));
+        $tableName = self::getTableName();
+
+        // Prepare the SQL query with the custom WHERE clause
+        $sql = 'SELECT * FROM ' . $tableName . ' WHERE ' . $whereClause;
+        
+        // Execute the query with the provided parameters
+        $result = $db->prepareAndExecute($sql, $params);
+
+        $models = [];
+        foreach ($result as $data) {
+            $models[] = self::mapDataToModel($data);
+        }
+
+        return $models;
     }
 
     /**

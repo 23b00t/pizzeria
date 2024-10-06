@@ -22,7 +22,7 @@ require __DIR__ . '/../head.php';
                 <input type="number" step="0.01" name="price" id="price" class="form-control" value="<?= isset($pizza) ? htmlspecialchars($pizza->price()) : '' ?>" required>
             </div>
             
-            <!-- csrf_token einfügen -->
+            <!-- insert csrf_token -->
             <input type="hidden" name="csrf_token" value="<?= $csrf_token; ?>">
 
             <button type="submit" class="btn btn-primary"><?= isset($pizza) ? 'Pizza aktualisieren' : 'Pizza erstellen' ?></button>

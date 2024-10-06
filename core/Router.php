@@ -8,6 +8,8 @@ require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../controllers/UserController.php';
 require_once __DIR__ . '/../controllers/PizzaController.php';
 require_once __DIR__ . '/../controllers/IngredientController.php';
+require_once __DIR__ . '/../controllers/PurchaseController.php';
+require_once __DIR__ . '/../controllers/CardController.php';
 
 /**
  * Router class for processing and handling HTTP requests.
@@ -86,6 +88,17 @@ class Router
         } elseif (preg_match('/ingredient\/update\/(\d+)$/', $this->route, $matches)) { 
             (new IngredientController())->update($matches[1], $_POST);
         } 
+
+        // Handle purchase routes
+        elseif ($this->route === 'purchase/handle') {
+            (new PurchaseController())->handle($_POST);
+        }
+
+        // Handle card routes
+        elseif (preg_match('/card\/update\/(\d+)$/', $this->route, $matches)) { 
+            (new CardController())->update($matches[1], $_POST);
+        } 
+
         // exit() to clean up
         exit();
     }
@@ -126,6 +139,23 @@ class Router
         elseif (preg_match('/user_id=(\d+)$/', $this->route, $matches)) {
             (new UserController())->show($matches[1]);
         } 
+
+        // Purchase routes
+        elseif ($this->route === 'purchase/index') {
+            (new PurchaseController())->index();
+        } elseif (preg_match('/purchase\/delete\/(\d+)$/', $this->route, $matches)) {
+            (new PurchaseController())->delete($matches[1]);
+        }
+        
+        // Card routes
+        elseif (preg_match('/card\/show\/(\d+)$/', $this->route, $matches)) {
+            (new CardController())->show($matches[1]);
+        } elseif (preg_match('/card\/delete\/(\d+)$/', $this->route, $matches)) {
+            (new CardController())->delete($matches[1]);
+        } elseif ('card/card') {
+            (new CardController())->showOpenCard();
+        }
+
         exit();
     }
 }

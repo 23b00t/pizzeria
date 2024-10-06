@@ -14,7 +14,10 @@
             <a class="nav-link" href="./index.php?ingredient/index">Zutaten</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Pricing</a>
+            <a class="nav-link" href="./index.php?purchase/index">Alle Bestellungen</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./index.php?card/card">Warenkorb</a>
           </li>
         </ul>
 
