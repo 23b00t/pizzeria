@@ -78,6 +78,7 @@ class Router
         // Handle pizza routes
         elseif ($this->route === 'pizza/store') { 
             (new PizzaController())->store($_POST);
+        // WARNING: Should handele id in POST data!!
         } elseif (preg_match('/pizza\/update\/(\d+)$/', $this->route, $matches)) { 
             (new PizzaController())->update($matches[1], $_POST);
         }
@@ -85,6 +86,7 @@ class Router
         // Handle ingredient routes
         elseif ($this->route === 'ingredient/store') { 
             (new IngredientController())->store($_POST);
+        // WARNING: Should handele id in POST data!!
         } elseif (preg_match('/ingredient\/update\/(\d+)$/', $this->route, $matches)) { 
             (new IngredientController())->update($matches[1], $_POST);
         } 
@@ -95,8 +97,8 @@ class Router
         }
 
         // Handle card routes
-        elseif (preg_match('/card\/update\/(\d+)$/', $this->route, $matches)) { 
-            (new CardController())->update($matches[1], $_POST);
+        elseif ($this->route === 'card/update') { 
+            (new CardController())->update($_POST);
         } 
 
         // exit() to clean up
@@ -152,7 +154,7 @@ class Router
             (new CardController())->show($matches[1]);
         } elseif (preg_match('/card\/delete\/(\d+)$/', $this->route, $matches)) {
             (new CardController())->delete($matches[1]);
-        } elseif ('card/card') {
+        } elseif ($this->route === 'card/card') {
             (new CardController())->showOpenCard();
         }
 

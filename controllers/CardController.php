@@ -51,8 +51,11 @@ class CardController
      */
     public function showOpenCard(): void
     {
-        $cards = $_SESSION['card'];
-        $purchase = Purchase::findBy($_SESSION['purchase_id'], 'id');
+
+        $cards = $_SESSION['card'] ?? [];
+        $purchase_id = $_SESSION['purchase_id'] ?? 0;
+        $purchase = Purchase::findBy($purchase_id, 'id');
+
         // Include the card detail view and pass the card object
         include './views/card/show.php'; 
     }
@@ -67,25 +70,40 @@ class CardController
      * @param int   $id       The card ID to update.
      * @param array $formData The form data submitted for updating the card.
      */
-    public function update($id, $formData): void
+    public function update($formData): void
     {
-        $card = Card::findBy($id, 'id');
+        $card_id = $formData['card_id'];
+        $card = Card::findBy($card_id, 'id');
 
         if ($card) {
             // Update the card properties
             $card->quantity($formData['quantity']);
-            $purchase_id = $card->purchase_id();           
 
             try {
                 // Save the updated card to the database
-                $card->update(); 
-                header('Location: ./index.php?card/show/' . $purchase_id . '?msg=Card%20successfully%20updated');
+                $card->update();
+
+                // Update the card in the session
+                if (isset($_SESSION['card'])) {
+                    foreach ($_SESSION['card'] as &$sessionCard) {
+                        if ($sessionCard->id() == $card_id) {
+                            // Update the session object directly
+                            $sessionCard->quantity($formData['quantity']);
+                            break;
+                        }
+                    }
+                    // Force session to be updated with new card data
+                    $_SESSION['card'] = array_values($_SESSION['card']);
+                }
+
+                header('Location: ./index.php?card/card?msg=Card%20successfully%20updated');
                 exit();
             } catch (PDOException $e) {
-                header('Location: ./index.php?card/show/' . $purchase_id . '?msg=Error');
+                error_log($e->getMessage());
+                header('Location: ./index.php?card/card?msg=Error');
                 exit();
             }
-        } 
+        }
     }
 
     /**

@@ -50,10 +50,6 @@ class PurchaseController
 
                 $purchase = Purchase::where('user_id = ? ORDER BY id DESC LIMIT 1', [$user_id])[0];
                 $_SESSION['purchase_id'] = $purchase->id();
-
-                // Success: Redirect with a success message
-                header('Location: ./index.php?pizza/index?msg=Warenkorb%20hinzugefügt');
-                exit();
             } catch (PDOException $e) {
                 // Log the error message
                 error_log($e->getMessage());
@@ -70,7 +66,8 @@ class PurchaseController
         if (!isset($_SESSION['card'])) {
             $_SESSION['card'] = [];
         }
-        $_SESSION['card'][] = serialize($card);
+        $card = Card::where('purchase_id = ? ORDER BY id DESC LIMIT 1', [$purchase_id])[0];        
+        $_SESSION['card'][] = $card;
         // Success: Redirect with a success message
         header('Location: ./index.php?pizza/index?msg=Warenkorb%20hinzugefügt');
         exit();
@@ -124,6 +121,8 @@ class PurchaseController
         if ($purchase) {
             try {
                 $purchase->delete();
+                unset($_SESSION['card']);
+                unset($_SESSION['purchase_id']);
                 header('Location: ./index.php?purchase/index?msg=Purchase%20successfully%20deleted');
                 exit();
             } catch (PDOException $e) {
