@@ -27,6 +27,7 @@ Helper::validateSession();
                         <td>
                             <a href="./index.php?purchase/edit/<?= htmlspecialchars($purchase->id()) ?>" class="btn btn-warning btn-sm">Bearbeiten</a>
                             <a href="./index.php?purchase/delete/<?= htmlspecialchars($purchase->id()) ?>" class="btn btn-danger btn-sm">Löschen</a>
+                            <a href="./index.php?purchase/update/<?= htmlspecialchars($purchase->id()) ?>" class="btn btn-success btn-sm">Geliefert</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

@@ -74,32 +74,50 @@ class PurchaseController
     }
 
     /**
-     * Handle the update process for an existing purchase.
-     *
-     * This method retrieves the purchase by its ID, validates the provided
-     * form data, updates the purchase's properties, and saves the changes
-     * to the database. It also manages redirection upon success or failure.
+     * Handle the order process for an existing purchase.
      *
      * @param int   $id       The purchase ID to update.
-     * @param array $formData The form data submitted for updating the purchase.
      */
-    public function update($id, $formData): void
+    public function place($id): void
     {
         $purchase = Purchase::findBy($id, 'id');
 
         if ($purchase) {
-            // Update the purchase properties
-            $purchase->status($formData['status']);
+            $purchase->status('placed');
            
-            // $purchase->delivered_at()
-
             try {
                 // Save the updated purchase to the database
                 $purchase->update(); 
-                header('Location: ./index.php?purchase/show/' . $id . '?msg=Purchase%20successfully%20updated');
+                header('Location: ./index.php?card/card?msg=Purchase%20successfully%20updated');
                 exit();
             } catch (PDOException $e) {
-                header('Location: ./index.php?purchase/show/' . $id . '?msg=Error');
+                error_log($e->getMessage());
+                header('Location: ./index.php?card/card?msg=Error');
+                exit();
+            }
+        } 
+    }
+
+    /**
+     * Handle the update process for an existing purchase.
+     *
+     * @param int   $id       The purchase ID to update.
+     */
+    public function update($id): void
+    {
+        $purchase = Purchase::findBy($id, 'id');
+
+        if ($purchase) {
+            $purchase->status('delivered');
+           
+            try {
+                // Save the updated purchase to the database
+                $purchase->update(); 
+                header('Location: ./index.php?purchase/index?msg=Purchase%20successfully%20updated');
+                exit();
+            } catch (PDOException $e) {
+                error_log($e->getMessage());
+                header('Location: ./index.php?purchase/index?msg=Error');
                 exit();
             }
         } 

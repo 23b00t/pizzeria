@@ -22,6 +22,7 @@ $csrf_token = Helper::generateCSRFToken();
                 <li>
                     <!-- TODO: refactoring and add link to Pizza#show -->
                     <strong><?= htmlspecialchars(Pizza::findBy($cardItem->pizza_id(), 'id')->name()); ?></strong> 
+                <?php if ($purchase->status() === 'pending' ): ?>
                     (Anzahl: 
                     <form action="./index.php?card/update" method="POST" style="display:inline;">
                         <input type="number" name="quantity" value="<?= htmlspecialchars($cardItem->quantity()); ?>" min="1" required style="width: 60px;">
@@ -34,13 +35,20 @@ $csrf_token = Helper::generateCSRFToken();
                     )
                     <a href="./index.php?card/delete/<?= htmlspecialchars($cardItem->id()); ?>" class="btn btn-danger btn-sm">Entfernen</a>
                 </li>
+                <?php else: ?>
+                    <?= '( ' . htmlspecialchars($cardItem->quantity()) . 'x )'; ?>
+                <?php endif ?>
             <?php endforeach; ?>
         </ul>
 
-        <div class="purchase-actions">
-            <a href="./index.php?purchase/update/<?= htmlspecialchars($purchase->id()); ?>" class="btn btn-success">Bestellung tätigen</a>
-            <a href="./index.php?purchase/delete/<?= htmlspecialchars($purchase->id()); ?>" class="btn btn-danger">Bestellung verwerfen</a>
-        </div>
+        <?php if ($purchase->status() === 'pending' ): ?>
+            <div class="purchase-actions">
+                <a href="./index.php?purchase/place/<?= htmlspecialchars($purchase->id()); ?>" class="btn btn-success">Bestellung tätigen</a>
+                <a href="./index.php?purchase/delete/<?= htmlspecialchars($purchase->id()); ?>" class="btn btn-danger">Bestellung verwerfen</a>
+            </div>
+        <?php else: ?>
+            <p> Bestellung getätigt </p>
+        <?php endif ?>
     <?php else: ?>
         <p> Noch keine Artikel im Warenkorb </p>
     <?php endif ?>

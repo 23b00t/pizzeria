@@ -23,7 +23,7 @@ require_once __DIR__ . '/../models/Card.php';
 class CardController
 {
     /**
-     * Show detailed information about a specific card.
+     * Show detailed information about a specific card by id.
      *
      * This method retrieves the card by its purchase ID and any associated 
      * then includes the card detail view to display the information.
@@ -44,17 +44,19 @@ class CardController
     }
 
     /**
-     * Show detailed information about the pending card
-     *
-     * This method retrieves the card by its ID and any associated ingredients,
-     * then includes the card detail view to display the information.
+     * Show detailed information about the pending card of a user
      */
     public function showOpenCard(): void
     {
-
         $cards = $_SESSION['card'] ?? [];
         $purchase_id = $_SESSION['purchase_id'] ?? 0;
         $purchase = Purchase::findBy($purchase_id, 'id');
+        if (isset($purchase) && $purchase->status() === 'delivered') {
+            unset($_SESSION['purchase_id']);
+            unset($_SESSION['card']);
+            $purchase = null;
+            $cards = [];
+        }
 
         // Include the card detail view and pass the card object
         include './views/card/show.php'; 
