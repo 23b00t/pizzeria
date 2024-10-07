@@ -14,9 +14,9 @@ require_once __DIR__ . '/BaseModel.php';
  */
 class Pizza extends BaseModel
 {
-    private $id;
-    private $name;
-    private $price;
+    private int|null $id;
+    private string $name;
+    private float $price;
 
     /**
      * @var array List of getter methods for Pizza properties.
@@ -49,7 +49,7 @@ class Pizza extends BaseModel
      * @return array An array of ingredients and their quantities.
      * Example return: [['ingredient' => $ingredientObject, 'quantity' => $quantity]]
      */
-    public static function findIngredientsByPizzaId($pizzaId): array
+    public static function findIngredientsByPizzaId(string $pizzaId): array
     {
         $db = new DatabaseHelper("reader", getenv('PW_READER'));
 

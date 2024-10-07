@@ -22,7 +22,7 @@ class UserController
      *
      * @param int $id The user ID.
      */
-    public function show($id): void
+    public function show(string $id): void
     {
         $user = User::findBy($id, 'id');
 
@@ -39,7 +39,7 @@ class UserController
      *
      * @param array $formData The form data submitted for login.
      */
-    public function login($formData): void
+    public function login(array $formData): void
     {
         $formCheckHelper = new FormCheckHelper($formData);
         $email = $formCheckHelper->email();
@@ -65,7 +65,7 @@ class UserController
      *
      * @param array $formData The form data submitted for registration.
      */
-    public function create($formData): void
+    public function create(array $formData): void
     {
         $formCheckHelper = new FormCheckHelper($formData);
 
@@ -89,7 +89,7 @@ class UserController
      *
      * @param User $user The user object to be stored.
      */
-    private function store($user): void
+    private function store(string $user): void
     {
         try {
             // Try to save the user

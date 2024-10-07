@@ -42,7 +42,7 @@ class PizzaController
      *
      * @param int $id The pizza ID.
      */
-    public function show($id): void
+    public function show(string $id): void
     {
         $pizza = Pizza::findBy($id, 'id');
         $ingredients = Pizza::findIngredientsByPizzaId($id);
@@ -61,7 +61,7 @@ class PizzaController
      *
      * @param int $id The ID of the pizza to edit.
      */
-    public function edit($id): void
+    public function edit(string $id): void
     {
         $pizza = Pizza::findBy($id, 'id');
 
@@ -79,6 +79,7 @@ class PizzaController
      */
     public function create(): void
     {
+        $ingredients = Ingredient::findAll();
         include __DIR__ . '/../views/pizza/form.php';
     }
 
@@ -91,7 +92,7 @@ class PizzaController
      *
      * @param array $formData The form data submitted for creating the pizza.
      */
-    public function store($formData): void
+    public function store(array $formData): void
     {
         // TODO: Validation of form data
         $pizza = new Pizza($formData['name'], $formData['price']);
@@ -120,7 +121,7 @@ class PizzaController
      * @param int   $id       The pizza ID to update.
      * @param array $formData The form data submitted for updating the pizza.
      */
-    public function update($id, $formData): void
+    public function update(string $id, array $formData): void
     {
         $pizza = Pizza::findBy($id, 'id');
 
@@ -150,7 +151,7 @@ class PizzaController
      *
      * @param int $id The pizza ID.
      */
-    public function delete($id): void
+    public function delete(string $id): void
     {
         $pizza = Pizza::findBy($id, 'id');
 

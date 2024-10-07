@@ -41,7 +41,7 @@ abstract class BaseClass
      * @return mixed                  The value of the property for getters, or null for setters.
      * @throws BadMethodCallException If the method or property is disallowed or does not exist.
      */
-    public function __call($func, $params): mixed
+    public function __call(string $func, array $params): ?string 
     {
         $reflect = new ReflectionClass($this);
         $props = $reflect->getProperties(ReflectionProperty::IS_PRIVATE | ReflectionProperty::IS_PROTECTED);

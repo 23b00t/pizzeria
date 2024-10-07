@@ -12,10 +12,10 @@ require_once __DIR__ . '/BaseModel.php';
  */
 class Card extends BaseModel
 {
-    private $id;
-    private $pizza_id;
-    private $purchase_id;
-    private $quantity;
+    private int|null $id;
+    private int      $pizza_id;
+    private int      $purchase_id;
+    private int      $quantity;
 
     /**
      * @var array List of getter methods for Card properties.

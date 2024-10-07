@@ -15,10 +15,10 @@ require_once __DIR__ . '/BaseModel.php';
  */
 class Ingredient extends BaseModel
 {
-    private $id;
-    private $name;
-    private $price;
-    private $vegetarian;
+    private int|null $id;
+    private string $name;
+    private float $price;
+    private bool $vegetarian;
 
     /**
      * @var array List of getter methods for Ingredient properties. 

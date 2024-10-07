@@ -50,7 +50,7 @@ class PurchaseController
      *
      * @param array $formData The form data that contains the pizza ID and quantity for the card.
      */
-    public function handle($formData): void
+    public function handle(array $formData): void
     {
         // Get the current user's ID from the session
         $user_id = $_SESSION['login'];
@@ -99,7 +99,7 @@ class PurchaseController
      *
      * @param int $id The purchase ID to place the order for.
      */
-    public function place($id): void
+    public function place(string $id): void
     {
         // Retrieve the purchase record by ID
         $purchase = Purchase::findBy($id, 'id');
@@ -132,7 +132,7 @@ class PurchaseController
      *
      * @param int $id The purchase ID to update.
      */
-    public function update($id): void
+    public function update(string $id): void
     {
         // Retrieve the purchase record by ID
         $purchase = Purchase::findBy($id, 'id');
@@ -166,7 +166,7 @@ class PurchaseController
      *
      * @param int $id The purchase ID.
      */
-    public function delete($id): void
+    public function delete(string $id): void
     {
         // Retrieve the purchase record by ID
         $purchase = Purchase::findBy($id, 'id');

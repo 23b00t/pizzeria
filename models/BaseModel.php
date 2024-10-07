@@ -119,7 +119,7 @@ abstract class BaseModel extends BaseClass
      * @param  mixed  $value     The value of the attribute to search for.
      * @return static|null The object if found, null otherwise.
      */
-    public static function findBy($value, string $attribute): ?self
+    public static function findBy(string $value, string $attribute): ?self
     {
         // Establish database connection
         $db = new DatabaseHelper('reader', getenv('PW_READER'));

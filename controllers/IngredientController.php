@@ -43,7 +43,7 @@ class IngredientController
      *
      * @param int $id The ID of the ingredient to edit.
      */
-    public function edit($id): void
+    public function edit(string $id): void
     {
         $ingredient = Ingredient::findBy($id, 'id');
 
@@ -73,7 +73,7 @@ class IngredientController
      *
      * @param array $formData The form data submitted for creating the ingredient.
      */
-    public function store($formData): void
+    public function store(array $formData): void
     {
         // TODO: Validation of form data
         $vegetarian = (isset($formData['vegetarian']) ? 1 : 0);
@@ -103,7 +103,7 @@ class IngredientController
      * @param int   $id       The ingredient ID to update.
      * @param array $formData The form data submitted for updating the ingredient.
      */
-    public function update($id, $formData): void
+    public function update(string $id, array $formData): void
     {
         $ingredient = Ingredient::findBy($id, 'id');
 
@@ -134,7 +134,7 @@ class IngredientController
      *
      * @param int $id The ingredient ID.
      */
-    public function delete($id): void
+    public function delete(string $id): void
     {
         $ingredient = Ingredient::findBy($id, 'id');
 

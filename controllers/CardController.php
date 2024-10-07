@@ -30,7 +30,7 @@ class CardController
      *
      * @param int $id The purchase ID.
      */
-    public function show($id): void
+    public function show(string $id): void
     {
         // Retrieve the purchase record using the provided ID
         $purchase = Purchase::findBy($id, 'id');
@@ -85,7 +85,7 @@ class CardController
      *
      * @param array $formData The form data submitted for updating the card.
      */
-    public function update($formData): void
+    public function update(array $formData): void
     {
         // Get the card ID from the form data
         $card_id = $formData['card_id'];
@@ -136,7 +136,7 @@ class CardController
      *
      * @param int $id The card ID.
      */
-    public function delete($id): void
+    public function delete(string $id): void
     {
         // Retrieve the card record by ID
         $card = Card::findBy($id, 'id');

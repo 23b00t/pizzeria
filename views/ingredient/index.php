@@ -24,7 +24,7 @@ Helper::validateSession();
                         <td><?= htmlspecialchars($ingredient->id()) ?></td>
                         <td><?= htmlspecialchars($ingredient->name()) ?></td>
                         <td><?= htmlspecialchars($ingredient->price()) ?> €</td>
-                        <td><?= htmlspecialchars($ingredient->vegetarian() === 1) ? 'X' : ''; ?> </td>
+                        <td><?= htmlspecialchars($ingredient->vegetarian() == 1) ? 'X' : ''; ?> </td>
                         <td>
                             <a href="./index.php?ingredient/edit/<?= htmlspecialchars($ingredient->id()) ?>" class="btn btn-warning btn-sm">Bearbeiten</a>
                             <a href="./index.php?ingredient/delete/<?= htmlspecialchars($ingredient->id()) ?>" class="btn btn-danger btn-sm">Löschen</a>
