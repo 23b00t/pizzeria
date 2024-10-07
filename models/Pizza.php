@@ -19,12 +19,12 @@ class Pizza extends BaseModel
     private $price;
 
     /**
-     * @var array List of getter methods for Pizza properties. 
+     * @var array List of getter methods for Pizza properties.
      */
     protected static $getters = ['id', 'name', 'price'];
 
     /**
-     * @var array List of setter methods for Pizza properties. 
+     * @var array List of setter methods for Pizza properties.
      */
     protected static $setters = ['name', 'price'];
 
@@ -37,7 +37,7 @@ class Pizza extends BaseModel
      */
     public function __construct($name, $price, $id = null)
     {
-        $this->id = $id; 
+        $this->id = $id;
         $this->name = $name;
         $this->price = $price;
     }
@@ -57,7 +57,7 @@ class Pizza extends BaseModel
                 FROM ingredient i
                 JOIN pizza_ingredient j ON i.id = j.ingredient_id
                 WHERE j.pizza_id = ?";
-        
+
         $params = [$pizzaId];
         $result = $db->prepareAndExecute($sql, $params);
 
