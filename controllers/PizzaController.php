@@ -64,6 +64,8 @@ class PizzaController
      */
     public function edit(string $id): void
     {
+        if (!User::isAdmin()) return;
+
         $pizza = Pizza::findBy($id, 'id');
         $ingredients = Ingredient::findAll();
 
@@ -81,6 +83,8 @@ class PizzaController
      */
     public function create(): void
     {
+        if (!User::isAdmin()) return;
+
         $ingredients = Ingredient::findAll();
         include __DIR__ . '/../views/pizza/form.php';
     }
@@ -96,6 +100,8 @@ class PizzaController
      */
     public function store(array $formData): void
     {
+        if (!User::isAdmin()) return;
+
         // TODO: Validation of form data
         $pizza = new Pizza($formData['name'], $formData['price']);
 
@@ -136,6 +142,8 @@ class PizzaController
      */
     public function update(string $id, array $formData): void
     {
+        if (!User::isAdmin()) return;
+
         $pizza = Pizza::findBy($id, 'id');
 
         if ($pizza) {
@@ -176,6 +184,8 @@ class PizzaController
      */
     public function delete(string $id): void
     {
+        if (!User::isAdmin()) return;
+
         $pizza = Pizza::findBy($id, 'id');
 
         if ($pizza) {

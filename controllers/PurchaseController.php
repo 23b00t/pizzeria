@@ -134,6 +134,8 @@ class PurchaseController
      */
     public function update(string $id): void
     {
+        if (!User::isAdmin()) return;
+
         // Retrieve the purchase record by ID
         $purchase = Purchase::findBy($id, 'id');
 
@@ -168,6 +170,8 @@ class PurchaseController
      */
     public function delete(string $id): void
     {
+        if (!User::isAdmin()) return;
+
         // Retrieve the purchase record by ID
         $purchase = Purchase::findBy($id, 'id');
 

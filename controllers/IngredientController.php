@@ -45,6 +45,8 @@ class IngredientController
      */
     public function edit(string $id): void
     {
+        if (!User::isAdmin()) return;
+
         $ingredient = Ingredient::findBy($id, 'id');
 
         if ($ingredient) {
@@ -61,6 +63,8 @@ class IngredientController
      */
     public function create(): void
     {
+        if (!User::isAdmin()) return;
+
         include __DIR__ . '/../views/ingredient/form.php';
     }
 
@@ -75,6 +79,8 @@ class IngredientController
      */
     public function store(array $formData): void
     {
+        if (!User::isAdmin()) return;
+
         // TODO: Validation of form data
         $vegetarian = (isset($formData['vegetarian']) ? 1 : 0);
         $ingredient = new Ingredient($formData['name'], $formData['price'], $vegetarian);
@@ -105,6 +111,8 @@ class IngredientController
      */
     public function update(string $id, array $formData): void
     {
+        if (!User::isAdmin()) return;
+
         $ingredient = Ingredient::findBy($id, 'id');
 
         if ($ingredient) {
@@ -136,6 +144,8 @@ class IngredientController
      */
     public function delete(string $id): void
     {
+        if (!User::isAdmin()) return;
+
         $ingredient = Ingredient::findBy($id, 'id');
 
         if ($ingredient) {
