@@ -22,7 +22,7 @@ class UserController
      *
      * @param int $id The user ID.
      */
-    public function show(string $id): void
+    public function show(int $id): void
     {
         $user = User::findBy($id, 'id');
 

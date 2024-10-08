@@ -30,7 +30,7 @@ class CardController
      *
      * @param int $id The purchase ID.
      */
-    public function show(string $id): void
+    public function show(int $id): void
     {
         // Retrieve the purchase record using the provided ID
         $purchase = Purchase::findBy($id, 'id');
@@ -136,7 +136,7 @@ class CardController
      *
      * @param int $id The card ID.
      */
-    public function delete(string $id): void
+    public function delete(int $id): void
     {
         // Retrieve the card record by ID
         $card = Card::findBy($id, 'id');

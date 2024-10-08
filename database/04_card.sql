@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS card (
     pizza_id INT NOT NULL,
     quantity INT NOT NULL,
     FOREIGN KEY (purchase_id) REFERENCES purchase(id) ON DELETE CASCADE,
-    FOREIGN KEY (pizza_id) REFERENCES pizza(id)
+    FOREIGN KEY (pizza_id) REFERENCES pizza(id) ON DELETE SET NULL
 );

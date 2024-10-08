@@ -43,7 +43,7 @@ class IngredientController
      *
      * @param int $id The ID of the ingredient to edit.
      */
-    public function edit(string $id): void
+    public function edit(int $id): void
     {
         if (!User::isAdmin()) return;
 
@@ -109,7 +109,7 @@ class IngredientController
      * @param int   $id       The ingredient ID to update.
      * @param array $formData The form data submitted for updating the ingredient.
      */
-    public function update(string $id, array $formData): void
+    public function update(int $id, array $formData): void
     {
         if (!User::isAdmin()) return;
 
@@ -142,7 +142,7 @@ class IngredientController
      *
      * @param int $id The ingredient ID.
      */
-    public function delete(string $id): void
+    public function delete(int $id): void
     {
         if (!User::isAdmin()) return;
 

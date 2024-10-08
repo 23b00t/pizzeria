@@ -43,7 +43,7 @@ class PizzaController
      *
      * @param int $id The pizza ID.
      */
-    public function show(string $id): void
+    public function show(int $id): void
     {
         $pizza = Pizza::findBy($id, 'id');
         $ingredients = Pizza::findIngredientsByPizzaId($id);
@@ -62,7 +62,7 @@ class PizzaController
      *
      * @param int $id The ID of the pizza to edit.
      */
-    public function edit(string $id): void
+    public function edit(int $id): void
     {
         if (!User::isAdmin()) return;
 
@@ -140,7 +140,7 @@ class PizzaController
      * @param int   $id       The pizza ID to update.
      * @param array $formData The form data submitted for updating the pizza.
      */
-    public function update(string $id, array $formData): void
+    public function update(int $id, array $formData): void
     {
         if (!User::isAdmin()) return;
 
@@ -167,6 +167,7 @@ class PizzaController
                 header('Location: ./index.php?pizza/show/' . $id . '?msg=Pizza%20successfully%20updated');
                 exit();
             } catch (PDOException $e) {
+                error_log($e->getMessage());
                 header('Location: ./index.php?pizza/show/' . $id . '?msg=Error');
                 exit();
             }
@@ -182,7 +183,7 @@ class PizzaController
      *
      * @param int $id The pizza ID.
      */
-    public function delete(string $id): void
+    public function delete(int $id): void
     {
         if (!User::isAdmin()) return;
 
@@ -194,6 +195,7 @@ class PizzaController
                 header('Location: ./index.php?pizza/index?msg=Pizza%20successfully%20deleted');
                 exit();
             } catch (PDOException $e) {
+                error_log($e->getMessage());
                 // Handle errors as needed
                 header('Location: ./index.php?pizza/index?msg=error');
                 exit();

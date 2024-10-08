@@ -99,7 +99,7 @@ class PurchaseController
      *
      * @param int $id The purchase ID to place the order for.
      */
-    public function place(string $id): void
+    public function place(int $id): void
     {
         // Retrieve the purchase record by ID
         $purchase = Purchase::findBy($id, 'id');
@@ -132,7 +132,7 @@ class PurchaseController
      *
      * @param int $id The purchase ID to update.
      */
-    public function update(string $id): void
+    public function update(int $id): void
     {
         if (!User::isAdmin()) return;
 
@@ -168,7 +168,7 @@ class PurchaseController
      *
      * @param int $id The purchase ID.
      */
-    public function delete(string $id): void
+    public function delete(int $id): void
     {
         if (!User::isAdmin()) return;
 
