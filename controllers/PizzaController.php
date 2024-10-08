@@ -151,7 +151,7 @@ class PizzaController
                 foreach ($pizzaIngredients as $pizzaIngredientId => $quantity ) {
                     if (empty($quantity)) continue;
 
-                    $pizzaIngredient = PizzaIngredient::findBy($pizzaIngredientId, 'id');
+                    $pizzaIngredient = PizzaIngredient::where('ingredient_id = ? && pizza_id = ?', [$pizzaIngredientId, $pizza->id()])[0];
                     $pizzaIngredient->quantity($quantity);
                     $pizzaIngredient->update();
                 }
