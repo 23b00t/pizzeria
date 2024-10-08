@@ -69,4 +69,10 @@ class User extends BaseModel
         $this->city = $city;
         $this->role = $role;
     }
+
+    public static function isAdmin() {
+        $userId = $_SESSION['login'];
+        $user = User::findBy($userId, 'id');
+        return $user->role() === 'admin';
+    }
 }
