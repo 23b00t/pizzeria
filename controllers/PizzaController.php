@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 require_once __DIR__ . '/../helpers/FormCheckHelper.php';
 require_once __DIR__ . '/../models/Pizza.php';
+require_once __DIR__ . '/../models/PizzaIngredient.php';
 
 /**
  * PizzaController class responsible for managing pizza-related actions,
@@ -64,6 +65,7 @@ class PizzaController
     public function edit(string $id): void
     {
         $pizza = Pizza::findBy($id, 'id');
+        $ingredients = Ingredient::findAll();
 
         if ($pizza) {
             // Include the pizza detail view and pass the pizza object
@@ -101,11 +103,22 @@ class PizzaController
             // Save the new pizza
             $pizza->save();
 
+            $pizza = Pizza::where('id ORDER BY id DESC LIMIT 1', [])[0];
+
+            $pizzaIngredients = $formData['quantities'];
+            foreach ($pizzaIngredients as $pizzaIngredientId => $quantity ) {
+                if (empty($quantity)) continue;
+
+                $pizzaIngredient = new PizzaIngredient($pizza->id(), $pizzaIngredientId, $quantity);
+                $pizzaIngredient->save();
+            }
+
             // Redirect to the pizza list with a success message
             header('Location: ./index.php?pizza/index?msg=Pizza%20successfully%20created');
             exit();
         } catch (PDOException $e) {
             // Handle the error and redirect back to the form
+            error_log($e->getMessage());
             header('Location: ./index.php?pizza/index?error=Could%20not%20create%20pizza');
             exit();
         }
@@ -133,6 +146,16 @@ class PizzaController
             try {
                 // Save the updated pizza to the database
                 $pizza->update(); 
+
+                $pizzaIngredients = $formData['quantities'];
+                foreach ($pizzaIngredients as $pizzaIngredientId => $quantity ) {
+                    if (empty($quantity)) continue;
+
+                    $pizzaIngredient = PizzaIngredient::findBy($pizzaIngredientId, 'id');
+                    $pizzaIngredient->quantity($quantity);
+                    $pizzaIngredient->update();
+                }
+
                 header('Location: ./index.php?pizza/show/' . $id . '?msg=Pizza%20successfully%20updated');
                 exit();
             } catch (PDOException $e) {

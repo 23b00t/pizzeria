@@ -19,7 +19,7 @@ abstract class BaseModel extends BaseClass
      */
     public function save(): array
     {
-        $tableName = self::getTableName();
+        $tableName = static::getTableName();
         $columns = [];
         $placeholders = [];
         $values = [];
@@ -56,7 +56,7 @@ abstract class BaseModel extends BaseClass
      */
     public function update(): array
     {
-        $tableName = self::getTableName();
+        $tableName = static::getTableName();
         $columns = [];
         $values = [];
 
@@ -100,7 +100,7 @@ abstract class BaseModel extends BaseClass
         // Establish database connection
         $db = new DatabaseHelper('writer', getenv('PW_WRITER'));
 
-        $tableName = self::getTableName();
+        $tableName = static::getTableName();
 
         // Define the SQL DELETE query
         $sql = 'DELETE FROM ' . $tableName . ' WHERE id = ?';
@@ -123,7 +123,7 @@ abstract class BaseModel extends BaseClass
     {
         // Establish database connection
         $db = new DatabaseHelper('reader', getenv('PW_READER'));
-        $tableName = self::getTableName();
+        $tableName = static::getTableName();
 
         // Prepare the SQL query using the attribute name
         $sql = 'SELECT * FROM ' . $tableName . ' WHERE ' . $attribute . ' = ?';
@@ -154,7 +154,7 @@ abstract class BaseModel extends BaseClass
     {
         // Establish database connection
         $db = new DatabaseHelper('reader', getenv('PW_READER'));
-        $tableName = self::getTableName();
+        $tableName = static::getTableName();
 
         // Prepare the SQL query with the custom WHERE clause
         $sql = 'SELECT * FROM ' . $tableName . ' WHERE ' . $whereClause;
@@ -179,7 +179,7 @@ abstract class BaseModel extends BaseClass
     public static function findAll(): array
     {
         $db = new DatabaseHelper('reader', getenv('PW_READER'));
-        $tableName = self::getTableName();
+        $tableName = static::getTableName();
         $sql = 'SELECT * FROM ' . $tableName;
         $result = $db->prepareAndExecute($sql, []);
 
@@ -234,7 +234,7 @@ abstract class BaseModel extends BaseClass
      *
      * @return string The table name.
      */
-    private static function getTableName(): string
+    protected static function getTableName(): string
     {
         // Get the name of the calling class and convert it to lowercase
         $calledClass = get_called_class();

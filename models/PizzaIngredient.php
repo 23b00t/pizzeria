@@ -26,7 +26,7 @@ class PizzaIngredient extends BaseModel
     /**
      * @var array List of setter methods for PizzaIngredient properties. 
      */
-    protected static $setters = [];
+    protected static $setters = ['quantity'];
 
     /**
      * PizzaIngredient constructor.
@@ -42,5 +42,15 @@ class PizzaIngredient extends BaseModel
         $this->pizza_id = $pizza_id;
         $this->ingredient_id = $ingredient_id;
         $this->quantity = $quantity;
+    }
+
+    /**
+     * Set db table name for use in parent class
+     *
+     * @return string The table name.
+     */
+    protected static function getTableName(): string
+    {
+        return 'pizza_ingredient';
     }
 }
