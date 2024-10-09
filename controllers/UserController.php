@@ -20,6 +20,10 @@ class UserController
     /**
      * Show the user profile page.
      *
+     * This method retrieves the user by the specified ID and includes the view
+     * for displaying the user profile. If the user is not found, an error message
+     * is displayed.
+     *
      * @param int $id The user ID.
      */
     public function show(int $id): void
@@ -37,6 +41,11 @@ class UserController
     /**
      * Handle the user login process.
      *
+     * This method validates the login credentials from the submitted form data.
+     * If the credentials are valid, the user ID is saved in the session,
+     * and the user is redirected to the pizza index. Otherwise, an error message
+     * is displayed on the login form.
+     *
      * @param array $formData The form data submitted for login.
      */
     public function login(array $formData): void
@@ -50,8 +59,6 @@ class UserController
             // save user id to session to authenticate it
             $_SESSION['login'] = $user->id();
             header('Location: ./index.php?pizza/index');
-            // header('Location: ./index.php?user_id=' . $user->id());
-
             exit();
         } else {
             // Failed login
@@ -62,6 +69,10 @@ class UserController
 
     /**
      * Handle the user registration process.
+     *
+     * This method validates the registration form data, checking for password equality
+     * and policy compliance. If validation passes, a new user object is created
+     * and stored in the database.
      *
      * @param array $formData The form data submitted for registration.
      */
@@ -87,9 +98,13 @@ class UserController
     /**
      * Store a new user in the database.
      *
+     * This method attempts to save the user object to the database.
+     * If successful, the user is redirected to the login form with a success message.
+     * If an error occurs, it handles database exceptions, particularly for unique constraints.
+     *
      * @param User $user The user object to be stored.
      */
-    private function store(string $user): void
+    private function store(User $user): void
     {
         try {
             // Try to save the user
@@ -104,7 +119,7 @@ class UserController
                 header('Location: ./views/user/register_form.php?error=Username%20not%20available');
             } else {
                 // Other errors
-                header('Location: ./views/user/register_form.php?error=Unknown%20error' . $e->getCode());
+                header('Location: ./views/user/register_form.php?error=Unknown%20error%20' . $e->getCode());
             }
             exit();
         }
@@ -112,6 +127,8 @@ class UserController
 
     /**
      * Log out the user.
+     *
+     * This method clears the session and redirects the user to the index page.
      */
     public static function signOut(): void
     {

@@ -6,17 +6,15 @@ require_once __DIR__ . '/../models/Ingredient.php';
 
 /**
  * IngredientController class responsible for managing ingredient-related actions,
- * such as displaying ingredient details, handling ingredient creation, updating,
- * and deletion.
+ * such as displaying, creating, updating, and deleting ingredients.
  * 
  * Methods:
  * 
  * - index(): void: Displays a list of all ingredients available in the system.
- * - show(int $id): void: Displays detailed information about a specific ingredient based on the given ID.
+ * - edit(int $id): void: Renders the form for editing an existing ingredient.
  * - create(): void: Renders the form for creating a new ingredient.
  * - store(array $formData): void: Validates the provided form data and saves a new ingredient to the database.
- * - edit(int $id): void: Retrieves the specified ingredient by ID and renders the edit form for that ingredient.
- * - update(int $id, array $formData): void: Validates the provided form data and updates the ingredient with the given ID.
+ * - update(int $id, array $formData): void: Validates the form data and updates the specified ingredient in the database.
  * - delete(int $id): void: Deletes the ingredient identified by the specified ID from the database.
  */
 class IngredientController
@@ -25,7 +23,7 @@ class IngredientController
      * Display a list of all ingredients.
      *
      * This method retrieves all ingredients from the database and includes
-     * the corresponding view to display them in a list format.
+     * the view to display them in a list format.
      */
     public function index(): void
     {
@@ -50,7 +48,7 @@ class IngredientController
         $ingredient = Ingredient::findBy($id, 'id');
 
         if ($ingredient) {
-            // Include the ingredient detail view and pass the ingredient object
+            // Include the ingredient form view for editing
             include './views/ingredient/form.php'; 
         } 
     }
@@ -58,8 +56,7 @@ class IngredientController
     /**
      * Display the form for creating a new ingredient.
      *
-     * This method includes the form view for the creation of a new ingredient
-     * without any pre-filled data.
+     * This method includes the form view for the creation of a new ingredient.
      */
     public function create(): void
     {
@@ -73,7 +70,7 @@ class IngredientController
      *
      * This method validates the form data submitted for creating a new
      * ingredient, instantiates the Ingredient model, and saves it to the
-     * database. It handles the redirection upon success or failure.
+     * database. It handles redirection upon success or failure.
      *
      * @param array $formData The form data submitted for creating the ingredient.
      */
@@ -81,11 +78,9 @@ class IngredientController
     {
         if (!User::isAdmin()) return;
 
-        // TODO: Validation of form data
-        $vegetarian = (isset($formData['vegetarian']) ? 1 : 0);
+        // Validate form data
+        $vegetarian = isset($formData['vegetarian']) ? 1 : 0;
         $ingredient = new Ingredient($formData['name'], $formData['price'], $vegetarian);
-        file_put_contents('/opt/lampp/logs/custom_log', "ingredient: " . print_r($ingredient, true), FILE_APPEND);
-
 
         try {
             // Save the new ingredient
@@ -96,7 +91,7 @@ class IngredientController
             exit();
         } catch (PDOException $e) {
             error_log($e->getMessage());
-            // Handle the error and redirect back to the form
+            // Handle error and redirect back to the form
             header('Location: ./index.php?ingredient/index?error=Could%20not%20create%20ingredient');
             exit();
         }
@@ -107,7 +102,7 @@ class IngredientController
      *
      * This method retrieves the ingredient by its ID, validates the provided
      * form data, updates the ingredient's properties, and saves the changes
-     * to the database. It also manages redirection upon success or failure.
+     * to the database. It manages redirection upon success or failure.
      *
      * @param int   $id       The ingredient ID to update.
      * @param array $formData The form data submitted for updating the ingredient.
@@ -119,7 +114,7 @@ class IngredientController
         $ingredient = Ingredient::findBy($id, 'id');
 
         if ($ingredient) {
-            // Update the ingredient properties
+            // Update the ingredient's properties
             $ingredient->name($formData['name']);
             $ingredient->price($formData['price']);
             $ingredient->vegetarian(isset($formData['vegetarian']) ? 1 : 0);
@@ -130,6 +125,8 @@ class IngredientController
                 header('Location: ./index.php?ingredient/index?msg=Ingredient%20successfully%20updated');
                 exit();
             } catch (PDOException $e) {
+                // Log the error and redirect with an error message
+                error_log($e->getMessage());
                 header('Location: ./index.php?ingredient/index?msg=Error');
                 exit();
             }
@@ -140,7 +137,7 @@ class IngredientController
      * Delete the ingredient with the specified ID.
      *
      * This method retrieves the ingredient by its ID and attempts to delete it
-     * from the database. It manages the redirection and handles any errors
+     * from the database. It handles redirection and manages any errors
      * that may occur during the deletion process.
      *
      * @param int $id The ingredient ID.
@@ -153,11 +150,13 @@ class IngredientController
 
         if ($ingredient) {
             try {
-                $ingredient->delete(); // Assuming a delete method exists in the Ingredient class
+                // Delete the ingredient from the database
+                $ingredient->delete();
                 header('Location: ./index.php?ingredient/index?msg=Ingredient%20successfully%20deleted');
                 exit();
             } catch (PDOException $e) {
-                // Handle errors as needed
+                // Log the error and redirect with an error message
+                error_log($e->getMessage());
                 header('Location: ./index.php?ingredient/index?msg=error');
                 exit();
             }

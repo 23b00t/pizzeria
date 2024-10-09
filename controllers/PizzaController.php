@@ -25,7 +25,8 @@ class PizzaController
     /**
      * Display a list of all pizzas.
      *
-     * @var $pizzas Variable is used in the included view.
+     * This method retrieves all pizzas from the database and includes
+     * the view to display them in a list format.
      */
     public function index(): void
     {
@@ -70,7 +71,7 @@ class PizzaController
         $ingredients = Ingredient::findAll();
 
         if ($pizza) {
-            // Include the pizza detail view and pass the pizza object
+            // Include the pizza form view for editing
             include './views/pizza/form.php'; 
         } 
     }
@@ -94,7 +95,7 @@ class PizzaController
      *
      * This method validates the form data submitted for creating a new
      * pizza, instantiates the Pizza model, and saves it to the
-     * database. It handles the redirection upon success or failure.
+     * database. It handles redirection upon success or failure.
      *
      * @param array $formData The form data submitted for creating the pizza.
      */
@@ -102,17 +103,18 @@ class PizzaController
     {
         if (!User::isAdmin()) return;
 
-        // TODO: Validation of form data
+        // TODO: Validate form data
         $pizza = new Pizza($formData['name'], $formData['price']);
 
         try {
             // Save the new pizza
             $pizza->save();
 
+            // Get the last saved pizza
             $pizza = Pizza::where('id ORDER BY id DESC LIMIT 1', [])[0];
 
             $pizzaIngredients = $formData['quantities'];
-            foreach ($pizzaIngredients as $pizzaIngredientId => $quantity ) {
+            foreach ($pizzaIngredients as $pizzaIngredientId => $quantity) {
                 if (empty($quantity)) continue;
 
                 $pizzaIngredient = new PizzaIngredient($pizza->id(), $pizzaIngredientId, $quantity);
@@ -156,7 +158,7 @@ class PizzaController
                 $pizza->update(); 
 
                 $pizzaIngredients = $formData['quantities'];
-                foreach ($pizzaIngredients as $pizzaIngredientId => $quantity ) {
+                foreach ($pizzaIngredients as $pizzaIngredientId => $quantity) {
                     if (empty($quantity)) continue;
 
                     $pizzaIngredient = PizzaIngredient::where('ingredient_id = ? && pizza_id = ?', [$pizzaIngredientId, $pizza->id()])[0];
@@ -191,6 +193,7 @@ class PizzaController
 
         if ($pizza) {
             try {
+                // Delete the pizza from the database
                 $pizza->delete();
                 header('Location: ./index.php?pizza/index?msg=Pizza%20successfully%20deleted');
                 exit();

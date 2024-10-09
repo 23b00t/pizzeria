@@ -5,15 +5,15 @@ require_once __DIR__ . '/../core/BaseClass.php';
 /** 
  * Abstract Class BaseModel
  * 
- * defines generic methods for models 
+ * Defines generic methods for models 
  * 
- * @method int id() inherited from BaseClass
+ * @method int id() Inherited from BaseClass
  */
 abstract class BaseModel extends BaseClass
 {
     /**
      * Saves the current object to the database.
-     * It dynamically generates an SQL INSERT statement based on the properties of the calling child class.
+     * Dynamically generates an SQL INSERT statement based on the properties of the calling child class.
      *
      * @return array The result of the database operation.
      */
@@ -24,7 +24,7 @@ abstract class BaseModel extends BaseClass
         $placeholders = [];
         $values = [];
 
-        // Reflect the calling child class to get its properties
+        // Reflects the calling child class to get its properties
         $reflection = new ReflectionClass(get_called_class());
         $props = $reflection->getProperties(ReflectionProperty::IS_PRIVATE);
 
@@ -35,22 +35,22 @@ abstract class BaseModel extends BaseClass
             if ($attribute !== 'id') {
                 $columns[] = $attribute;
                 $placeholders[] = '?';
-                // Retrieve the value of the property from the instance
+                // Retrieves the value of the property from the instance
                 $values[] = $prop->getValue($this);
             }
         }
 
-        // Build the SQL INSERT query
+        // Builds the SQL INSERT query
         $sql = 'INSERT INTO ' . $tableName . ' (' . implode(',', $columns) . ') VALUES (' . implode(',', $placeholders) . ')';
         $db = new DatabaseHelper('writer', getenv('PW_WRITER'));
 
-        // Execute the query and return the result
+        // Executes the query and returns the result
         return $db->prepareAndExecute($sql, $values);
     }
 
     /**
      * Updates the current object in the database.
-     * It dynamically generates an SQL UPDATE statement based on the properties of the calling child class.
+     * Dynamically generates an SQL UPDATE statement based on the properties of the calling child class.
      *
      * @return array The result of the database operation.
      */
@@ -60,60 +60,60 @@ abstract class BaseModel extends BaseClass
         $columns = [];
         $values = [];
 
-        // Reflect the calling child class to get its properties
+        // Reflects the calling child class to get its properties
         $reflection = new ReflectionClass(get_called_class());
         $props = $reflection->getProperties(ReflectionProperty::IS_PRIVATE);
 
         foreach ($props as $prop) {
             $attribute = $prop->getName();
 
-            // Do not update the 'id' field
+            // Does not update the 'id' field
             if ($attribute !== 'id') {
                 $columns[] = $attribute . ' = ?';
-                // Retrieve the value of the property from the instance
+                // Retrieves the value of the property from the instance
                 $values[] = $prop->getValue($this);
             }
         }
 
-        // Retrieve the 'id' value for the WHERE clause
+        // Retrieves the 'id' value for the WHERE clause
         $idProperty = $reflection->getProperty('id');
         $idProperty->setAccessible(true);
         $idValue = $idProperty->getValue($this);
         $values[] = $idValue;
 
-        // Build the SQL UPDATE query
+        // Builds the SQL UPDATE query
         $sql = 'UPDATE ' . $tableName . ' SET ' . implode(', ', $columns) . ' WHERE id = ?';
         $db = new DatabaseHelper('writer', getenv('PW_WRITER'));
 
-        // Execute the query and return the result
+        // Executes the query and returns the result
         return $db->prepareAndExecute($sql, $values);
     }
 
     /**
      * Deletes the current object from the database.
-     * This method generates an SQL DELETE query based on the object's ID.
+     * Generates an SQL DELETE query based on the object's ID.
      *
      * @return array The result of the delete operation.
      */
     public function delete(): array
     {
-        // Establish database connection
+        // Establishes database connection
         $db = new DatabaseHelper('writer', getenv('PW_WRITER'));
 
         $tableName = static::getTableName();
 
-        // Define the SQL DELETE query
+        // Defines the SQL DELETE query
         $sql = 'DELETE FROM ' . $tableName . ' WHERE id = ?';
         $params = [$this->id()];
 
-        // Execute the query and return the result
+        // Executes the query and returns the result
         return $db->prepareAndExecute($sql, $params);
     }
 
     /**
      * Finds an object by a specified attribute.
      *
-     * Use with unique values! Otherwise it will only return the first result!
+     * Use with unique values! Otherwise, it will only return the first result!
      *
      * @param  string $attribute The name of the attribute to search by.
      * @param  mixed  $value     The value of the attribute to search for.
@@ -121,11 +121,11 @@ abstract class BaseModel extends BaseClass
      */
     public static function findBy(string $value, string $attribute): ?self
     {
-        // Establish database connection
+        // Establishes database connection
         $db = new DatabaseHelper('reader', getenv('PW_READER'));
         $tableName = static::getTableName();
 
-        // Prepare the SQL query using the attribute name
+        // Prepares the SQL query using the attribute name
         $sql = 'SELECT * FROM ' . $tableName . ' WHERE ' . $attribute . ' = ?';
         $result = $db->prepareAndExecute($sql, [$value]);
 
@@ -143,7 +143,7 @@ abstract class BaseModel extends BaseClass
      * Example usage:
      * 
      * $whereClause = 'user_id = ? AND date = TODAY() LIMIT 1';
-     * $params = [5];  // param for user_id
+     * $params = [5];  // Parameter for user_id
      * $models = Model::where($whereClause, $params);
      *
      * @param  string $whereClause The complete WHERE clause, including any conditions.
@@ -152,14 +152,14 @@ abstract class BaseModel extends BaseClass
      */
     public static function where(string $whereClause, array $params = []): array
     {
-        // Establish database connection
+        // Establishes database connection
         $db = new DatabaseHelper('reader', getenv('PW_READER'));
         $tableName = static::getTableName();
 
-        // Prepare the SQL query with the custom WHERE clause
+        // Prepares the SQL query with the custom WHERE clause
         $sql = 'SELECT * FROM ' . $tableName . ' WHERE ' . $whereClause;
         
-        // Execute the query with the provided parameters
+        // Executes the query with the provided parameters
         $result = $db->prepareAndExecute($sql, $params);
 
         $models = [];
@@ -172,7 +172,7 @@ abstract class BaseModel extends BaseClass
 
     /**
      * Finds all objects in the table.
-     * This method dynamically maps all database results to their respective model instances.
+     * Dynamically maps all database results to their respective model instances.
      *
      * @return array An array of all model instances.
      */
@@ -193,7 +193,7 @@ abstract class BaseModel extends BaseClass
 
     /**
      * Maps database result data to the appropriate model instance.
-     * This method dynamically creates the model object using reflection, 
+     * Dynamically creates the model object using reflection, 
      * matching the database data to the constructor parameters of the child class.
      *
      * @param  array $data The data from the database.
@@ -201,30 +201,30 @@ abstract class BaseModel extends BaseClass
      */
     private static function mapDataToModel(array $data): self
     {
-        // Instantiate the calling child class using the reflected parameters
+        // Instantiates the calling child class using the reflected parameters
         $modelClass = get_called_class();
         $reflection = new ReflectionClass($modelClass);
 
-        // Retrieve the constructor parameters
+        // Retrieves the constructor parameters
         $constructor = $reflection->getConstructor();
         $parameters = $constructor->getParameters();
 
-        // Prepare an array to store the values for the constructor
+        // Prepares an array to store the values for the constructor
         $constructorArgs = [];
 
         foreach ($parameters as $param) {
             $paramName = $param->getName();
 
-            // Match data to the constructor parameters
+            // Matches data to the constructor parameters
             if (array_key_exists($paramName, $data)) {
                 $constructorArgs[] = $data[$paramName];
             } else {
-                // Use default values for optional parameters if not present in the data
+                // Uses default values for optional parameters if not present in the data
                 $constructorArgs[] = $param->isOptional() ? $param->getDefaultValue() : null;
             }
         }
 
-        // Create an instance of the child class with the matched values
+        // Creates an instance of the child class with the matched values
         return $reflection->newInstanceArgs($constructorArgs);
     }
 
@@ -236,7 +236,7 @@ abstract class BaseModel extends BaseClass
      */
     protected static function getTableName(): string
     {
-        // Get the name of the calling class and convert it to lowercase
+        // Gets the name of the calling class and converts it to lowercase
         $calledClass = get_called_class();
 
         return strtolower($calledClass);

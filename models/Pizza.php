@@ -8,9 +8,11 @@ require_once __DIR__ . '/BaseModel.php';
  *
  * Represents a pizza entity with properties and methods for database interactions.
  *
- * @method int id()
- * @method string name()
- * @method string price()
+ * @method int id()                Retrieves the ID of the pizza.
+ * @method string name()           Retrieves the name of the pizza.
+ * @method float price()           Retrieves the price of the pizza.
+ * @method void name(string $name) Sets the name of the pizza.
+ * @method void price(float $price) Sets the price of the pizza.
  */
 class Pizza extends BaseModel
 {

@@ -20,9 +20,7 @@
  * @method mixed __call(string $func, array $params)
  *         Dynamically handles getter and setter calls for class properties.
  * @throws BadMethodCallException If the method or property is disallowed or does not exist.
- *
  */
-
 abstract class BaseClass
 {
     // Set allowed methods for getters and setters in child class
@@ -41,34 +39,37 @@ abstract class BaseClass
      * @return mixed                  The value of the property for getters, or null for setters.
      * @throws BadMethodCallException If the method or property is disallowed or does not exist.
      */
-    public function __call(string $func, array $params): ?string 
+    public function __call(string $func, array $params): mixed 
     {
         $reflect = new ReflectionClass($this);
         $props = $reflect->getProperties(ReflectionProperty::IS_PRIVATE | ReflectionProperty::IS_PROTECTED);
 
-        // iterate over all instance variables
+        // Iterate over all instance variables
         foreach ($props as $prop) {
-            // Check if the named called is valid. Without this the first found is returned
-            // and not the one which the caller searches
-            // Create getters, to params with getters
-            if ($prop->getName() === $func && empty($params)) {
-                // Check for not allowed getters
-                self::checkAllowed($func, static::$getters);
-                return $prop->getValue($this);
-                // create setters, if params are set
-            } elseif ($prop->getName() === $func && isset($params)) {
-                // Check for not allowed setters
+            // Check if the called method matches the property name
+            if ($prop->getName() === $func) {
+                // For getters: return the property value if no parameters are passed
+                if (empty($params)) {
+                    self::checkAllowed($func, static::$getters);
+                    return $prop->getValue($this);
+                }
+
+                // For setters: set the property value if parameters are provided
                 self::checkAllowed($func, static::$setters);
-                return $prop->setValue($this, ...$params);
+                $prop->setValue($this, ...$params);
+                return;
             }
         }
 
-        // attribute not found
-        throw new BadMethodCallException('Method {$func} does not exist.');
+        // Method not found
+        throw new BadMethodCallException("Method '{$func}' does not exist.");
     }
 
     /**
-     * Checks if the method is on the white list
+     * Checks if the method is on the whitelist.
+     *
+     * This method verifies if the given method name is allowed based on the 
+     * provided exceptions array. If not allowed, it throws an exception.
      *
      * @param  string $func       The name of the method to check.
      * @param  array  $exceptions The list of allowed methods.
@@ -77,17 +78,7 @@ abstract class BaseClass
     private static function checkAllowed(string $func, array $exceptions): void
     {
         if (!in_array($func, $exceptions)) {
-            throw new BadMethodCallException('{$func} is not allowed.');
+            throw new BadMethodCallException("'{$func}' is not allowed.");
         }
     }
 }
-
-/* NOTE: Resources
-*
-* https://www.php.net/manual/en/class.reflectionclass.php
-* https://www.php.net/manual/en/reflectionclass.getproperties.php
-* https://www.php.net/manual/en/reflectionclass.getname.php
-* https://www.php.net/manual/en/reflectionclassconstant.getvalue.php
-* https://www.php.net/manual/en/reflectionproperty.setvalue.php
-* https://stackoverflow.com/questions/12868066/dynamically-create-php-class-functions#12868100
-*/

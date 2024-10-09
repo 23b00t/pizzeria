@@ -6,10 +6,13 @@ require_once __DIR__ . '/BaseModel.php';
 /**
  * Class PizzaIngredient
  *
- * @method int id()
- * @method int pizza_id()
- * @method int ingredient_id()
- * @method int quantity();
+ * Represents a pizza-ingredient association with properties and methods for database interactions.
+ *
+ * @method int id()                  Retrieves the ID of the pizza ingredient association.
+ * @method int pizza_id()           Retrieves the ID of the associated pizza.
+ * @method int ingredient_id()      Retrieves the ID of the associated ingredient.
+ * @method int quantity()            Retrieves the quantity of the ingredient in the pizza.
+ * @method void quantity(int $quantity) Sets the quantity of the ingredient in the pizza.
  */
 class PizzaIngredient extends BaseModel
 {
@@ -19,22 +22,22 @@ class PizzaIngredient extends BaseModel
     private int $quantity;
 
     /**
-     * @var array List of getter methods for PizzaIngredient properties. 
+     * @var array List of getter methods for PizzaIngredient properties.
      */
     protected static $getters = ['id', 'pizza_id', 'ingredient_id', 'quantity'];
 
     /**
-     * @var array List of setter methods for PizzaIngredient properties. 
+     * @var array List of setter methods for PizzaIngredient properties.
      */
     protected static $setters = ['quantity'];
 
     /**
      * PizzaIngredient constructor.
      *
-     * @param int       $pizza_id       The id of the pizza
-     * @param int       $ingredient_id  The id of the ingredient
-     * @param int       $quantity       The quantity of the ingredient
-     * @param int|null  $id             The ID of the ingredient (optional).
+     * @param int       $pizza_id       The ID of the pizza.
+     * @param int       $ingredient_id  The ID of the ingredient.
+     * @param int       $quantity       The quantity of the ingredient.
+     * @param int|null  $id             The ID of the pizza ingredient association (optional).
      */
     public function __construct($pizza_id, $ingredient_id, $quantity, $id = null)
     {

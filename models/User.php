@@ -4,28 +4,21 @@ require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 require_once __DIR__ . '/BaseModel.php';
 
 /**
- * User class responsible for representing and managing user data.
- * 
- * Properties:
- * 
- * - $id: The unique identifier of the user.
- * - $email: The email address of the user.
- * - $hashed_password: The hashed password of the user.
- * - $first_name: The first name of the user.
- * - $last_name: The last name of the user.
- * - $address: The address of the user.
- * - $role: The role of the user.
+ * Class User
  *
- * @method int id() 
- * @method string email()
- * @method string hashed_password()
- * @method string first_name()
- * @method string last_name()
- * @method string street()
- * @method string str_no()
- * @method string zip()
- * @method string city()
- * @method string role()
+ * Represents a user entity with properties and methods for managing user data.
+ *
+ * @method int id()                          Retrieves the unique identifier of the user.
+ * @method string email()                    Retrieves the email address of the user.
+ * @method string hashed_password()          Retrieves the hashed password of the user.
+ * @method string first_name()               Retrieves the first name of the user.
+ * @method string last_name()                Retrieves the last name of the user.
+ * @method string street()                   Retrieves the street name of the user's address.
+ * @method string str_no()                   Retrieves the street number of the user's address.
+ * @method string zip()                      Retrieves the zip code of the user's address.
+ * @method string city()                     Retrieves the city of the user's address.
+ * @method string role()                     Retrieves the role of the user.
+ * @method void role(string $role)           Sets the role of the user.
  */
 class User extends BaseModel
 {
@@ -40,7 +33,15 @@ class User extends BaseModel
     private $city;
     private $role;
 
+    /**
+     * @var array List of getter methods for User properties. 
+     */
     protected static $getters = ['id', 'email', 'hashed_password', 'first_name', 'last_name', 'street', 'str_no', 'zip', 'city', 'role'];
+
+    /**
+     * @var array List of setter methods for User properties. 
+     */
+    protected static $setters = ['role'];
 
     /**
      * User constructor.
@@ -54,7 +55,7 @@ class User extends BaseModel
      * @param string      $zip             The zip code of the user's address.
      * @param string      $city            The city of the user's address.
      * @param int|null    $id              The unique identifier of the user (optional).
-     * @param string|null $role            The user role ['customer', 'admin']. Defaults in DB to 'customer';
+     * @param string|null $role            The user role ['customer', 'admin']. Defaults in DB to 'customer'.
      */
     public function __construct($email, $hashed_password, $first_name, $last_name, $street, $str_no, $zip, $city, $id = null, $role = null)
     {
@@ -70,6 +71,11 @@ class User extends BaseModel
         $this->role = $role;
     }
 
+    /**
+     * Checks if the current user is an admin.
+     *
+     * @return bool True if the user is an admin, false otherwise.
+     */
     public static function isAdmin() {
         $userId = $_SESSION['login'];
         $user = User::findBy($userId, 'id');

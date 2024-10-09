@@ -1,8 +1,5 @@
 <?php
 
-// INFO: Return types
-// https://dev.to/karleb/return-types-in-php-3fip
-
 require_once __DIR__ . '/../helpers/Helper.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../controllers/UserController.php';
@@ -20,17 +17,18 @@ require_once __DIR__ . '/../controllers/CardController.php';
 class Router
 {
     private $route;
+
     /**
      * Constructor that starts a session if none is active.
      */
     public function __construct()
     {
-        // Check if a session is active, otherwise start one
+        // Check if a session is active; otherwise, start one
         session_status() === PHP_SESSION_NONE && session_start();
 
         $requestUri = $_SERVER['REQUEST_URI'];
 
-        // Extract query param if present, else '' (?? null coalescing operator)
+        // Extract query parameter if present; default to empty string if not
         $route = explode('?', $requestUri)[1] ?? ''; 
         $route = rtrim($route, '/'); 
         $this->route = $route;
@@ -47,7 +45,7 @@ class Router
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->handlePost();
         } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            // To avoid missmatches of the preg_match statement
+            // Redirect to the login form if the route is empty
             $this->route === '' && header('Location: ./views/user/login_form.php') && exit();
 
             $this->handleGet();
@@ -62,44 +60,44 @@ class Router
      */
     private function handlePost(): void
     {
-        // Logout user
+        // Logout user if signout is requested
         isset($_POST['signout']) && UserController::signOut();
 
-        // Check if valid CSRF Token is present
+        // Check if a valid CSRF Token is present
         Helper::checkCSRFToken();
 
-        // Handle user routes
+        // Handle user-related routes
         if (isset($_POST['login'])) {
             (new UserController())->login($_POST);
         } elseif (isset($_POST['register'])) {
             (new UserController())->create($_POST);
         } 
 
-        // Handle pizza routes
+        // Handle pizza-related routes
         elseif ($this->route === 'pizza/store') { 
             (new PizzaController())->store($_POST);
         } elseif (preg_match('/pizza\/update\/(\d+)$/', $this->route, $matches)) { 
             (new PizzaController())->update($matches[1], $_POST);
         }
 
-        // Handle ingredient routes
+        // Handle ingredient-related routes
         elseif ($this->route === 'ingredient/store') { 
             (new IngredientController())->store($_POST);
         } elseif (preg_match('/ingredient\/update\/(\d+)$/', $this->route, $matches)) { 
             (new IngredientController())->update($matches[1], $_POST);
         } 
 
-        // Handle purchase routes
+        // Handle purchase-related routes
         elseif ($this->route === 'purchase/handle') {
             (new PurchaseController())->handle($_POST);
         }
 
-        // Handle card routes
+        // Handle card-related routes
         elseif ($this->route === 'card/update') { 
             (new CardController())->update($_POST);
         } 
 
-        // exit() to clean up
+        // Exit to clean up
         exit();
     }
 
@@ -111,7 +109,7 @@ class Router
      */
     private function handleGet(): void
     {
-        // Pizza routes
+        // Handle pizza-related GET requests
         if ($this->route === 'pizza/index') { 
             (new PizzaController())->index();
         } elseif (preg_match('/pizza\/show\/(\d+)$/', $this->route, $matches)) {
@@ -124,7 +122,7 @@ class Router
             (new PizzaController())->delete($matches[1]);
         } 
 
-        // Ingredient routes
+        // Handle ingredient-related GET requests
         elseif ($this->route === 'ingredient/index') { 
             (new IngredientController())->index();
         } elseif (preg_match('/ingredient\/edit\/(\d+)$/', $this->route, $matches)) {
@@ -135,12 +133,12 @@ class Router
             (new IngredientController())->delete($matches[1]);
         } 
 
-        // User routes
+        // Handle user-related GET requests
         elseif (preg_match('/user_id=(\d+)$/', $this->route, $matches)) {
             (new UserController())->show($matches[1]);
         } 
 
-        // Purchase routes
+        // Handle purchase-related GET requests
         elseif ($this->route === 'purchase/index') {
             (new PurchaseController())->index();
         } elseif (preg_match('/purchase\/delete\/(\d+)$/', $this->route, $matches)) {
@@ -151,7 +149,7 @@ class Router
             (new PurchaseController())->update($matches[1]);
         }
         
-        // Card routes
+        // Handle card-related GET requests
         elseif (preg_match('/card\/show\/(\d+)$/', $this->route, $matches)) {
             (new CardController())->show($matches[1]);
         } elseif (preg_match('/card\/delete\/(\d+)$/', $this->route, $matches)) {

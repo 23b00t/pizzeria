@@ -3,30 +3,26 @@
 require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 require_once __DIR__ . '/../helpers/FormCheckHelper.php';
 require_once __DIR__ . '/../models/Card.php';
-require_once __DIR__ . '/../models/Card.php';
+require_once __DIR__ . '/../models/Purchase.php';
 
 /**
  * CardController class responsible for managing card-related actions,
- * such as displaying card details, handling card creation, updating,
- * and deletion.
+ * such as displaying card details, handling card updates, and deletions.
  * 
  * Methods:
  * 
- * - index(): void: Displays a list of all cards available in the system.
- * - show(int $id): void: Displays detailed information about a specific card based on the given ID.
- * - create(): void: Renders the form for creating a new card.
- * - store(array $formData): void: Validates the provided form data and saves a new card to the database.
- * - edit(int $id): void: Retrieves the specified card by ID and renders the edit form for that card.
- * - update(int $id, array $formData): void: Validates the provided form data and updates the card with the given ID.
- * - delete(int $id): void: Deletes the card identified by the specified ID from the database.
+ * - show(int $id): void: Displays detailed information about a specific card based on the provided purchase ID.
+ * - showOpenCard(): void: Displays details of the current user's pending card if available.
+ * - update(array $formData): void: Updates the quantity of a specific card based on the provided form data.
+ * - delete(int $id): void: Deletes the card with the given ID from the database.
  */
 class CardController
 {
     /**
-     * Show detailed information about a specific card by id.
+     * Show detailed information about a specific card by purchase ID.
      *
-     * This method retrieves the card by its purchase ID and any associated 
-     * then includes the card detail view to display the information.
+     * Retrieves the purchase record by its ID and any associated cards,
+     * then includes the card detail view to display this information.
      *
      * @param int $id The purchase ID.
      */
@@ -44,7 +40,6 @@ class CardController
         
         // Filter cards associated with the provided purchase ID
         $cards = array_filter($allCards, function($c) use ($id) {
-            // Ensure correct comparison between string and integer
             return $c->purchase_id() == $id;
         });
 
@@ -53,11 +48,11 @@ class CardController
     }
 
     /**
-     * Show detailed information about the pending card of a user.
+     * Show detailed information about the pending card of the current user.
      *
-     * This method checks if the user has a pending card in the session and displays
-     * the details of the card. It also verifies the purchase status to ensure that 
-     * only open cards are shown, clearing the session for delivered cards.
+     * Checks if the user has a pending card in the session and displays
+     * its details. If the associated purchase has been delivered, the 
+     * session is cleared.
      */
     public function showOpenCard(): void
     {
@@ -83,9 +78,9 @@ class CardController
     /**
      * Handle the update process for an existing card.
      *
-     * This method retrieves the card by its ID, validates the provided
-     * form data, updates the card's properties, and saves the changes
-     * to the database. It also manages redirection upon success or failure.
+     * Retrieves the card by its ID, updates its quantity based on the 
+     * provided form data, and saves the changes to the database. 
+     * It also updates the session if necessary.
      *
      * @param array $formData The form data submitted for updating the card.
      */
@@ -134,9 +129,9 @@ class CardController
     /**
      * Delete the card with the specified ID.
      *
-     * This method retrieves the card by its ID and attempts to delete it
-     * from the database. It manages the redirection and handles any errors
-     * that may occur during the deletion process.
+     * Retrieves the card by its ID and attempts to delete it
+     * from the database. Manages redirection and handles any 
+     * errors during the deletion process.
      *
      * @param int $id The card ID.
      */

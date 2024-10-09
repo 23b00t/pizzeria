@@ -13,11 +13,9 @@ require_once __DIR__ . '/../models/Card.php';
  * Methods:
  * 
  * - index(): void: Displays a list of all purchases available in the system.
- * - show(int $id): void: Displays detailed information about a specific purchase based on the given ID.
- * - create(): void: Renders the form for creating a new purchase.
- * - store(array $formData): void: Validates the provided form data and saves a new purchase to the database.
- * - edit(int $id): void: Retrieves the specified purchase by ID and renders the edit form for that purchase.
- * - update(int $id, array $formData): void: Validates the provided form data and updates the purchase with the given ID.
+ * - handle(array $formData): void: Handles the creation of a new purchase and adds items to it.
+ * - place(int $id): void: Places an order for the specified purchase by updating its status.
+ * - update(int $id): void: Updates the status of the specified purchase to "delivered".
  * - delete(int $id): void: Deletes the purchase identified by the specified ID from the database.
  */
 class PurchaseController
@@ -29,7 +27,7 @@ class PurchaseController
      * a view to display them. The $purchases variable is passed to the view
      * for rendering.
      *
-     * @var $purchases Variable is used in the included view.
+     * @var Purchase[] $purchases Array of purchases used in the included view.
      */
     public function index(): void
     {
@@ -37,6 +35,7 @@ class PurchaseController
             // Retrieve all purchases from the database
             $purchases = Purchase::findAll(); 
         } else {
+            // Retrieve purchases belonging to the logged-in user
             $purchases = Purchase::where('user_id = ?', [$_SESSION['login']]);
         }
 
@@ -174,9 +173,6 @@ class PurchaseController
      */
     public function delete(int $id): void
     {
-        // Check if user is admin or owner
-        // if (!User::isAdmin()) return;
-
         // Retrieve the purchase record by ID
         $purchase = Purchase::findBy($id, 'id');
 
