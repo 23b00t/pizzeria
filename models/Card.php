@@ -13,8 +13,8 @@ require_once __DIR__ . '/BaseModel.php';
 class Card extends BaseModel
 {
     private int|null $id;
-    private int      $pizza_id;
-    private int      $purchase_id;
+    private int|null $pizza_id;
+    private int|null $purchase_id;
     private int      $quantity;
 
     /**

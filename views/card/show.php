@@ -20,9 +20,15 @@ $csrf_token = Helper::generateCSRFToken();
         <ul>
             <?php foreach ($cards as $cardItem): ?>
                 <li>
+                <?php if ($cardItem->pizza_id() !== null): ?>
                     <strong>
-                        <a href="./index.php?pizza/show/<?= htmlspecialchars($cardItem->pizza_id()) ?>"><?= htmlspecialchars(Pizza::findBy($cardItem->pizza_id(), 'id')->name()) ?></a>
-                    </strong> 
+                        <a href="./index.php?pizza/show/<?= htmlspecialchars($cardItem->pizza_id()) ?>">
+                            <?= htmlspecialchars(Pizza::findBy($cardItem->pizza_id(), 'id')->name()) ?>
+                        </a>
+                    </strong>
+                <?php else: ?>
+                    <strong>Pizza nicht verfügbar</strong>
+                <?php endif; ?>
                 <?php if ($purchase->status() === 'pending' ): ?>
                     (Anzahl: 
                     <form action="./index.php?card/update" method="POST" style="display:inline;">

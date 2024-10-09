@@ -43,6 +43,7 @@ class CardController
             // Ensure correct comparison between string and integer
             return $c->purchase_id() == $id;
         });
+file_put_contents('/opt/lampp/logs/custom_log', "cards: " . print_r($cards, true), FILE_APPEND);
 
         // Include the card detail view, passing the card object for rendering
         include './views/card/show.php'; 
