@@ -11,14 +11,14 @@ require_once __DIR__ . '/BaseModel.php';
  * @method int id()
  * @method string name()
  * @method float price()
- * @method bool vegetarian()
+ * @method int vegetarian()
  */
 class Ingredient extends BaseModel
 {
     private int|null $id;
     private string $name;
     private float $price;
-    private bool $vegetarian;
+    private int|null $vegetarian;
 
     /**
      * @var array List of getter methods for Ingredient properties. 
@@ -35,7 +35,7 @@ class Ingredient extends BaseModel
      *
      * @param string    $name       The name of the ingredient.
      * @param float     $price      The price of the ingredient.
-     * @param bool|null $vegetarian Indicates whether the ingredient is vegetarian.
+     * @param int|null $vegetarian Indicates whether the ingredient is vegetarian.
      * @param int|null  $id         The ID of the ingredient (optional).
      */
     public function __construct($name, $price, $vegetarian, $id = null)
@@ -43,6 +43,6 @@ class Ingredient extends BaseModel
         $this->id = $id; 
         $this->name = $name;
         $this->price = $price;
-        $this->vegetarian = $vegetarian ?? 0;
+        $this->vegetarian = $vegetarian;
     }
 }

@@ -84,6 +84,8 @@ class IngredientController
         // TODO: Validation of form data
         $vegetarian = (isset($formData['vegetarian']) ? 1 : 0);
         $ingredient = new Ingredient($formData['name'], $formData['price'], $vegetarian);
+        file_put_contents('/opt/lampp/logs/custom_log', "ingredient: " . print_r($ingredient, true), FILE_APPEND);
+
 
         try {
             // Save the new ingredient
@@ -93,6 +95,7 @@ class IngredientController
             header('Location: ./index.php?ingredient/index?msg=Ingredient%20successfully%20created');
             exit();
         } catch (PDOException $e) {
+            error_log($e->getMessage());
             // Handle the error and redirect back to the form
             header('Location: ./index.php?ingredient/index?error=Could%20not%20create%20ingredient');
             exit();
