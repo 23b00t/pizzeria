@@ -33,7 +33,11 @@ class CardController
     public function show(int $id): void
     {
         // Retrieve the purchase record using the provided ID
-        $purchase = Purchase::findBy($id, 'id');
+        if (User::isAdmin()) {
+            $purchase = Purchase::findBy($id, 'id');
+        } else {
+            $purchase = Purchase::where('id = ? && user_id = ?', [$id, $_SESSION['login']])[0];
+        }
         
         // Fetch all cards
         $allCards = Card::findAll();
@@ -43,7 +47,6 @@ class CardController
             // Ensure correct comparison between string and integer
             return $c->purchase_id() == $id;
         });
-file_put_contents('/opt/lampp/logs/custom_log', "cards: " . print_r($cards, true), FILE_APPEND);
 
         // Include the card detail view, passing the card object for rendering
         include './views/card/show.php'; 

@@ -174,7 +174,8 @@ class PurchaseController
      */
     public function delete(int $id): void
     {
-        if (!User::isAdmin()) return;
+        // Check if user is admin or owner
+        // if (!User::isAdmin()) return;
 
         // Retrieve the purchase record by ID
         $purchase = Purchase::findBy($id, 'id');

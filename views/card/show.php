@@ -48,13 +48,11 @@ $csrf_token = Helper::generateCSRFToken();
             <?php endforeach; ?>
         </ul>
 
-        <?php if ($purchase->status() === 'pending' ): ?>
+        <?php if ($purchase->status() === 'pending' && !User::isAdmin() ): ?>
             <div class="purchase-actions">
                 <a href="./index.php?purchase/place/<?= htmlspecialchars($purchase->id()); ?>" class="btn btn-success">Bestellung tätigen</a>
                 <a href="./index.php?purchase/delete/<?= htmlspecialchars($purchase->id()); ?>" class="btn btn-danger">Bestellung verwerfen</a>
             </div>
-        <?php else: ?>
-            <p> Bestellung getätigt </p>
         <?php endif ?>
     <?php else: ?>
         <p> Noch keine Artikel im Warenkorb </p>
