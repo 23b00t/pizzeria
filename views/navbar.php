@@ -16,9 +16,11 @@
           <li class="nav-item">
             <a class="nav-link" href="./index.php?purchase/index">Alle Bestellungen</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="./index.php?card/card">Warenkorb</a>
-          </li>
+          <?php if (!User::isAdmin()): ?>
+            <li class="nav-item">
+              <a class="nav-link" href="./index.php?card/card">Warenkorb</a>
+            </li>
+          <?php endif; ?>
         </ul>
 
         <!-- Ausloggen --> 

@@ -15,7 +15,9 @@ Helper::validateSession();
                     <th>Name</th>
                     <th>Preis</th>
                     <th>Vegetarisch</th>
-                    <th>Aktionen</th>
+                    <?php if (User::isAdmin()): ?>
+                        <th>Aktionen</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody>
@@ -25,14 +27,19 @@ Helper::validateSession();
                         <td><?= htmlspecialchars($ingredient->name()) ?></td>
                         <td><?= htmlspecialchars($ingredient->price()) ?> €</td>
                         <td><?= htmlspecialchars($ingredient->vegetarian() == 1) ? 'X' : ''; ?> </td>
-                        <td>
-                            <a href="./index.php?ingredient/edit/<?= htmlspecialchars($ingredient->id()) ?>" class="btn btn-warning btn-sm">Bearbeiten</a>
-                            <a href="./index.php?ingredient/delete/<?= htmlspecialchars($ingredient->id()) ?>" class="btn btn-danger btn-sm">Löschen</a>
-                        </td>
+                        <?php if (User::isAdmin()): ?>
+                            <td>
+                                <a href="./index.php?ingredient/edit/<?= htmlspecialchars($ingredient->id()) ?>" class="btn btn-warning btn-sm">Bearbeiten</a>
+                                <a href="./index.php?ingredient/delete/<?= htmlspecialchars($ingredient->id()) ?>" class="btn btn-danger btn-sm">Löschen</a>
+                            </td>
+                        <?php endif; ?>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
-        <a href="./index.php?ingredient/create" class="btn btn-primary">Neue Zutaten hinzufügen</a>
+
+        <?php if (User::isAdmin()): ?>
+            <a href="./index.php?ingredient/create" class="btn btn-primary">Neue Zutaten hinzufügen</a>
+        <?php endif; ?>
     </div>
 <?php require __DIR__ . '/../tail.php'; ?>

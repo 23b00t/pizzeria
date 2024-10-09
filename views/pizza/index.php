@@ -24,9 +24,12 @@ $csrf_token = Helper::generateCSRFToken();
                         <td><a href="./index.php?pizza/show/<?= htmlspecialchars($pizza->id()) ?>"><?= htmlspecialchars($pizza->name()) ?></a></td>
                         <td><?= htmlspecialchars($pizza->price()) ?> €</td>
                         <td>
+
+                        <?php if (User::isAdmin()): ?>
                             <a href="./index.php?pizza/edit/<?= htmlspecialchars($pizza->id()) ?>" class="btn btn-warning btn-sm">Bearbeiten</a>
                             <a href="./index.php?pizza/delete/<?= htmlspecialchars($pizza->id()) ?>" class="btn btn-danger btn-sm">Löschen</a>
-
+                        <?php endif; ?>
+                        <?php if (!User::isAdmin()): ?>
                             <!-- purchase form -->
                             <form action="./index.php?purchase/handle/" method="POST" style="display:inline;">
                                 <input type="hidden" name="pizza_id" value="<?= htmlspecialchars($pizza->id()) ?>">
@@ -36,11 +39,14 @@ $csrf_token = Helper::generateCSRFToken();
                                 <button type="submit" class="btn btn-success btn-sm">Warenkorb hinzufügen</button>
                             </form>
                             <!-- end purchase form -->
+                        <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
-        <a href="./index.php?pizza/create" class="btn btn-primary">Neue Pizza hinzufügen</a>
+        <?php if (User::isAdmin()): ?>
+            <a href="./index.php?pizza/create" class="btn btn-primary">Neue Pizza hinzufügen</a>
+        <?php endif; ?>
     </div>
 <?php require __DIR__ . '/../tail.php'; ?>

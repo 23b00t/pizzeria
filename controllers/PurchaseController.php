@@ -33,8 +33,12 @@ class PurchaseController
      */
     public function index(): void
     {
-        // Retrieve all purchases from the database
-        $purchases = Purchase::findAll(); 
+        if (User::isAdmin()) {
+            // Retrieve all purchases from the database
+            $purchases = Purchase::findAll(); 
+        } else {
+            $purchases = Purchase::where('user_id = ?', [$_SESSION['login']]);
+        }
 
         // Include the view to display all purchases
         include __DIR__ . '/../views/purchase/index.php'; 
