@@ -14,3 +14,4 @@
   <body>
   <?php require __DIR__ . '/navbar.php'; ?>
   <!-- INFO: Body content follows here -->
+    

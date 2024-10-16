@@ -1,0 +1,17 @@
+{
+    "name": "user/pizzeria",
+    "type": "project",
+    "require": {
+        "phpactor/phpactor": "dev-master"
+    },
+    "require-dev": {
+        "phpactor/phpactor": "dev-master"
+    },
+    "authors": [
+        {
+            "name": "Daniel Kipp",
+            "email": "daniel.kipp@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}

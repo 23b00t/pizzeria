@@ -158,7 +158,6 @@ abstract class BaseModel extends BaseClass
 
         // Prepares the SQL query with the custom WHERE clause
         $sql = 'SELECT * FROM ' . $tableName . ' WHERE ' . $whereClause;
-        
         // Executes the query with the provided parameters
         $result = $db->prepareAndExecute($sql, $params);
 
@@ -193,7 +192,7 @@ abstract class BaseModel extends BaseClass
 
     /**
      * Maps database result data to the appropriate model instance.
-     * Dynamically creates the model object using reflection, 
+     * Dynamically creates the model object using reflection,
      * matching the database data to the constructor parameters of the child class.
      *
      * @param  array $data The data from the database.

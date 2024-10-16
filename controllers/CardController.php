@@ -8,13 +8,6 @@ require_once __DIR__ . '/../models/Purchase.php';
 /**
  * CardController class responsible for managing card-related actions,
  * such as displaying card details, handling card updates, and deletions.
- * 
- * Methods:
- * 
- * - show(int $id): void: Displays detailed information about a specific card based on the provided purchase ID.
- * - showOpenCard(): void: Displays details of the current user's pending card if available.
- * - update(array $formData): void: Updates the quantity of a specific card based on the provided form data.
- * - delete(int $id): void: Deletes the card with the given ID from the database.
  */
 class CardController
 {
@@ -25,6 +18,8 @@ class CardController
      * then includes the card detail view to display this information.
      *
      * @param int $id The purchase ID.
+     *
+     * @return void
      */
     public function show(int $id): void
     {
@@ -34,24 +29,24 @@ class CardController
         } else {
             $purchase = Purchase::where('id = ? && user_id = ?', [$id, $_SESSION['login']])[0];
         }
-        
+
         // Fetch all cards
         $allCards = Card::findAll();
-        
+
         // Filter cards associated with the provided purchase ID
-        $cards = array_filter($allCards, function($c) use ($id) {
+        $cards = array_filter($allCards, function ($c) use ($id) {
             return $c->purchase_id() == $id;
         });
 
         // Include the card detail view, passing the card object for rendering
-        include './views/card/show.php'; 
+        include './views/card/show.php';
     }
 
     /**
      * Show detailed information about the pending card of the current user.
      *
      * Checks if the user has a pending card in the session and displays
-     * its details. If the associated purchase has been delivered, the 
+     * its details. If the associated purchase has been delivered, the
      * session is cleared.
      */
     public function showOpenCard(): void
@@ -59,10 +54,10 @@ class CardController
         // Retrieve the card and purchase ID from the session
         $cards = $_SESSION['card'] ?? [];
         $purchase_id = $_SESSION['purchase_id'] ?? 0;
-        
+
         // Retrieve the purchase record using the session's purchase ID
         $purchase = Purchase::findBy($purchase_id, 'id');
-        
+
         // If the purchase is delivered, clear the session and reset variables
         if (isset($purchase) && $purchase->status() === 'delivered') {
             unset($_SESSION['purchase_id']);
@@ -72,14 +67,14 @@ class CardController
         }
 
         // Include the card detail view and pass the card object
-        include './views/card/show.php'; 
+        include './views/card/show.php';
     }
 
     /**
      * Handle the update process for an existing card.
      *
-     * Retrieves the card by its ID, updates its quantity based on the 
-     * provided form data, and saves the changes to the database. 
+     * Retrieves the card by its ID, updates its quantity based on the
+     * provided form data, and saves the changes to the database.
      * It also updates the session if necessary.
      *
      * @param array $formData The form data submitted for updating the card.
@@ -88,7 +83,7 @@ class CardController
     {
         // Get the card ID from the form data
         $card_id = $formData['card_id'];
-        
+
         // Retrieve the card record by ID
         $card = Card::findBy($card_id, 'id');
 
@@ -130,7 +125,7 @@ class CardController
      * Delete the card with the specified ID.
      *
      * Retrieves the card by its ID and attempts to delete it
-     * from the database. Manages redirection and handles any 
+     * from the database. Manages redirection and handles any
      * errors during the deletion process.
      *
      * @param int $id The card ID.
@@ -145,7 +140,7 @@ class CardController
             try {
                 // Delete the card from the database
                 $card->delete();
-                
+
                 // Redirect with a success message after deletion
                 header('Location: ./index.php?card/show/' . $card->purchase_id() . '?msg=Card%20successfully%20deleted');
                 exit();

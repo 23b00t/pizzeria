@@ -9,9 +9,9 @@ require_once __DIR__ . '/../models/PizzaIngredient.php';
  * PizzaController class responsible for managing pizza-related actions,
  * such as displaying pizza details, handling pizza creation, updating,
  * and deletion.
- * 
+ *
  * Methods:
- * 
+ *
  * - index(): void: Displays a list of all pizzas available in the system.
  * - show(int $id): void: Displays detailed information about a specific pizza based on the given ID.
  * - create(): void: Renders the form for creating a new pizza.
@@ -30,10 +30,10 @@ class PizzaController
      */
     public function index(): void
     {
-        $pizzas = Pizza::findAll(); 
+        $pizzas = Pizza::findAll();
 
         // Include the view to display all pizzas
-        include __DIR__ . '/../views/pizza/index.php'; 
+        include __DIR__ . '/../views/pizza/index.php';
     }
 
     /**
@@ -51,29 +51,31 @@ class PizzaController
 
         if ($pizza) {
             // Include the pizza detail view and pass the pizza object
-            include './views/pizza/show.php'; 
-        } 
+            include './views/pizza/show.php';
+        }
     }
 
     /**
      * Render the edit form for a specified pizza.
      *
-     * This method retrieves the pizza by its ID and includes the 
+     * This method retrieves the pizza by its ID and includes the
      * form view for editing the pizza's details.
      *
      * @param int $id The ID of the pizza to edit.
      */
     public function edit(int $id): void
     {
-        if (!User::isAdmin()) return;
+        if (!User::isAdmin()) {
+            return;
+        }
 
         $pizza = Pizza::findBy($id, 'id');
         $ingredients = Ingredient::findAll();
 
         if ($pizza) {
             // Include the pizza form view for editing
-            include './views/pizza/form.php'; 
-        } 
+            include './views/pizza/form.php';
+        }
     }
 
     /**
@@ -84,7 +86,9 @@ class PizzaController
      */
     public function create(): void
     {
-        if (!User::isAdmin()) return;
+        if (!User::isAdmin()) {
+            return;
+        }
 
         $ingredients = Ingredient::findAll();
         include __DIR__ . '/../views/pizza/form.php';
@@ -101,7 +105,9 @@ class PizzaController
      */
     public function store(array $formData): void
     {
-        if (!User::isAdmin()) return;
+        if (!User::isAdmin()) {
+            return;
+        }
 
         // TODO: Validate form data
         $pizza = new Pizza($formData['name'], $formData['price']);
@@ -115,7 +121,9 @@ class PizzaController
 
             $pizzaIngredients = $formData['quantities'];
             foreach ($pizzaIngredients as $pizzaIngredientId => $quantity) {
-                if (empty($quantity)) continue;
+                if (empty($quantity)) {
+                    continue;
+                }
 
                 $pizzaIngredient = new PizzaIngredient($pizza->id(), $pizzaIngredientId, $quantity);
                 $pizzaIngredient->save();
@@ -144,7 +152,9 @@ class PizzaController
      */
     public function update(int $id, array $formData): void
     {
-        if (!User::isAdmin()) return;
+        if (!User::isAdmin()) {
+            return;
+        }
 
         $pizza = Pizza::findBy($id, 'id');
 
@@ -155,11 +165,13 @@ class PizzaController
 
             try {
                 // Save the updated pizza to the database
-                $pizza->update(); 
+                $pizza->update();
 
                 $pizzaIngredients = $formData['quantities'];
                 foreach ($pizzaIngredients as $pizzaIngredientId => $quantity) {
-                    if (empty($quantity)) continue;
+                    if (empty($quantity)) {
+                        continue;
+                    }
 
                     $pizzaIngredient = PizzaIngredient::where('ingredient_id = ? && pizza_id = ?', [$pizzaIngredientId, $pizza->id()])[0];
                     $pizzaIngredient->quantity($quantity);
@@ -173,7 +185,7 @@ class PizzaController
                 header('Location: ./index.php?pizza/show/' . $id . '?msg=Error');
                 exit();
             }
-        } 
+        }
     }
 
     /**
@@ -187,7 +199,9 @@ class PizzaController
      */
     public function delete(int $id): void
     {
-        if (!User::isAdmin()) return;
+        if (!User::isAdmin()) {
+            return;
+        }
 
         $pizza = Pizza::findBy($id, 'id');
 
