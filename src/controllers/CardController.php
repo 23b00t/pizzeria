@@ -21,7 +21,7 @@ class CardController
      *
      * @param int $id The purchase ID.
      *
-     * @return void
+     * @return array
      */
     public function show(int $id): array
     {

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * public\index.php
+ * All request come in here.
+ */
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use app\core\Router;

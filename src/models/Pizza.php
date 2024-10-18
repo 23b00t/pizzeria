@@ -55,7 +55,7 @@ class Pizza extends BaseModel
      */
     public static function findIngredientsByPizzaId(string $pizzaId): array
     {
-        $db = new DatabaseHelper("reader", getenv('PW_READER'));
+        DatabaseHelper::initializeConnection("reader", getenv('PW_READER'));
 
         $sql = "SELECT i.*, j.quantity 
                 FROM ingredient i
@@ -63,7 +63,7 @@ class Pizza extends BaseModel
                 WHERE j.pizza_id = ?";
 
         $params = [$pizzaId];
-        $result = $db->prepareAndExecute($sql, $params);
+        $result = DatabaseHelper::prepareAndExecute($sql, $params);
 
         $ingredients = [];
         if ($result) {

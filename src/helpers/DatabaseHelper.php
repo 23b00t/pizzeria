@@ -5,53 +5,40 @@ namespace app\helpers;
 use PDO;
 use PDOException;
 
-// INFO: Resourcen:
-// https://www.w3schools.com/php/php_mysqlconnect.asp
-// https://www.php.net/manual/en/ref.pdo-mysql.php
-// https://www.ibm.com/docs/en/dscp/10.1.0?topic=ess-preparing-executing-sql-statements
-// https://www.ibm.com/docs/en/dscp/10.1.0?topic=rqrs-fetching-rows-columns-from-result-sets
-// https://www.php.net/manual/de/pdo.constants.php#pdo.constants.fetch-assoc
-
 /**
  * DatabaseHelper class responsible for establishing a connection to the database
  * and executing SQL queries using PDO.
- *
- * This class handles the database connection and provides methods to prepare
- * and execute SQL statements. It ensures that the connection is properly closed
- * when the instance is destroyed.
- *
- * Properties:
- *
- * - $conn: PDO connection instance for interacting with the database.
  */
 class DatabaseHelper
 {
     /**
-     * @var PDO $conn The PDO connection instance for interacting with the database.
+     * @var PDO|null $conn The static PDO connection instance for interacting with the database.
      */
-    private $conn;
+    private static ?PDO $conn = null;
 
     /**
-     * Constructor to initialize the DatabaseHelper and establish a database connection.
+     * Static method to initialize the database connection if it hasn't been established yet.
      *
      * @param string $dbuser     The username for the database connection.
      * @param string $dbpassword The password for the database connection.
      *
      * @throws PDOException If the connection to the database fails.
      */
-    public function __construct($dbuser, $dbpassword)
+    public static function initializeConnection($dbuser, $dbpassword): void
     {
-        $servername = "127.0.0.1";
-        $dbname = "pizzeria";
-        $dsn = "mysql:host=$servername;dbname=$dbname;charset=utf8mb4";
+        if (self::$conn === null) {
+            $servername = "127.0.0.1";
+            $dbname = "pizzeria";
+            $dsn = "mysql:host=$servername;dbname=$dbname;charset=utf8mb4";
 
-        try {
-            // Establish connection using PDO
-            $this->conn = new PDO($dsn, $dbuser, $dbpassword);
-            // Set PDO error mode to exception
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            die("Connection failed: " . $e->getMessage() . "\n");
+            try {
+                // Establish connection using PDO
+                self::$conn = new PDO($dsn, $dbuser, $dbpassword);
+                // Set PDO error mode to exception
+                self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $e) {
+                die("Connection failed: " . $e->getMessage() . "\n");
+            }
         }
     }
 
@@ -65,10 +52,15 @@ class DatabaseHelper
      *
      * @throws PDOException If the execution of the statement fails.
      */
-    public function prepareAndExecute($sql, $params): array
+    public static function prepareAndExecute($sql, $params): array
     {
+        // Ensure the connection is initialized
+        if (self::$conn === null) {
+            throw new PDOException("Database connection is not initialized.");
+        }
+
         // Prepare the SQL statement
-        $stmt = $this->conn->prepare($sql);
+        $stmt = self::$conn->prepare($sql);
 
         // Execute the prepared statement
         $stmt->execute($params);
@@ -78,16 +70,12 @@ class DatabaseHelper
     }
 
     /**
-     * Destructor to close the database connection.
-     *
-     * This method is called when the DatabaseHelper instance is destroyed,
-     * ensuring that the connection to the database is properly closed.
+     * Static method to close the database connection.
      *
      * @return void
      */
-    public function __destruct()
+    public static function closeConnection(): void
     {
-        // Close the database connection
-        $this->conn = null;
+        self::$conn = null;
     }
 }

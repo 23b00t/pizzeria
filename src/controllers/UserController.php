@@ -74,6 +74,7 @@ class UserController
      * This method validates the registration form data, checking for password equality
      * and policy compliance. If validation passes, a new user object is created
      * and stored in the database.
+     * TODO: Inconsistent use of create method
      *
      * @param array $formData The form data submitted for registration.
      * @return array

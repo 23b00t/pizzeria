@@ -1,11 +1,14 @@
 <?php
 
-require_once __DIR__ . '/../helpers/DatabaseHelper.php';
+namespace app\database;
+
+use PDOException;
+use app\helpers\DatabaseHelper;
 
 /**
  * Class MigrateDatabase
- * 
- * This class is responsible for executing SQL commands from a specified SQL file 
+ *
+ * This class is responsible for executing SQL commands from a specified SQL file
  * against a database using the DatabaseHelper class.
  */
 class MigrateDatabase
@@ -18,7 +21,7 @@ class MigrateDatabase
      * @param  string $dbPassword The database password.
      * @return void
      */
-    function executeSqlFile($filePath, $dbUser, $dbPassword): void
+    public function executeSqlFile($filePath, $dbUser, $dbPassword): void
     {
         // Create an instance of the DatabaseHelper
         $dbHelper = new DatabaseHelper($dbUser, $dbPassword);

@@ -5,10 +5,7 @@ namespace app\core;
 use ReflectionMethod;
 
 /**
- * Router class for processing and handling HTTP requests.
- *
- * This class checks the request type (GET or POST) and calls the corresponding
- * method to handle the request. It automatically starts a session if none is active.
+ * Router class
  */
 class Router
 {
@@ -22,6 +19,7 @@ class Router
      * Constructor that starts a session if none is active.
      * @param string $area
      * @param string $action
+     * @param int $id
      * @param array<int,mixed> $formData
      */
     public function __construct(string $area, string $action, int $id, array $formData)
@@ -38,24 +36,33 @@ class Router
     /**
      * route
      *
-     * @return string
+     * @return array
      */
     public function route(): array
     {
+        // get controller name including namespace from @param $area
         $controllerName = 'app\\controllers\\' . ucfirst($this->area) . 'Controller';
 
+        // Check if a controller with this name exists
+        // TODO: Implement in both if-blocks Error Handeling
         if (class_exists($controllerName)) {
+            // Instanciate the controller
             $controller = new $controllerName();
 
+            // Check if the method, given in @param $action, exists in the controller
             if (method_exists($controller, $this->action)) {
+                // Instanciate ReflectionMethod to read the expected paramters of the controller method
                 $reflectionMethod = new ReflectionMethod($controller, $this->action);
                 $parameters = $reflectionMethod->getParameters();
                 $args = [];
 
+                /** Iterate over the expected params an add them to array $args if given.
+                 *  The controllers expect one of or both from int $id and array $formData.
+                 *  TODO: This logic should be reviewed and could be more robust
+                 */
                 foreach ($parameters as $param) {
-                    $paramName = $param->getName();  // Name des Parameters
+                    $paramName = $param->getName();
 
-                    // Wert aus dem formData-Array entnehmen, wenn vorhanden
                     if ($paramName === 'id') {
                         $args[] = $this->id;
                     } elseif ($paramName === 'formData') {
@@ -63,7 +70,7 @@ class Router
                     }
                 }
 
-                // Die Methode mit den gefundenen Argumenten aufrufen
+                // Call the method on the controller with $args
                 return $reflectionMethod->invokeArgs($controller, $args);
             }
         }

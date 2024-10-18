@@ -1,8 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../helpers/DatabaseHelper.php';
+namespace app\database;
 
-$db = new DatabaseHelper('root', '');
+use app\helpers\DatabaseHelper;
+
+DatabaseHelper::initializeConnection('root', '');
 
 for ($i = 1; $i <= 10; $i++) {
     $email = "user$i@example.com";
@@ -14,11 +16,12 @@ for ($i = 1; $i <= 10; $i++) {
     $zip = 12345 + $i;           // Beispiel-PLZ
     $city = "CityName";          // Beispielstadt
 
-    $db->prepareAndExecute(
+    DatabaseHelper::prepareAndExecute(
         "
         INSERT INTO user (email, hashed_password, first_name, last_name, street, str_no, zip, city, role)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'customer')
-    ", [$email, $hashedPassword, $firstName, $lastName, $street, $strNo, $zip, $city]
+    ",
+        [$email, $hashedPassword, $firstName, $lastName, $street, $strNo, $zip, $city]
     );
 }
 
@@ -27,11 +30,12 @@ $pizzaNames = ['Margherita', 'Pepperoni', 'Funghi', 'Quattro Stagioni', 'Hawaii'
 foreach ($pizzaNames as $name) {
     $price = rand(8, 15); // Zufälliger Preis zwischen 8 und 15 Euro
 
-    $db->prepareAndExecute(
+    DatabaseHelper::prepareAndExecute(
         "
         INSERT INTO pizza (name, price)
         VALUES (?, ?)
-    ", [$name, $price]
+    ",
+        [$name, $price]
     );
 }
 
@@ -39,11 +43,12 @@ foreach ($pizzaNames as $name) {
 $ingredientNames = ['Tomato', 'Cheese', 'Pepperoni', 'Mushrooms', 'Pineapple'];
 foreach ($ingredientNames as $name) {
     $price = rand(0.5, 2);
-    $db->prepareAndExecute(
+    DatabaseHelper::prepareAndExecute(
         "
         INSERT INTO ingredient (name, price)
         VALUES (?, ?)
-    ", [$name, $price]
+    ",
+        [$name, $price]
     );
 }
 
@@ -51,13 +56,14 @@ foreach ($ingredientNames as $name) {
 for ($i = 1; $i <= 5; $i++) {
     $userId = rand(1, 10); // Zufälliger Benutzer
     $purchasedAt = date('Y-m-d H:i:s');
-    $deliveredAt = date('Y-m-d H:i:s', strtotime("+".rand(1, 3)." hours")); // Zufällige Zeit in 1-3 Stunden
+    $deliveredAt = date('Y-m-d H:i:s', strtotime("+" . rand(1, 3) . " hours")); // Zufällige Zeit in 1-3 Stunden
 
-    $db->prepareAndExecute(
+    DatabaseHelper::prepareAndExecute(
         "
         INSERT INTO purchase (user_id, purchased_at, delivered_at)
         VALUES (?, ?, ?)
-    ", [$userId, $purchasedAt, $deliveredAt]
+    ",
+        [$userId, $purchasedAt, $deliveredAt]
     );
 }
 
@@ -67,11 +73,12 @@ for ($i = 1; $i <= 10; $i++) {
     $pizzaId = rand(1, count($pizzaNames)); // Zufällige Pizza
     $quantity = rand(1, 5); // Menge zwischen 1 und 5
 
-    $db->prepareAndExecute(
+    DatabaseHelper::prepareAndExecute(
         "
         INSERT INTO card (pizza_id, purchase_id, quantity)
         VALUES (?, ?, ?)
-    ", [$pizzaId, $purchaseId, $quantity]
+    ",
+        [$pizzaId, $purchaseId, $quantity]
     );
 }
 
@@ -81,11 +88,12 @@ for ($i = 1; $i <= 10; $i++) {
     $ingredientId = rand(1, count($ingredientNames)); // Zufällige Zutat
     $quantity = rand(1, 2); // Menge zwischen 1 und 2
 
-    $db->prepareAndExecute(
+    DatabaseHelper::prepareAndExecute(
         "
         INSERT INTO pizza_ingredient (pizza_id, ingredient_id, quantity)
         VALUES (?, ?, ?)
-    ", [$pizzaId, $ingredientId, $quantity]
+    ",
+        [$pizzaId, $ingredientId, $quantity]
     );
 }
 
