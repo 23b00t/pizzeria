@@ -16,7 +16,7 @@ $csrf_token = Helper::generateCSRFToken();
 <?php $pageTitle = 'Bestellung';
 require __DIR__ . '/../head.php'; ?>
 <div class="container">
-  <?php if (!empty($cards)) : ?>
+<?php if (!empty($cards)) : ?>
   <h1>Bestellung #
     <?= htmlspecialchars($purchase->id()); ?>
   </h1>
@@ -33,16 +33,16 @@ require __DIR__ . '/../head.php'; ?>
   <ul>
     <?php foreach ($cards as $cardItem) : ?>
     <li>
-      <?php if ($cardItem->pizza_id() !== null) : ?>
+        <?php if ($cardItem->pizza_id() !== null) : ?>
       <strong>
         <a href="./index.php?area=pizza&action=show&id=<?= htmlspecialchars($cardItem->pizza_id()) ?>">
-          <?= htmlspecialchars(Pizza::findBy($cardItem->pizza_id(), 'id')->name()) ?>
+            <?= htmlspecialchars(Pizza::findBy($cardItem->pizza_id(), 'id')->name()) ?>
         </a>
       </strong>
-      <?php else : ?>
+        <?php else : ?>
       <strong>Pizza nicht verfügbar</strong>
-      <?php endif; ?>
-      <?php if ($purchase->status() === 'pending') : ?>
+        <?php endif; ?>
+        <?php if ($purchase->status() === 'pending') : ?>
       (Anzahl:
       <form action="./index.php?card/update" method="POST" style="display:inline;">
         <input type="number" name="quantity" value="<?= htmlspecialchars($cardItem->quantity()); ?>" min="1" required
@@ -59,21 +59,21 @@ require __DIR__ . '/../head.php'; ?>
       <a href="./index.php?area=card&action=delete&id=<?= htmlspecialchars($cardItem->id()); ?>"
         class="btn btn-danger btn-sm">Entfernen</a>
     </li>
-    <?php else : ?>
-    <?= '( ' . htmlspecialchars($cardItem->quantity()) . 'x )'; ?>
-    <?php endif ?>
+        <?php else : ?>
+            <?= '( ' . htmlspecialchars($cardItem->quantity()) . 'x )'; ?>
+        <?php endif ?>
     <?php endforeach; ?>
   </ul>
 
-  <?php if ($purchase->status() === 'pending' && !User::isAdmin()) : ?>
+    <?php if ($purchase->status() === 'pending' && !User::isAdmin()) : ?>
   <div class="purchase-actions">
     <a href="./index.php?area=purchase&action=place&id=<?= htmlspecialchars($purchase->id()); ?>"
       class="btn btn-success">Bestellung tätigen</a>
   </div>
-  <?php endif ?>
-  <?php else : ?>
+    <?php endif ?>
+<?php else : ?>
   <p> Noch keine Artikel im Warenkorb </p>
-  <?php endif ?>
+<?php endif ?>
 
   <a href="./index.php?area=purchase&action=index" class="button">Zurück zur Übersicht</a>
 </div>

@@ -38,18 +38,21 @@ require __DIR__ . '/../head.php';
     <div class="form-group mb-3">
       <label for="ingredients">Zutaten auswählen und Stückzahl angeben:</label>
       <?php foreach ($ingredients as $ingredient) :
-        if (isset($pizza)) {
-          $pizzaIngredient = PizzaIngredient::where('ingredient_id = ? && pizza_id = ?', [$ingredient->id(), $pizza->id()])[0] ?? null;
-        }
-        $isChecked = isset($pizzaIngredient) && $pizzaIngredient->quantity() > 0 ? 'checked' : '';
-        $quantity = isset($pizzaIngredient) ? $pizzaIngredient->quantity() : 0;
-        ?>
+            if (isset($pizza)) {
+                $pizzaIngredient = PizzaIngredient::where(
+                    'ingredient_id = ? && pizza_id = ?',
+                    [$ingredient->id(), $pizza->id()]
+                )[0] ?? null;
+            }
+            $isChecked = isset($pizzaIngredient) && $pizzaIngredient->quantity() > 0 ? 'checked' : '';
+            $quantity = isset($pizzaIngredient) ? $pizzaIngredient->quantity() : 0;
+            ?>
       <div class="form-group mb-2">
         <input type="checkbox" name="ingredients[<?= $ingredient->id() ?>]"
           id="ingredient_<?= $ingredient->id() ?>" value="<?= $ingredient->id() ?>" <?=$isChecked ?>>
         <label for="ingredient_<?= $ingredient->id() ?>">
-          <?= htmlspecialchars($ingredient->name()) ?> (
-          <?= number_format($ingredient->price(), 2) ?>€)
+            <?= htmlspecialchars($ingredient->name()) ?> (
+            <?= number_format($ingredient->price(), 2) ?>€)
         </label>
         <!-- Ingredient quantity -->
         <input type="number" name="quantities[<?= $ingredient->id() ?>]" class="form-control mt-1"

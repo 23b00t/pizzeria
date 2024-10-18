@@ -19,7 +19,7 @@ require __DIR__ . '/../head.php';
   </h1>
 
   <form action="<?= isset($ingredient) ? './index.php?area=ingredient&action=update&id='
-  . htmlspecialchars($ingredient->id()) : './index.php?area=ingredient&action=store' ?>" method="POST">
+    . htmlspecialchars($ingredient->id()) : './index.php?area=ingredient&action=store' ?>" method="POST">
     <div class="form-group mb-3">
       <label for="name">Zutaten Name</label>
       <input type="text" name="name" id="name" class="form-control"

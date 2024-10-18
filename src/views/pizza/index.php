@@ -27,23 +27,23 @@ require __DIR__ . '/../head.php'; ?>
       <?php foreach ($pizzas as $pizza) : ?>
       <tr>
         <td>
-          <?= htmlspecialchars($pizza->id()) ?>
+            <?= htmlspecialchars($pizza->id()) ?>
         </td>
         <td><a href="./index.php?area=pizza&action=show&id=<?= htmlspecialchars($pizza->id()) ?>">
             <?= htmlspecialchars($pizza->name()) ?>
           </a></td>
         <td>
-          <?= htmlspecialchars($pizza->price()) ?> €
+            <?= htmlspecialchars($pizza->price()) ?> €
         </td>
         <td>
 
-          <?php if (User::isAdmin()) : ?>
+            <?php if (User::isAdmin()) : ?>
           <a href="./index.php?area=pizza&action=edit&id=<?= htmlspecialchars($pizza->id()) ?>"
             class="btn btn-warning btn-sm">Bearbeiten</a>
           <a href="./index.php?area=pizza&action=delete&id=<?= htmlspecialchars($pizza->id()) ?>"
             class="btn btn-danger btn-sm">Löschen</a>
-          <?php endif; ?>
-          <?php if (!User::isAdmin()) : ?>
+            <?php endif; ?>
+            <?php if (!User::isAdmin()) : ?>
           <!-- purchase form -->
           <form action="./index.php?area=purchase&action=handle" method="POST" style="display:inline;">
             <input type="hidden" name="pizza_id" value="<?= htmlspecialchars($pizza->id()) ?>">
@@ -54,7 +54,7 @@ require __DIR__ . '/../head.php'; ?>
             <button type="submit" class="btn btn-success btn-sm">Warenkorb hinzufügen</button>
           </form>
           <!-- end purchase form -->
-          <?php endif; ?>
+            <?php endif; ?>
         </td>
       </tr>
       <?php endforeach; ?>

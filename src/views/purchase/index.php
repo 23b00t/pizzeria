@@ -30,23 +30,23 @@ require __DIR__ . '/../head.php'; ?>
             <?= htmlspecialchars($purchase->id()) ?>
           </a></td>
         <td>
-          <?= htmlspecialchars($purchase->purchased_at()) ?? 'offen' ?>
+            <?= htmlspecialchars($purchase->purchased_at()) ?? 'offen' ?>
         </td>
         <td>
-          <?= htmlspecialchars($purchase->delivered_at()) ?? 'offen' ?>
+            <?= htmlspecialchars($purchase->delivered_at()) ?? 'offen' ?>
         </td>
         <td>
-          <?= htmlspecialchars($purchase->status()) ?>
+            <?= htmlspecialchars($purchase->status()) ?>
         </td>
         <td>
-          <?php if (User::isAdmin()) : ?>
+            <?php if (User::isAdmin()) : ?>
           <a href="./index.php?area=card&action=edit&id=<?= htmlspecialchars($purchase->id()) ?>"
             class="btn btn-warning btn-sm">Bearbeiten</a>
           <a href="./index.php?area=purchase&action=delete&id=<?= htmlspecialchars($purchase->id()) ?>"
             class="btn btn-danger btn-sm">Löschen</a>
           <a href="./index.php?area=purchase&action=update&id=<?= htmlspecialchars($purchase->id()) ?>"
             class="btn btn-success btn-sm">Geliefert</a>
-          <?php endif; ?>
+            <?php endif; ?>
         </td>
       </tr>
       <?php endforeach; ?>

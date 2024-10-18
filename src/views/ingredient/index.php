@@ -30,25 +30,25 @@ require __DIR__ . '/../head.php'; ?>
       <?php foreach ($ingredients as $ingredient) : ?>
       <tr>
         <td>
-          <?= htmlspecialchars($ingredient->id()) ?>
+            <?= htmlspecialchars($ingredient->id()) ?>
         </td>
         <td>
-          <?= htmlspecialchars($ingredient->name()) ?>
+            <?= htmlspecialchars($ingredient->name()) ?>
         </td>
         <td>
-          <?= htmlspecialchars($ingredient->price()) ?> €
+            <?= htmlspecialchars($ingredient->price()) ?> €
         </td>
         <td>
-          <?= htmlspecialchars($ingredient->vegetarian() == 1) ? 'X' : ''; ?>
+            <?= htmlspecialchars($ingredient->vegetarian() == 1) ? 'X' : ''; ?>
         </td>
-        <?php if (User::isAdmin()) : ?>
+            <?php if (User::isAdmin()) : ?>
         <td>
           <a href="./index.php?area=ingredient&action=edit&id=<?= htmlspecialchars($ingredient->id()) ?>"
             class="btn btn-warning btn-sm">Bearbeiten</a>
           <a href="./index.php?area=ingredient&action=delete&id=<?= htmlspecialchars($ingredient->id()) ?>"
             class="btn btn-danger btn-sm">Löschen</a>
         </td>
-        <?php endif; ?>
+            <?php endif; ?>
       </tr>
       <?php endforeach; ?>
     </tbody>

@@ -31,10 +31,10 @@ require __DIR__ . '/../head.php'; ?>
   <ul>
     <?php foreach ($ingredients as $ingredientData) : ?>
     <li>
-      <?= htmlspecialchars($ingredientData['ingredient']->name()); ?>
+        <?= htmlspecialchars($ingredientData['ingredient']->name()); ?>
       (Menge:
-      <?= htmlspecialchars($ingredientData['quantity']); ?>)
-      <?= $ingredientData['ingredient']->vegetarian() ? '(Vegetarisch)' : '(Nicht vegetarisch)'; ?>
+        <?= htmlspecialchars($ingredientData['quantity']); ?>)
+        <?= $ingredientData['ingredient']->vegetarian() ? '(Vegetarisch)' : '(Nicht vegetarisch)'; ?>
     </li>
     <?php endforeach; ?>
   </ul>
