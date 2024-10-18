@@ -27,10 +27,29 @@ function showAlert() {
         messageContainer.className = 'alert alert-success'; // Set Bootstrap class for success message
         messageContainer.textContent = msgText; // Set the text content to the message
         messageContainer.style.display = 'block'; // Show the message container
-    } else {
-        // No relevant keys found, no alert
-        console.log("No error or message found."); // Optional: Log a message if neither key is found
     }
+
+    // Create a close button
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'X'; // Button text
+    closeButton.style.position = 'absolute'; // Position it
+    closeButton.style.top = '10px'; // Position it at the top
+    closeButton.style.right = '10px'; // Position it on the right
+    closeButton.style.backgroundColor = 'transparent'; // Transparent background
+    closeButton.style.border = 'none'; // No border
+    closeButton.style.color = 'white'; // White text color
+    closeButton.style.cursor = 'pointer'; // Pointer cursor
+    messageContainer.appendChild(closeButton); // Add the button to the message container
+
+    // Close the alert when the button is clicked
+    closeButton.addEventListener('click', () => {
+        messageContainer.remove();
+    });
+
+    // Auto-remove the alert after a certain duration (e.g., 5 seconds)
+    setTimeout(() => {
+        messageContainer.remove();
+    }, 10000); // Adjust the time in milliseconds as needed
 }
 
 // Call function onload

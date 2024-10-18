@@ -27,7 +27,7 @@ namespace app\views;
 
 <body>
   <?php include __DIR__ . '/navbar.php'; ?>
-  <div class='custom-alert m-2' style='display: none;' role='alert'>
+  <div class='custom-alert' style='display: none;' role='alert'>
     <?= isset($msg) ? $msg : ''; ?>
   </div>
   <!-- INFO: Body content follows here -->
