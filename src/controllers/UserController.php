@@ -64,7 +64,7 @@ class UserController
             exit();
         } else {
             // Failed login
-            return ['view' => 'user/login_form', 'msg' => '?error=Login%20failed'];
+            return ['view' => 'user/login_form', 'msg' => 'error=Login failed'];
         }
     }
 
