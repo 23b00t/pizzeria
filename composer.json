@@ -5,7 +5,8 @@
         "phpactor/phpactor": "dev-master"
     },
     "require-dev": {
-        "phpactor/phpactor": "dev-master"
+        "phpactor/phpactor": "dev-master",
+        "smeghead/php-class-diagram": "dev-main"
     },
     "authors": [
         {

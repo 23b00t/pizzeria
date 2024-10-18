@@ -1,0 +1,191 @@
+@startuml
+  package models as models {
+    class "Purchase\n<b>Class Purchase</b>" as models_Purchase {
+      -id : 
+      -user_id : 
+      -purchased_at : 
+      -delivered_at : 
+      -status : 
+      #getters : array
+      #setters : array
+      +__construct(user_id, purchased_at, delivered_at, status, id)
+    }
+    class "User\n<b>Class User</b>" as models_User {
+      -id : 
+      -email : 
+      -hashed_password : 
+      -first_name : 
+      -last_name : 
+      -street : 
+      -str_no : 
+      -zip : 
+      -city : 
+      -role : 
+      #getters : array
+      #setters : array
+      +__construct(email, hashed_password, first_name, last_name, street, str_no, zip, city, id, role)
+      {static} +isAdmin()
+    }
+    class "Card\n<b>Class Card</b>" as models_Card {
+      -id : int|null
+      -pizza_id : int|null
+      -purchase_id : int|null
+      -quantity : int
+      #getters : array
+      #setters : array
+      +__construct(pizza_id, purchase_id, quantity, id)
+    }
+    class "PizzaIngredient\n<b>Class PizzaIngredient</b>" as models_PizzaIngredient {
+      -id : int|null
+      -pizza_id : int
+      -ingredient_id : int
+      -quantity : int
+      #getters : array
+      #setters : array
+      +__construct(pizza_id, ingredient_id, quantity, id)
+      {static} #getTableName()
+    }
+    class "BaseModel\n<b>Abstract Class BaseModel</b>" as models_BaseModel {
+      +save()
+      +update()
+      +delete()
+      {static} +findBy(value, attribute)
+      {static} +where(whereClause, params)
+      {static} +findAll()
+      {static} -mapDataToModel(data)
+      {static} #getTableName()
+    }
+    class "Pizza\n<b>Class Pizza</b>" as models_Pizza {
+      -id : int|null
+      -name : string
+      -price : float
+      #getters : array
+      #setters : array
+      +__construct(name, price, id)
+      {static} +findIngredientsByPizzaId(pizzaId)
+    }
+    class "Ingredient\n<b>Class Ingredient</b>" as models_Ingredient {
+      -id : int|null
+      -name : string
+      -price : float
+      -vegetarian : int|null
+      #getters : array
+      #setters : array
+      +__construct(name, price, vegetarian, id)
+    }
+  }
+  package helpers as helpers {
+    class "Helper\n<b>Helper class providing utility functions for CSRF (Cross-Site Request Forgery) protection.</b>" as helpers_Helper {
+      {static} +checkCSRFToken()
+      {static} +generateCSRFToken()
+      {static} +validateSession()
+    }
+    class "DatabaseHelper\n<b>DatabaseHelper class responsible for establishing a connection to the database</b>" as helpers_DatabaseHelper {
+      -conn : PDO|null
+      {static} +initializeConnection(dbuser, dbpassword)
+      {static} +prepareAndExecute(sql, params)
+      {static} +closeConnection()
+    }
+    class "FormCheckHelper\n<b>FormCheckHelper class for handling form data, especially related to password validation.</b>" as helpers_FormCheckHelper {
+      -email : 
+      -password : 
+      -password_hash : 
+      -password_repeat : 
+      #getters : 
+      #setters : 
+      +__construct(formData)
+      +validatePasswordPolicy()
+      +validatePasswordEquality()
+      -setHashedPassword(password)
+    }
+  }
+  package controllers as controllers {
+    class "UserController\n<b>UserController class responsible for managing user-related actions, such as</b>" as controllers_UserController {
+      +showLogin()
+      +new()
+      +login(formData)
+      +create(formData)
+      -store(user)
+      +signOut()
+    }
+    class "PurchaseController\n<b>PurchaseController class responsible for managing purchase-related actions,</b>" as controllers_PurchaseController {
+      +index()
+      +handle(formData)
+      +place(id)
+      +update(id)
+      +delete(id)
+    }
+    class "IngredientController\n<b>IngredientController class responsible for managing ingredient-related actions,</b>" as controllers_IngredientController {
+      +index()
+      +edit(id)
+      +create()
+      +store(formData)
+      +update(id, formData)
+      +delete(id)
+    }
+    class "PizzaController\n<b>PizzaController class responsible for managing pizza-related actions,</b>" as controllers_PizzaController {
+      +index()
+      +show(id)
+      +edit(id)
+      +create()
+      +store(formData)
+      +update(id, formData)
+      +delete(id)
+    }
+    class "CardController\n<b>CardController class responsible for managing card-related actions,</b>" as controllers_CardController {
+      +show(id)
+      +showOpenCard()
+      +update(formData)
+      +delete(id)
+    }
+  }
+  package core as core {
+    class "BaseClass\n<b>BaseClass provides a mechanism for automatic getter and setter generation</b>" as core_BaseClass {
+      #getters : 
+      #setters : 
+      +__call(func, params)
+      {static} -checkAllowed(func, exceptions)
+    }
+    class "Router\n<b>Router class</b>" as core_Router {
+      -area : string
+      -action : string
+      -id : int
+      -formData : array
+      +__construct(area, action, id, formData)
+      +route()
+    }
+  }
+  package database as database {
+    class "MigrateDatabase\n<b>Class MigrateDatabase</b>" as database_MigrateDatabase {
+      +executeSqlFile(filePath, dbUser, dbPassword)
+    }
+  }
+  controllers_CardController ..> models_Card
+  controllers_CardController ..> models_Purchase
+  controllers_CardController ..> models_User
+  controllers_IngredientController ..> models_Ingredient
+  controllers_IngredientController ..> models_User
+  controllers_PizzaController ..> models_Ingredient
+  controllers_PizzaController ..> models_Pizza
+  controllers_PizzaController ..> models_PizzaIngredient
+  controllers_PizzaController ..> models_User
+  controllers_PurchaseController ..> models_Card
+  controllers_PurchaseController ..> models_Purchase
+  controllers_PurchaseController ..> models_User
+  controllers_UserController ..> helpers_FormCheckHelper
+  controllers_UserController ..> models_User
+  core_BaseClass <|-- helpers_FormCheckHelper
+  core_BaseClass <|-- models_BaseModel
+  database_MigrateDatabase ..> helpers_DatabaseHelper
+  models_BaseModel ..> helpers_DatabaseHelper
+  models_BaseModel <|-- models_Card
+  models_BaseModel <|-- models_Ingredient
+  models_BaseModel <|-- models_Pizza
+  models_BaseModel <|-- models_PizzaIngredient
+  models_BaseModel <|-- models_Purchase
+  models_BaseModel <|-- models_User
+  models_Pizza ..> helpers_DatabaseHelper
+  models_Pizza ..> models_Ingredient
+  models_User ..> models_User
+@enduml
+
