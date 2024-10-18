@@ -92,7 +92,7 @@ class PurchaseController
         $card = Card::where('purchase_id = ? ORDER BY id DESC LIMIT 1', [$purchase_id])[0];
         $_SESSION['card'][] = $card;
 
-        return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Warenkorb hinzugefügt'];
+        return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'msg=Warenkorb hinzugefügt'];
     }
 
     /**
@@ -118,11 +118,14 @@ class PurchaseController
                 $purchase->update();
 
                 // Redirect with a success message
-                return ['redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'Erfolgreich'];
+                return [
+                    'redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard',
+                    'msg' => 'msg=Bestellung erfolgreich getätigt'
+                ];
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'Fehler'];
+                return ['redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'error=Fehler'];
             }
         }
     }
@@ -139,7 +142,9 @@ class PurchaseController
     public function update(int $id): array
     {
         if (!User::isAdmin()) {
-            return ['redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'Fehler'];
+            return [
+                'redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'error=Nicht erlaubt!'
+            ];
         }
 
         // Retrieve the purchase record by ID
@@ -154,11 +159,14 @@ class PurchaseController
                 $purchase->update();
 
                 // Redirect with a success message
-                return ['redirect' => 'true', 'area' => 'purchase', 'action' => 'index', 'msg' => 'Erfolgreich'];
+                return [
+                    'redirect' => 'true', 'area' => 'purchase', 'action' => 'index',
+                    'msg' => 'msg=Erfolgreich aktualisiert'
+                ];
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'purchase', 'action' => 'index', 'msg' => 'Fehler'];
+                return ['redirect' => 'true', 'area' => 'purchase', 'action' => 'index', 'msg' => 'error=Fehler'];
             }
         }
     }
@@ -189,11 +197,13 @@ class PurchaseController
                 unset($_SESSION['purchase_id']);
 
                 // Redirect with a success message after deletion
-                return ['redirect' => 'true', 'area' => 'purchase', 'action' => 'index', 'msg' => 'Erfolgreich'];
+                return [
+                    'redirect' => 'true', 'area' => 'purchase', 'action' => 'index', 'msg' => 'msg=Erfolgreich gelöscht'
+                ];
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'purchase', 'action' => 'index', 'msg' => 'Fehler'];
+                return ['redirect' => 'true', 'area' => 'purchase', 'action' => 'index', 'msg' => 'error=Fehler'];
             }
         }
     }

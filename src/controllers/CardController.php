@@ -113,11 +113,14 @@ class CardController
                     $_SESSION['card'] = array_values($_SESSION['card']);
                 }
 
-                return ['redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'Erfolgreich'];
+                return [
+                    'redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard',
+                    'msg' => 'msg=Erfolgreich aktualisiert'
+                ];
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'Fehler'];
+                return ['redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'error=Fehler'];
             }
         }
     }
@@ -144,11 +147,13 @@ class CardController
                 $card->delete();
 
                 // Redirect with a success message after deletion
-                return ['redirect' => 'true', 'area' => 'card', 'action' => 'index', 'msg' => 'Erfolgreich gelöscht'];
+                return [
+                    'redirect' => 'true', 'area' => 'card', 'action' => 'index', 'msg' => 'msg=Erfolgreich gelöscht'
+                ];
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'card', 'action' => 'index', 'msg' => 'Fehler'];
+                return ['redirect' => 'true', 'area' => 'card', 'action' => 'index', 'msg' => 'error=Fehler'];
             }
         }
     }

@@ -72,7 +72,7 @@ class PizzaController
     public function edit(int $id): array
     {
         if (!User::isAdmin()) {
-            return ['view' => 'pizza/index'];
+            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'error=Nicht erlaubt'];
         }
 
         $pizza = Pizza::findBy($id, 'id');
@@ -94,7 +94,7 @@ class PizzaController
     public function create(): array
     {
         if (!User::isAdmin()) {
-            return ['view' => 'pizza/index'];
+            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'error=Nicht erlaubt'];
         }
 
         $ingredients = Ingredient::findAll();
@@ -114,7 +114,7 @@ class PizzaController
     public function store(array $formData): array
     {
         if (!User::isAdmin()) {
-            return ['view' => 'pizza/index'];
+            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'error=Nicht erlaubt'];
         }
 
         // TODO: Validate form data
@@ -138,11 +138,11 @@ class PizzaController
             }
 
             // Redirect to the pizza list with a success message
-            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Erstellen erfolgreich'];
+            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'msg=Erstellen erfolgreich'];
         } catch (PDOException $e) {
             // Handle the error and redirect back to the form
             error_log($e->getMessage());
-            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Fehler'];
+            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'error=Fehler'];
         }
     }
 
@@ -160,7 +160,7 @@ class PizzaController
     public function update(int $id, array $formData): array
     {
         if (!User::isAdmin()) {
-            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Nicht erlaubt'];
+            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'error=Nicht erlaubt'];
         }
 
         $pizza = Pizza::findBy($id, 'id');
@@ -188,11 +188,12 @@ class PizzaController
                     $pizzaIngredient->update();
                 }
 
-                return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Update erfolgreich'];
+                return [
+                    'redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'msg=Update erfolgreich'
+                ];
             } catch (PDOException $e) {
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Fehler'];
-                exit();
+                return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'error=Fehler'];
             }
         }
     }
@@ -210,7 +211,7 @@ class PizzaController
     public function delete(int $id): array
     {
         if (!User::isAdmin()) {
-            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Nicht erlaubt'];
+            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'error=Nicht erlaubt'];
         }
 
         $pizza = Pizza::findBy($id, 'id');
@@ -219,11 +220,13 @@ class PizzaController
             try {
                 // Delete the pizza from the database
                 $pizza->delete();
-                return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Löschen erfolgreich'];
+                return [
+                    'redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'msg=Löschen erfolgreich'
+                ];
             } catch (PDOException $e) {
                 error_log($e->getMessage());
                 // Handle errors as needed
-                return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Fehler'];
+                return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'error=Fehler'];
             }
         }
     }

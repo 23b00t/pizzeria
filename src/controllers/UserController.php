@@ -84,9 +84,9 @@ class UserController
         $formCheckHelper = new FormCheckHelper($formData);
 
         if (!$formCheckHelper->validatePasswordEquality()) {
-            return ['view' => 'user/register_form', 'msg' => '?error=Passwords%20do%20not%20match'];
+            return ['view' => 'user/register_form', 'msg' => 'error=Passwords% do not match'];
         } elseif (!$formCheckHelper->validatePasswordPolicy()) {
-            return ['view' => 'user/register_form', 'msg' => '?error=Weak%20password'];
+            return ['view' => 'user/register_form', 'msg' => 'error=Weak password'];
         } else {
             // Create a new user object
             $user = new User(
@@ -123,14 +123,14 @@ class UserController
             $user->save();
 
             // Successful insertion
-            return ['view' => 'user/login_form', 'msg' => '?msg=Account%20successfully%20created'];
+            return ['view' => 'user/login_form', 'msg' => 'msg=Account successfully created'];
         } catch (PDOException $e) {
             // Error 23000: Duplicate entry (database error for UNIQUE constraint)
             if ($e->getCode() === '23000') {
-                return ['view' => 'user/register_form', 'msg' => '?error=Username%20not%20available'];
+                return ['view' => 'user/register_form', 'msg' => 'error=Username not available'];
             } else {
                 // Other errors
-                return ['view' => 'user/register_form', 'msg' => '?error=Unknown%20error%20'];
+                return ['view' => 'user/register_form', 'msg' => 'error=Unknown error '];
             }
         }
     }

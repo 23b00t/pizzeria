@@ -48,7 +48,7 @@ class IngredientController
     public function edit(int $id): array
     {
         if (!User::isAdmin()) {
-            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Nicht erlaubt'];
+            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'error=Nicht erlaubt'];
         }
 
         $ingredient = Ingredient::findBy($id, 'id');
@@ -68,7 +68,7 @@ class IngredientController
     public function create(): array
     {
         if (!User::isAdmin()) {
-            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Nicht erlaubt'];
+            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'error=Nicht erlaubt'];
         }
 
         return ['view' => 'ingredient/form'];
@@ -87,7 +87,7 @@ class IngredientController
     public function store(array $formData): array
     {
         if (!User::isAdmin()) {
-            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Nicht erlaubt'];
+            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'error=Nicht erlaubt'];
         }
 
         // Validate form data
@@ -99,11 +99,13 @@ class IngredientController
             $ingredient->save();
 
             // Redirect to the ingredient list with a success message
-            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Erfolgreich erstellt'];
+            return [
+                'redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'msg=Erfolgreich erstellt'
+            ];
         } catch (PDOException $e) {
             error_log($e->getMessage());
             // Handle error and redirect back to the form
-            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Fehler'];
+            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'error=Fehler'];
         }
     }
 
@@ -121,7 +123,7 @@ class IngredientController
     public function update(int $id, array $formData): array
     {
         if (!User::isAdmin()) {
-            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Nicht erlaubt'];
+            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'error=Nicht erlaubt'];
         }
 
         $ingredient = Ingredient::findBy($id, 'id');
@@ -142,7 +144,7 @@ class IngredientController
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Fehler'];
+                return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'error=Fehler'];
             }
         }
     }
@@ -160,7 +162,7 @@ class IngredientController
     public function delete(int $id): array
     {
         if (!User::isAdmin()) {
-            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Nicht erlaubt'];
+            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'error=Nicht erlaubt'];
         }
 
         $ingredient = Ingredient::findBy($id, 'id');
@@ -170,12 +172,13 @@ class IngredientController
                 // Delete the ingredient from the database
                 $ingredient->delete();
                 return [
-                    'redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Erfolgreich gelöscht'
+                    'redirect' => 'true', 'area' => 'ingredient', 'action' => 'index',
+                    'msg' => 'msg=Erfolgreich gelöscht'
                 ];
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Fehler'];
+                return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'error=Fehler'];
             }
         }
     }
