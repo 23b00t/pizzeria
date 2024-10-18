@@ -45,7 +45,7 @@ abstract class BaseClass
      * @return mixed                  The value of the property for getters, or null for setters.
      * @throws BadMethodCallException If the method or property is disallowed or does not exist.
      */
-    public function __call(string $func, array $params): mixed 
+    public function __call(string $func, array $params): mixed
     {
         $reflect = new ReflectionClass($this);
         $props = $reflect->getProperties(ReflectionProperty::IS_PRIVATE | ReflectionProperty::IS_PROTECTED);
@@ -74,7 +74,7 @@ abstract class BaseClass
     /**
      * Checks if the method is on the whitelist.
      *
-     * This method verifies if the given method name is allowed based on the 
+     * This method verifies if the given method name is allowed based on the
      * provided exceptions array. If not allowed, it throws an exception.
      *
      * @param  string $func       The name of the method to check.

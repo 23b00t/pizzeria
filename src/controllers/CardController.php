@@ -23,7 +23,7 @@ class CardController
      *
      * @return void
      */
-    public function show(int $id): void
+    public function show(int $id): array
     {
         // Retrieve the purchase record using the provided ID
         if (User::isAdmin()) {
@@ -41,7 +41,7 @@ class CardController
         });
 
         // Include the card detail view, passing the card object for rendering
-        include './views/card/show.php';
+        return ['view' => 'card/show', 'purchase' => $purchase, 'cards' => $cards];
     }
 
     /**
@@ -50,8 +50,9 @@ class CardController
      * Checks if the user has a pending card in the session and displays
      * its details. If the associated purchase has been delivered, the
      * session is cleared.
+     * @return array<string,string>
      */
-    public function showOpenCard(): void
+    public function showOpenCard(): array
     {
         // Retrieve the card and purchase ID from the session
         $cards = $_SESSION['card'] ?? [];
@@ -69,7 +70,7 @@ class CardController
         }
 
         // Include the card detail view and pass the card object
-        include './views/card/show.php';
+        return ['view' => 'card/show', 'purchase' => $purchase, 'cards' => $cards];
     }
 
     /**
@@ -80,8 +81,9 @@ class CardController
      * It also updates the session if necessary.
      *
      * @param array $formData The form data submitted for updating the card.
+     * @return array<string,string>
      */
-    public function update(array $formData): void
+    public function update(array $formData): array
     {
         // Get the card ID from the form data
         $card_id = $formData['card_id'];
@@ -111,14 +113,11 @@ class CardController
                     $_SESSION['card'] = array_values($_SESSION['card']);
                 }
 
-                // Redirect with a success message
-                header('Location: ./index.php?card/card?msg=Card%20successfully%20updated');
-                exit();
+                return ['redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'Erfolgreich'];
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                header('Location: ./index.php?card/card?msg=Error');
-                exit();
+                return ['redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'Fehler'];
             }
         }
     }
@@ -131,8 +130,9 @@ class CardController
      * errors during the deletion process.
      *
      * @param int $id The card ID.
+     * @return array<string,string>
      */
-    public function delete(int $id): void
+    public function delete(int $id): array
     {
         // Retrieve the card record by ID
         $card = Card::findBy($id, 'id');
@@ -144,13 +144,11 @@ class CardController
                 $card->delete();
 
                 // Redirect with a success message after deletion
-                header('Location: ./index.php?card/show/' . $card->purchase_id() . '?msg=Card%20successfully%20deleted');
-                exit();
+                return ['redirect' => 'true', 'area' => 'card', 'action' => 'index', 'msg' => 'Erfolgreich gelöscht'];
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                header('Location: ./index.php?card/index?msg=error');
-                exit();
+                return ['redirect' => 'true', 'area' => 'card', 'action' => 'index', 'msg' => 'Fehler'];
             }
         }
     }

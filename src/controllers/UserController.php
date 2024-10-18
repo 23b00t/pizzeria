@@ -21,24 +21,23 @@ use PDOException;
 class UserController
 {
     /**
-     * Show the user profile page.
+     * showLogin
      *
-     * This method retrieves the user by the specified ID and includes the view
-     * for displaying the user profile. If the user is not found, an error message
-     * is displayed.
-     *
-     * @param int $id The user ID.
+     * @return array
      */
-    public function show(int $id): void
+    public function showLogin(): array
     {
-        $user = User::findBy($id, 'id');
+        return ['view' => 'user/login_form'];
+    }
 
-        if ($user) {
-            // Include the user profile view and pass the user object
-            include './views/user/user_profile.php';
-        } else {
-            echo 'User not found.';
-        }
+    /**
+     * showRegister
+     *
+     * @return array
+     */
+    public function new(): array
+    {
+        return ['view' => 'user/register_form'];
     }
 
     /**
@@ -50,23 +49,22 @@ class UserController
      * is displayed on the login form.
      *
      * @param array $formData The form data submitted for login.
+     * @return array
      */
-    public function login(array $formData): void
+    public function login(array $formData): array
     {
         $formCheckHelper = new FormCheckHelper($formData);
         $email = $formCheckHelper->email();
         $user = User::findBy($email, 'email');
 
         if ($user && password_verify($formCheckHelper->password(), $user->hashed_password())) {
-
             // save user id to session to authenticate it
             $_SESSION['login'] = $user->id();
-            header('Location: ./index.php?pizza/index');
+            return [ 'redirect' => 'true', 'area' => 'pizza', 'action' => 'index'];
             exit();
         } else {
             // Failed login
-            header('Location: ./views/user/login_form.php?error=Invalid%20login%20credentials');
-            exit();
+            return ['view' => 'user/login_form', 'msg' => '?error=Login%20failed'];
         }
     }
 
@@ -78,23 +76,32 @@ class UserController
      * and stored in the database.
      *
      * @param array $formData The form data submitted for registration.
+     * @return array
      */
-    public function create(array $formData): void
+    public function create(array $formData): array
     {
         $formCheckHelper = new FormCheckHelper($formData);
 
         if (!$formCheckHelper->validatePasswordEquality()) {
-            header('Location: ./views/user/register_form.php?error=Passwords%20do%20not%20match');
-            exit();
+            return ['view' => 'user/register_form', 'msg' => '?error=Passwords%20do%20not%20match'];
         } elseif (!$formCheckHelper->validatePasswordPolicy()) {
-            header('Location: ./views/user/register_form.php?error=Weak%20password');
-            exit();
+            return ['view' => 'user/register_form', 'msg' => '?error=Weak%20password'];
         } else {
             // Create a new user object
-            $user = new User($formCheckHelper->email(), $formCheckHelper->password_hash(), $formData['first_name'], $formData['last_name'], $formData['street'], $formData['str_no'], $formData['zip'], $formData['city']);
+            $user = new User(
+                $formCheckHelper->email(),
+                $formCheckHelper->password_hash(),
+                $formData['first_name'],
+                $formData['last_name'],
+                $formData['street'],
+                $formData['str_no'],
+                $formData['zip'],
+                $formData['city']
+            );
 
             // Save the new user to the database
             $this->store($user);
+            return [];
         }
     }
 
@@ -106,25 +113,24 @@ class UserController
      * If an error occurs, it handles database exceptions, particularly for unique constraints.
      *
      * @param User $user The user object to be stored.
+     * @return array
      */
-    private function store(User $user): void
+    private function store(User $user): array
     {
         try {
             // Try to save the user
             $user->save();
 
             // Successful insertion
-            header('Location: ./views/user/login_form.php?msg=Account%20successfully%20created');
-            exit();
+            return ['view' => 'user/login_form', 'msg' => '?msg=Account%20successfully%20created'];
         } catch (PDOException $e) {
             // Error 23000: Duplicate entry (database error for UNIQUE constraint)
             if ($e->getCode() === '23000') {
-                header('Location: ./views/user/register_form.php?error=Username%20not%20available');
+                return ['view' => 'user/register_form', 'msg' => '?error=Username%20not%20available'];
             } else {
                 // Other errors
-                header('Location: ./views/user/register_form.php?error=Unknown%20error%20' . $e->getCode());
+                return ['view' => 'user/register_form', 'msg' => '?error=Unknown%20error%20'];
             }
-            exit();
         }
     }
 
@@ -132,12 +138,12 @@ class UserController
      * Log out the user.
      *
      * This method clears the session and redirects the user to the index page.
+     * @return array
      */
-    public static function signOut(): void
+    public function signOut(): array
     {
         session_unset();
         session_destroy();
-        header('Location: ./index.php');
-        exit();
+        return ['view' => 'user/login_form'];
     }
 }

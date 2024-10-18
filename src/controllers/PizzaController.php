@@ -30,13 +30,14 @@ class PizzaController
      *
      * This method retrieves all pizzas from the database and includes
      * the view to display them in a list format.
+     * @return array<string,mixed>
      */
-    public function index(): void
+    public function index(): array
     {
         $pizzas = Pizza::findAll();
 
         // Include the view to display all pizzas
-        include __DIR__ . '/../views/pizza/index.php';
+        return [ 'view' => 'pizza/index', 'pizzas' => $pizzas];
     }
 
     /**
@@ -46,15 +47,16 @@ class PizzaController
      * then includes the pizza detail view to display the information.
      *
      * @param int $id The pizza ID.
+     * @return array<string,string>
      */
-    public function show(int $id): void
+    public function show(int $id): array
     {
         $pizza = Pizza::findBy($id, 'id');
         $ingredients = Pizza::findIngredientsByPizzaId($id);
 
         if ($pizza) {
             // Include the pizza detail view and pass the pizza object
-            include './views/pizza/show.php';
+            return ['view' => 'pizza/show', 'ingredients' => $ingredients, 'pizza' => $pizza];
         }
     }
 
@@ -65,11 +67,12 @@ class PizzaController
      * form view for editing the pizza's details.
      *
      * @param int $id The ID of the pizza to edit.
+     * @return array<string,string>|array<string,mixed>
      */
-    public function edit(int $id): void
+    public function edit(int $id): array
     {
         if (!User::isAdmin()) {
-            return;
+            return ['view' => 'pizza/index'];
         }
 
         $pizza = Pizza::findBy($id, 'id');
@@ -77,7 +80,7 @@ class PizzaController
 
         if ($pizza) {
             // Include the pizza form view for editing
-            include './views/pizza/form.php';
+            return ['view' => 'pizza/form', 'pizza' => $pizza, 'ingredients' => $ingredients] ;
         }
     }
 
@@ -86,15 +89,16 @@ class PizzaController
      *
      * This method includes the form view for the creation of a new pizza
      * without any pre-filled data.
+     * @return array<string,string>|array<string,mixed>
      */
-    public function create(): void
+    public function create(): array
     {
         if (!User::isAdmin()) {
-            return;
+            return ['view' => 'pizza/index'];
         }
 
         $ingredients = Ingredient::findAll();
-        include __DIR__ . '/../views/pizza/form.php';
+        return ['view' => 'pizza/form', 'ingredients' => $ingredients] ;
     }
 
     /**
@@ -105,11 +109,12 @@ class PizzaController
      * database. It handles redirection upon success or failure.
      *
      * @param array $formData The form data submitted for creating the pizza.
+     * @return array<string,string>
      */
-    public function store(array $formData): void
+    public function store(array $formData): array
     {
         if (!User::isAdmin()) {
-            return;
+            return ['view' => 'pizza/index'];
         }
 
         // TODO: Validate form data
@@ -133,13 +138,11 @@ class PizzaController
             }
 
             // Redirect to the pizza list with a success message
-            header('Location: ./index.php?pizza/index?msg=Pizza%20successfully%20created');
-            exit();
+            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Erstellen erfolgreich'];
         } catch (PDOException $e) {
             // Handle the error and redirect back to the form
             error_log($e->getMessage());
-            header('Location: ./index.php?pizza/index?error=Could%20not%20create%20pizza');
-            exit();
+            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Fehler'];
         }
     }
 
@@ -152,11 +155,12 @@ class PizzaController
      *
      * @param int   $id       The pizza ID to update.
      * @param array $formData The form data submitted for updating the pizza.
+     * @return array<string,string>|array
      */
-    public function update(int $id, array $formData): void
+    public function update(int $id, array $formData): array
     {
         if (!User::isAdmin()) {
-            return;
+            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Nicht erlaubt'];
         }
 
         $pizza = Pizza::findBy($id, 'id');
@@ -176,16 +180,18 @@ class PizzaController
                         continue;
                     }
 
-                    $pizzaIngredient = PizzaIngredient::where('ingredient_id = ? && pizza_id = ?', [$pizzaIngredientId, $pizza->id()])[0];
+                    $pizzaIngredient = PizzaIngredient::where(
+                        'ingredient_id = ? && pizza_id = ?',
+                        [$pizzaIngredientId, $pizza->id()]
+                    )[0];
                     $pizzaIngredient->quantity($quantity);
                     $pizzaIngredient->update();
                 }
 
-                header('Location: ./index.php?pizza/show/' . $id . '?msg=Pizza%20successfully%20updated');
-                exit();
+                return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Update erfolgreich'];
             } catch (PDOException $e) {
                 error_log($e->getMessage());
-                header('Location: ./index.php?pizza/show/' . $id . '?msg=Error');
+                return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Fehler'];
                 exit();
             }
         }
@@ -199,11 +205,12 @@ class PizzaController
      * that may occur during the deletion process.
      *
      * @param int $id The pizza ID.
+     * @return array<string,string>
      */
-    public function delete(int $id): void
+    public function delete(int $id): array
     {
         if (!User::isAdmin()) {
-            return;
+            return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Nicht erlaubt'];
         }
 
         $pizza = Pizza::findBy($id, 'id');
@@ -212,13 +219,11 @@ class PizzaController
             try {
                 // Delete the pizza from the database
                 $pizza->delete();
-                header('Location: ./index.php?pizza/index?msg=Pizza%20successfully%20deleted');
-                exit();
+                return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Löschen erfolgreich'];
             } catch (PDOException $e) {
                 error_log($e->getMessage());
                 // Handle errors as needed
-                header('Location: ./index.php?pizza/index?msg=error');
-                exit();
+                return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Fehler'];
             }
         }
     }

@@ -7,13 +7,11 @@ use app\helpers\DatabaseHelper;
 use ReflectionClass;
 use ReflectionProperty;
 
-require_once __DIR__ . '/../core/BaseClass.php';
-
-/** 
+/**
  * Abstract Class BaseModel
- * 
- * Defines generic methods for models 
- * 
+ *
+ * Defines generic methods for models
+ *
  * @method int id() Inherited from BaseClass
  */
 abstract class BaseModel extends BaseClass
@@ -48,7 +46,8 @@ abstract class BaseModel extends BaseClass
         }
 
         // Builds the SQL INSERT query
-        $sql = 'INSERT INTO ' . $tableName . ' (' . implode(',', $columns) . ') VALUES (' . implode(',', $placeholders) . ')';
+        $sql =
+        'INSERT INTO ' . $tableName . ' (' . implode(',', $columns) . ') VALUES (' . implode(',', $placeholders) . ')';
         $db = new DatabaseHelper('writer', getenv('PW_WRITER'));
 
         // Executes the query and returns the result
@@ -148,7 +147,7 @@ abstract class BaseModel extends BaseClass
      * Finds objects based on a custom WHERE statement.
      *
      * Example usage:
-     * 
+     *
      * $whereClause = 'user_id = ? AND date = TODAY() LIMIT 1';
      * $params = [5];  // Parameter for user_id
      * $models = Model::where($whereClause, $params);
@@ -242,9 +241,10 @@ abstract class BaseModel extends BaseClass
      */
     protected static function getTableName(): string
     {
-        // Gets the name of the calling class and converts it to lowercase
-        $calledClass = get_called_class();
+        // Get the class name including namespace
+        $caller = get_called_class();
 
-        return strtolower($calledClass);
+        // Use `basename` on the class name using namespace separator
+        return strtolower(basename(str_replace('\\', '/', $caller)));
     }
 }

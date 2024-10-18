@@ -35,12 +35,14 @@ class User extends BaseModel
     private $role;
 
     /**
-     * @var array List of getter methods for User properties. 
+     * @var array List of getter methods for User properties.
      */
-    protected static $getters = ['id', 'email', 'hashed_password', 'first_name', 'last_name', 'street', 'str_no', 'zip', 'city', 'role'];
+    protected static $getters = [
+        'id', 'email', 'hashed_password', 'first_name', 'last_name', 'street', 'str_no', 'zip', 'city', 'role'
+    ];
 
     /**
-     * @var array List of setter methods for User properties. 
+     * @var array List of setter methods for User properties.
      */
     protected static $setters = ['role'];
 
@@ -58,9 +60,19 @@ class User extends BaseModel
      * @param int|null    $id              The unique identifier of the user (optional).
      * @param string|null $role            The user role ['customer', 'admin']. Defaults in DB to 'customer'.
      */
-    public function __construct($email, $hashed_password, $first_name, $last_name, $street, $str_no, $zip, $city, $id = null, $role = null)
-    {
-        $this->id = $id; 
+    public function __construct(
+        $email,
+        $hashed_password,
+        $first_name,
+        $last_name,
+        $street,
+        $str_no,
+        $zip,
+        $city,
+        $id = null,
+        $role = null
+    ) {
+        $this->id = $id;
         $this->email = $email;
         $this->hashed_password = $hashed_password;
         $this->first_name = $first_name;
@@ -77,7 +89,7 @@ class User extends BaseModel
      *
      * @return bool True if the user is an admin, false otherwise.
      */
-    public static function isAdmin(): bool 
+    public static function isAdmin(): bool
     {
         $userId = $_SESSION['login'];
         $user = User::findBy($userId, 'id');

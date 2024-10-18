@@ -9,15 +9,15 @@ use PDOException;
 /**
  * IngredientController class responsible for managing ingredient-related actions,
  * such as displaying, creating, updating, and deleting ingredients.
- * 
+ *
  * Methods:
- * 
- * - index(): void: Displays a list of all ingredients available in the system.
- * - edit(int $id): void: Renders the form for editing an existing ingredient.
- * - create(): void: Renders the form for creating a new ingredient.
- * - store(array $formData): void: Validates the provided form data and saves a new ingredient to the database.
- * - update(int $id, array $formData): void: Validates the form data and updates the specified ingredient in the database.
- * - delete(int $id): void: Deletes the ingredient identified by the specified ID from the database.
+ *
+ * - index(): array: Displays a list of all ingredients available in the system.
+ * - edit(int $id): array: Renders the form for editing an existing ingredient.
+ * - create(): array: Renders the form for creating a new ingredient.
+ * - store(array $formData): array: Validates the provided form data and saves a new ingredient to the database.
+ * - update(int $id, array $formData): array: Validates form data and updates the specified ingredient in the database.
+ * - delete(int $id): array: Deletes the ingredient identified by the specified ID from the database.
  */
 class IngredientController
 {
@@ -26,45 +26,52 @@ class IngredientController
      *
      * This method retrieves all ingredients from the database and includes
      * the view to display them in a list format.
+     * @return array<string,string>
      */
-    public function index(): void
+    public function index(): array
     {
-        $ingredients = Ingredient::findAll(); 
+        $ingredients = Ingredient::findAll();
 
         // Include the view to display all ingredients
-        include __DIR__ . '/../views/ingredient/index.php'; 
+        return ['view' =>  'ingredient/index', 'ingredients' => $ingredients];
     }
 
     /**
      * Render the edit form for a specified ingredient.
      *
-     * This method retrieves the ingredient by its ID and includes the 
+     * This method retrieves the ingredient by its ID and includes the
      * form view for editing the ingredient's details.
      *
      * @param int $id The ID of the ingredient to edit.
+     * @return array<string,string>
      */
-    public function edit(int $id): void
+    public function edit(int $id): array
     {
-        if (!User::isAdmin()) return;
+        if (!User::isAdmin()) {
+            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Nicht erlaubt'];
+        }
 
         $ingredient = Ingredient::findBy($id, 'id');
 
         if ($ingredient) {
             // Include the ingredient form view for editing
-            include './views/ingredient/form.php'; 
-        } 
+            return ['view' => 'ingredient/form', 'ingredient' => $ingredient];
+        }
     }
 
     /**
      * Display the form for creating a new ingredient.
      *
      * This method includes the form view for the creation of a new ingredient.
+     * @return array<string,string>
      */
-    public function create(): void
+    public function create(): array
     {
-        if (!User::isAdmin()) return;
+        if (!User::isAdmin()) {
+            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Nicht erlaubt'];
+        }
 
-        include __DIR__ . '/../views/ingredient/form.php';
+        return ['view' => 'ingredient/form'];
     }
 
     /**
@@ -75,10 +82,13 @@ class IngredientController
      * database. It handles redirection upon success or failure.
      *
      * @param array $formData The form data submitted for creating the ingredient.
+     * @return array<string,string>
      */
-    public function store(array $formData): void
+    public function store(array $formData): array
     {
-        if (!User::isAdmin()) return;
+        if (!User::isAdmin()) {
+            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Nicht erlaubt'];
+        }
 
         // Validate form data
         $vegetarian = isset($formData['vegetarian']) ? 1 : 0;
@@ -89,13 +99,11 @@ class IngredientController
             $ingredient->save();
 
             // Redirect to the ingredient list with a success message
-            header('Location: ./index.php?ingredient/index?msg=Ingredient%20successfully%20created');
-            exit();
+            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Erfolgreich erstellt'];
         } catch (PDOException $e) {
             error_log($e->getMessage());
             // Handle error and redirect back to the form
-            header('Location: ./index.php?ingredient/index?error=Could%20not%20create%20ingredient');
-            exit();
+            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Fehler'];
         }
     }
 
@@ -108,10 +116,13 @@ class IngredientController
      *
      * @param int   $id       The ingredient ID to update.
      * @param array $formData The form data submitted for updating the ingredient.
+     * @return array<string,string>
      */
-    public function update(int $id, array $formData): void
+    public function update(int $id, array $formData): array
     {
-        if (!User::isAdmin()) return;
+        if (!User::isAdmin()) {
+            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Nicht erlaubt'];
+        }
 
         $ingredient = Ingredient::findBy($id, 'id');
 
@@ -123,16 +134,17 @@ class IngredientController
 
             try {
                 // Save the updated ingredient to the database
-                $ingredient->update(); 
-                header('Location: ./index.php?ingredient/index?msg=Ingredient%20successfully%20updated');
-                exit();
+                $ingredient->update();
+                return [
+                    'redirect' => 'true', 'area' => 'ingredient',
+                    'action' => 'index', 'msg' => 'Erfolgreich aktualisiert'
+                ];
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                header('Location: ./index.php?ingredient/index?msg=Error');
-                exit();
+                return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Fehler'];
             }
-        } 
+        }
     }
 
     /**
@@ -143,10 +155,13 @@ class IngredientController
      * that may occur during the deletion process.
      *
      * @param int $id The ingredient ID.
+     * @return array<string,string>
      */
-    public function delete(int $id): void
+    public function delete(int $id): array
     {
-        if (!User::isAdmin()) return;
+        if (!User::isAdmin()) {
+            return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Nicht erlaubt'];
+        }
 
         $ingredient = Ingredient::findBy($id, 'id');
 
@@ -154,13 +169,13 @@ class IngredientController
             try {
                 // Delete the ingredient from the database
                 $ingredient->delete();
-                header('Location: ./index.php?ingredient/index?msg=Ingredient%20successfully%20deleted');
-                exit();
+                return [
+                    'redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Erfolgreich gelöscht'
+                ];
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                header('Location: ./index.php?ingredient/index?msg=error');
-                exit();
+                return ['redirect' => 'true', 'area' => 'ingredient', 'action' => 'index', 'msg' => 'Fehler'];
             }
         }
     }

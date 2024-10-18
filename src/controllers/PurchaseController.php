@@ -11,14 +11,14 @@ use PDOException;
  * PurchaseController class responsible for managing purchase-related actions,
  * such as displaying purchase details, handling purchase creation, updating,
  * and deletion.
- * 
+ *
  * Methods:
- * 
- * - index(): void: Displays a list of all purchases available in the system.
- * - handle(array $formData): void: Handles the creation of a new purchase and adds items to it.
- * - place(int $id): void: Places an order for the specified purchase by updating its status.
- * - update(int $id): void: Updates the status of the specified purchase to "delivered".
- * - delete(int $id): void: Deletes the purchase identified by the specified ID from the database.
+ *
+ * - index(): array: Displays a list of all purchases available in the system.
+ * - handle(array $formData): array: Handles the creation of a new purchase and adds items to it.
+ * - place(int $id): array: Places an order for the specified purchase by updating its status.
+ * - update(int $id): array: Updates the status of the specified purchase to "delivered".
+ * - delete(int $id): array: Deletes the purchase identified by the specified ID from the database.
  */
 class PurchaseController
 {
@@ -30,32 +30,34 @@ class PurchaseController
      * for rendering.
      *
      * @var Purchase[] $purchases Array of purchases used in the included view.
+     * @return array<string,string>
      */
-    public function index(): void
+    public function index(): array
     {
         if (User::isAdmin()) {
             // Retrieve all purchases from the database
-            $purchases = Purchase::findAll(); 
+            $purchases = Purchase::findAll();
         } else {
             // Retrieve purchases belonging to the logged-in user
             $purchases = Purchase::where('user_id = ?', [$_SESSION['login']]);
         }
 
         // Include the view to display all purchases
-        include __DIR__ . '/../views/purchase/index.php'; 
+        return ['view' => 'purchase/index', 'purchases' => $purchases];
     }
 
     /**
      * Handle the creation of a new purchase and add items to it.
      *
      * This method first checks if a purchase ID already exists in the session.
-     * If not, a new purchase is created for the logged-in user. Then, a new card 
-     * (item) is created and associated with the purchase, and the card is stored 
+     * If not, a new purchase is created for the logged-in user. Then, a new card
+     * (item) is created and associated with the purchase, and the card is stored
      * in the session.
      *
      * @param array $formData The form data that contains the pizza ID and quantity for the card.
+     * @return array<string,string>
      */
-    public function handle(array $formData): void
+    public function handle(array $formData): array
     {
         // Get the current user's ID from the session
         $user_id = $_SESSION['login'];
@@ -63,7 +65,7 @@ class PurchaseController
         // Check if there's already an active purchase in the session
         if (!isset($_SESSION['purchase_id'])) {
             // Create a new purchase for the user
-            $purchase = new Purchase($user_id); 
+            $purchase = new Purchase($user_id);
 
             try {
                 // Save the new purchase to the database
@@ -75,25 +77,22 @@ class PurchaseController
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                header('Location: ./index.php?pizza/index?error=Konnte%20Warenkorb%20nicht%20hinzugefügt%20werden');
-                exit();
+                return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Fehler'];
             }
-        } 
+        }
 
         // Retrieve the purchase ID from the session
         $purchase_id = $_SESSION['purchase_id'];
-        
+
         // Create a new card (pizza order) associated with the purchase
         $card = new Card($formData['pizza_id'], $purchase_id, $formData['quantity']);
         $card->save();
 
         // Retrieve the latest card associated with this purchase and store it in the session
-        $card = Card::where('purchase_id = ? ORDER BY id DESC LIMIT 1', [$purchase_id])[0];        
+        $card = Card::where('purchase_id = ? ORDER BY id DESC LIMIT 1', [$purchase_id])[0];
         $_SESSION['card'][] = $card;
 
-        // Redirect with a success message after adding the item to the cart
-        header('Location: ./index.php?pizza/index?msg=Warenkorb%20hinzugefügt');
-        exit();
+        return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Warenkorb hinzugefügt'];
     }
 
     /**
@@ -103,8 +102,9 @@ class PurchaseController
      * It manages the redirection and handles any errors that may occur.
      *
      * @param int $id The purchase ID to place the order for.
+     * @return array<string,string>
      */
-    public function place(int $id): void
+    public function place(int $id): array
     {
         // Retrieve the purchase record by ID
         $purchase = Purchase::findBy($id, 'id');
@@ -112,21 +112,19 @@ class PurchaseController
         // If the purchase exists, update its status to "placed"
         if ($purchase) {
             $purchase->status('placed');
-           
+
             try {
                 // Save the updated purchase to the database
-                $purchase->update(); 
+                $purchase->update();
 
                 // Redirect with a success message
-                header('Location: ./index.php?card/card?msg=Purchase%20successfully%20updated');
-                exit();
+                return ['redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'Erfolgreich'];
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                header('Location: ./index.php?card/card?msg=Error');
-                exit();
+                return ['redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'Fehler'];
             }
-        } 
+        }
     }
 
     /**
@@ -136,10 +134,13 @@ class PurchaseController
      * the changes to the database. It also manages redirection upon success or failure.
      *
      * @param int $id The purchase ID to update.
+     * @return array<string,string>
      */
-    public function update(int $id): void
+    public function update(int $id): array
     {
-        if (!User::isAdmin()) return;
+        if (!User::isAdmin()) {
+            return ['redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'Fehler'];
+        }
 
         // Retrieve the purchase record by ID
         $purchase = Purchase::findBy($id, 'id');
@@ -147,21 +148,19 @@ class PurchaseController
         // If the purchase exists, update its status to "delivered"
         if ($purchase) {
             $purchase->status('delivered');
-           
+
             try {
                 // Save the updated purchase to the database
-                $purchase->update(); 
+                $purchase->update();
 
                 // Redirect with a success message
-                header('Location: ./index.php?purchase/index?msg=Purchase%20successfully%20updated');
-                exit();
+                return ['redirect' => 'true', 'area' => 'purchase', 'action' => 'index', 'msg' => 'Erfolgreich'];
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                header('Location: ./index.php?purchase/index?msg=Error');
-                exit();
+                return ['redirect' => 'true', 'area' => 'purchase', 'action' => 'index', 'msg' => 'Fehler'];
             }
-        } 
+        }
     }
 
     /**
@@ -172,8 +171,9 @@ class PurchaseController
      * and redirects to the index with a success message.
      *
      * @param int $id The purchase ID.
+     * @return array<string,string>
      */
-    public function delete(int $id): void
+    public function delete(int $id): array
     {
         // Retrieve the purchase record by ID
         $purchase = Purchase::findBy($id, 'id');
@@ -189,13 +189,11 @@ class PurchaseController
                 unset($_SESSION['purchase_id']);
 
                 // Redirect with a success message after deletion
-                header('Location: ./index.php?purchase/index?msg=Purchase%20successfully%20deleted');
-                exit();
+                return ['redirect' => 'true', 'area' => 'purchase', 'action' => 'index', 'msg' => 'Erfolgreich'];
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                header('Location: ./index.php?purchase/index?msg=error');
-                exit();
+                return ['redirect' => 'true', 'area' => 'purchase', 'action' => 'index', 'msg' => 'Fehler'];
             }
         }
     }
