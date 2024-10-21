@@ -193,7 +193,7 @@ class PizzaController
                 ];
             } catch (PDOException $e) {
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'error=Fehler'];
+                return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'error=Fehler ' . $e];
             }
         }
     }

@@ -48,10 +48,10 @@ abstract class BaseModel extends BaseClass
         // Builds the SQL INSERT query
         $sql =
         'INSERT INTO ' . $tableName . ' (' . implode(',', $columns) . ') VALUES (' . implode(',', $placeholders) . ')';
-        DatabaseHelper::initializeConnection('writer', getenv('PW_WRITER'));
+        DatabaseHelper::initializeWriteConnection();
 
         // Executes the query and returns the result
-        return DatabaseHelper::prepareAndExecute($sql, $values);
+        return DatabaseHelper::prepareAndExecute($sql, $values, 'connWrite');
     }
 
     /**
@@ -89,10 +89,10 @@ abstract class BaseModel extends BaseClass
 
         // Builds the SQL UPDATE query
         $sql = 'UPDATE ' . $tableName . ' SET ' . implode(', ', $columns) . ' WHERE id = ?';
-        DatabaseHelper::initializeConnection('writer', getenv('PW_WRITER'));
+        DatabaseHelper::initializeWriteConnection();
 
         // Executes the query and returns the result
-        return DatabaseHelper::prepareAndExecute($sql, $values);
+        return DatabaseHelper::prepareAndExecute($sql, $values, 'connWrite');
     }
 
     /**
@@ -104,7 +104,7 @@ abstract class BaseModel extends BaseClass
     public function delete(): array
     {
         // Establishes database connection
-        DatabaseHelper::initializeConnection('writer', getenv('PW_WRITER'));
+        DatabaseHelper::initializeWriteConnection();
 
         $tableName = static::getTableName();
 
@@ -113,7 +113,7 @@ abstract class BaseModel extends BaseClass
         $params = [$this->id()];
 
         // Executes the query and returns the result
-        return DatabaseHelper::prepareAndExecute($sql, $params);
+        return DatabaseHelper::prepareAndExecute($sql, $params, 'connWrite');
     }
 
     /**
@@ -128,12 +128,12 @@ abstract class BaseModel extends BaseClass
     public static function findBy(string $value, string $attribute): ?self
     {
         // Establishes database connection
-        DatabaseHelper::initializeConnection('reader', getenv('PW_READER'));
+        DatabaseHelper::initializeReadConnection();
         $tableName = static::getTableName();
 
         // Prepares the SQL query using the attribute name
         $sql = 'SELECT * FROM ' . $tableName . ' WHERE ' . $attribute . ' = ?';
-        $result = DatabaseHelper::prepareAndExecute($sql, [$value]);
+        $result = DatabaseHelper::prepareAndExecute($sql, [$value], 'connRead');
 
         if ($result && count($result) > 0) {
             $data = $result[0];
@@ -159,13 +159,13 @@ abstract class BaseModel extends BaseClass
     public static function where(string $whereClause, array $params = []): array
     {
         // Establishes database connection
-        DatabaseHelper::initializeConnection('reader', getenv('PW_READER'));
+        DatabaseHelper::initializeWriteConnection();
         $tableName = static::getTableName();
 
         // Prepares the SQL query with the custom WHERE clause
         $sql = 'SELECT * FROM ' . $tableName . ' WHERE ' . $whereClause;
         // Executes the query with the provided parameters
-        $result = DatabaseHelper::prepareAndExecute($sql, $params);
+        $result = DatabaseHelper::prepareAndExecute($sql, $params, 'connWrite');
 
         $models = [];
         foreach ($result as $data) {
@@ -183,10 +183,10 @@ abstract class BaseModel extends BaseClass
      */
     public static function findAll(): array
     {
-        DatabaseHelper::initializeConnection('reader', getenv('PW_READER'));
+        DatabaseHelper::initializeReadConnection();
         $tableName = static::getTableName();
         $sql = 'SELECT * FROM ' . $tableName;
-        $result = DatabaseHelper::prepareAndExecute($sql, []);
+        $result = DatabaseHelper::prepareAndExecute($sql, [], 'connRead');
 
         $models = [];
         foreach ($result as $data) {
