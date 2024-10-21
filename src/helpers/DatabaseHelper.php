@@ -12,64 +12,49 @@ use PDOException;
 class DatabaseHelper
 {
     /**
-     * @var PDO|null $connRead
+     * @var ?PDO $connRead
      */
     private static ?PDO $connRead = null;
     /**
-     * @var PDO|null $connWrite
+     * @var ?PDO $connWrite
      */
     private static ?PDO $connWrite = null;
 
     /**
-     *  Initialize DB Connection to read data
-     * Static method to initialize the database connection if it hasn't been established yet.
+     * Static method to initialize the database connection based on type.
      *
+     * @param string $type 'read' or 'write'
      * @throws PDOException If the connection to the database fails.
      */
-    public static function initializeReadConnection(): void
+    private static function initializeConnection(string $type): void
     {
-        if (self::$connRead === null) {
-            $servername = "127.0.0.1";
-            $dbname = "pizzeria";
-            $dsn = "mysql:host=$servername;dbname=$dbname;charset=utf8mb4";
-            $dbuser = 'reader';
-            $dbpassword = getenv('PW_READER');
+        $servername = "127.0.0.1";
+        $dbname = "pizzeria";
+        $dsn = "mysql:host=$servername;dbname=$dbname;charset=utf8mb4";
+        $dbuser = $type === 'read' ? 'reader' : 'writer';
+        $dbpassword = getenv($type === 'read' ? 'PW_READER' : 'PW_WRITER');
 
-            try {
-                // Establish connection using PDO
+        try {
+            if ($type === 'read' && self::$connRead === null) {
                 self::$connRead = new PDO($dsn, $dbuser, $dbpassword);
-                // Set PDO error mode to exception
                 self::$connRead->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            } catch (PDOException $e) {
-                die("Connection failed: " . $e->getMessage() . "\n");
+            } elseif ($type === 'write' && self::$connWrite === null) {
+                self::$connWrite = new PDO($dsn, $dbuser, $dbpassword);
+                self::$connWrite->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             }
+        } catch (PDOException $e) {
+            throw new PDOException("Connection failed: " . $e->getMessage());
         }
     }
 
-    /**
-     * Initialize DB Connection to write data
-     * Static method to initialize the database connection if it hasn't been established yet.
-     *
-     * @throws PDOException If the connection to the database fails.
-     */
+    public static function initializeReadConnection(): void
+    {
+        self::initializeConnection('read');
+    }
+
     public static function initializeWriteConnection(): void
     {
-        if (self::$connWrite === null) {
-            $servername = "127.0.0.1";
-            $dbname = "pizzeria";
-            $dsn = "mysql:host=$servername;dbname=$dbname;charset=utf8mb4";
-            $dbuser = 'writer';
-            $dbpassword = getenv('PW_WRITER');
-
-            try {
-                // Establish connection using PDO
-                self::$connWrite = new PDO($dsn, $dbuser, $dbpassword);
-                // Set PDO error mode to exception
-                self::$connWrite->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            } catch (PDOException $e) {
-                die("Connection failed: " . $e->getMessage() . "\n");
-            }
-        }
+        self::initializeConnection('write');
     }
 
     /**
@@ -77,7 +62,7 @@ class DatabaseHelper
      *
      * @param string $sql    The SQL statement to prepare and execute.
      * @param array  $params The parameters to bind to the SQL statement.
-     * @param string $conn
+     * @param string $conn   'connRead' or 'connWrite'
      *
      * @return array An associative array of fetched results.
      *
@@ -85,13 +70,13 @@ class DatabaseHelper
      */
     public static function prepareAndExecute(string $sql, array $params, string $conn): array
     {
-        // Prepare the SQL statement
-        $stmt = self::$$conn->prepare($sql);
+        $connection = self::$$conn;
+        if (!$connection) {
+            throw new PDOException("Connection not initialized.");
+        }
 
-        // Execute the prepared statement
+        $stmt = $connection->prepare($sql);
         $stmt->execute($params);
-
-        // Fetch and return the results
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
