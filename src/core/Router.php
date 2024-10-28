@@ -11,14 +11,11 @@ class Router
 {
     private string $area;
     private string $action;
+    private string $view;
+    private bool $redirect;
+    private string $msg;
     private int $id;
     private array $formData;
-
-    private string $view;
-
-    private bool $redirect;
-
-    private string $msg;
 
 
     /**
@@ -52,7 +49,7 @@ class Router
     /**
      * route
      *
-     * @return array
+     * @return array|void
      */
     public function route(): ?array
     {

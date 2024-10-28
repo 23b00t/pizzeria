@@ -28,7 +28,7 @@ if ($redirect) {
     $return = (new Router($area, $action, $view, $redirect, $msg, $id, $data))->route();
     is_array($return) && extract($return);
 
-    include __DIR__ . '/../src/views/' . $view . '.php';
+    include __DIR__ . '/../src/views/application.html.php';
 } else {
-    include __DIR__ . '/../src/views/' . $view . '.php';
+    include __DIR__ . '/../src/views/application.html.php';
 }

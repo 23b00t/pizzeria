@@ -13,9 +13,7 @@ $csrf_token = Helper::generateCSRFToken();
 // @var controllers\CardController $cards
 ?>
 
-<?php $pageTitle = 'Bestellung';
-require __DIR__ . '/../head.php'; ?>
-<div class="container">
+<?php $pageTitle = 'Bestellung'; ?>
 <?php if (!empty($cards)) : ?>
   <h1>Bestellung #
     <?= htmlspecialchars($purchase->id()); ?>
@@ -76,5 +74,3 @@ require __DIR__ . '/../head.php'; ?>
 <?php endif ?>
 
   <a href="./index.php?area=purchase&action=index" class="button">Zurück zur Übersicht</a>
-</div>
-<?php require __DIR__ . '/../tail.php'; ?>
