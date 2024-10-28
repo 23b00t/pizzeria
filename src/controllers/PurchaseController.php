@@ -22,6 +22,28 @@ use PDOException;
  */
 class PurchaseController
 {
+    private string $area;
+    private string $action;
+    private string $view;
+    private bool $redirect;
+    private string $msg;
+
+    /**
+     * @param string $area
+     * @param string $action
+     * @param string $view
+     * @param bool $redirect
+     * @param string $msg
+     */
+    public function __construct(string &$area, string &$action, string &$view, bool &$redirect, string &$msg)
+    {
+        $this->area = &$area;
+        $this->action = &$action;
+        $this->view = &$view;
+        $this->redirect = &$redirect;
+        $this->msg = &$msg;
+    }
+
     /**
      * Display a list of all purchases.
      *
@@ -30,7 +52,7 @@ class PurchaseController
      * for rendering.
      *
      * @var Purchase[] $purchases Array of purchases used in the included view.
-     * @return array<string,string>
+     * @return array
      */
     public function index(): array
     {
@@ -42,8 +64,8 @@ class PurchaseController
             $purchases = Purchase::where('user_id = ?', [$_SESSION['login']]);
         }
 
-        // Include the view to display all purchases
-        return ['view' => 'purchase/index', 'purchases' => $purchases];
+        $this->view = 'purchase/index';
+        return [ 'purchases' => $purchases ];
     }
 
     /**
@@ -55,9 +77,9 @@ class PurchaseController
      * in the session.
      *
      * @param array $formData The form data that contains the pizza ID and quantity for the card.
-     * @return array<string,string>
+     * @return void
      */
-    public function handle(array $formData): array
+    public function handle(array $formData): void
     {
         // Get the current user's ID from the session
         $user_id = $_SESSION['login'];
@@ -77,7 +99,8 @@ class PurchaseController
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'Fehler'];
+                $this->setRedirectPizza();
+                $this->msg = 'error=Fehler';
             }
         }
 
@@ -92,7 +115,8 @@ class PurchaseController
         $card = Card::where('purchase_id = ? ORDER BY id DESC LIMIT 1', [$purchase_id])[0];
         $_SESSION['card'][] = $card;
 
-        return ['redirect' => 'true', 'area' => 'pizza', 'action' => 'index', 'msg' => 'msg=Warenkorb hinzugefügt'];
+        $this->setRedirectPizza();
+        $this->msg = 'msg=Warenkorb hinzugefügt';
     }
 
     /**
@@ -102,9 +126,9 @@ class PurchaseController
      * It manages the redirection and handles any errors that may occur.
      *
      * @param int $id The purchase ID to place the order for.
-     * @return array<string,string>
+     * @return void
      */
-    public function place(int $id): array
+    public function place(int $id): void
     {
         // Retrieve the purchase record by ID
         $purchase = Purchase::findBy($id, 'id');
@@ -118,14 +142,13 @@ class PurchaseController
                 $purchase->update();
 
                 // Redirect with a success message
-                return [
-                    'redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard',
-                    'msg' => 'msg=Bestellung erfolgreich getätigt'
-                ];
+                $this->setRedirectCard();
+                $this->msg = 'msg=Bestellung erfolgreich';
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'error=Fehler'];
+                $this->setRedirectCard();
+                $this->msg = 'error=Fehler';
             }
         }
     }
@@ -137,14 +160,13 @@ class PurchaseController
      * the changes to the database. It also manages redirection upon success or failure.
      *
      * @param int $id The purchase ID to update.
-     * @return array<string,string>
+     * @return void
      */
-    public function update(int $id): array
+    public function update(int $id): void
     {
         if (!User::isAdmin()) {
-            return [
-                'redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'error=Nicht erlaubt!'
-            ];
+            $this->setRedirectCard();
+            $this->msg = 'error=Nicht erlaubt';
         }
 
         // Retrieve the purchase record by ID
@@ -159,14 +181,13 @@ class PurchaseController
                 $purchase->update();
 
                 // Redirect with a success message
-                return [
-                    'redirect' => 'true', 'area' => 'purchase', 'action' => 'index',
-                    'msg' => 'msg=Erfolgreich aktualisiert'
-                ];
+                $this->setRedirectPurchase();
+                $this->msg = 'msg=Erfolgreich aktualisiert';
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'purchase', 'action' => 'index', 'msg' => 'error=Fehler'];
+                $this->setRedirectPurchase();
+                $this->msg = 'error=Fehler';
             }
         }
     }
@@ -179,9 +200,9 @@ class PurchaseController
      * and redirects to the index with a success message.
      *
      * @param int $id The purchase ID.
-     * @return array<string,string>
+     * @return void
      */
-    public function delete(int $id): array
+    public function delete(int $id): void
     {
         // Retrieve the purchase record by ID
         $purchase = Purchase::findBy($id, 'id');
@@ -197,14 +218,44 @@ class PurchaseController
                 unset($_SESSION['purchase_id']);
 
                 // Redirect with a success message after deletion
-                return [
-                    'redirect' => 'true', 'area' => 'purchase', 'action' => 'index', 'msg' => 'msg=Erfolgreich gelöscht'
-                ];
+                $this->setRedirectPurchase();
+                $this->msg = 'msg=Erfolgreich gelöscht';
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'purchase', 'action' => 'index', 'msg' => 'error=Fehler'];
+                $this->setRedirectPurchase();
+                $this->msg = 'error=Fehler';
             }
         }
+    }
+
+    /**
+     * @return void
+     */
+    private function setRedirectPizza(): void
+    {
+        $this->redirect = true;
+        $this->area = 'pizza';
+        $this->action = 'index';
+    }
+
+    /**
+     * @return void
+     */
+    private function setRedirectCard(): void
+    {
+        $this->redirect = true;
+        $this->area = 'card';
+        $this->action = 'showOpenCard';
+    }
+
+    /**
+     * @return void
+     */
+    private function setRedirectPurchase(): void
+    {
+        $this->redirect = true;
+        $this->area = 'purchase';
+        $this->action = 'index';
     }
 }

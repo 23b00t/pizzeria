@@ -4,26 +4,26 @@ namespace app\helpers;
 
 /**
  * Helper class providing utility functions for CSRF (Cross-Site Request Forgery) protection.
- * 
- * This class includes methods to check and generate CSRF tokens to help prevent 
- * CSRF attacks in web applications. It ensures that requests made to the server 
+ *
+ * This class includes methods to check and generate CSRF tokens to help prevent
+ * CSRF attacks in web applications. It ensures that requests made to the server
  * are legitimate and originate from the same session.
- * 
+ *
  * Methods:
- * 
- * @method static void checkCSRFToken() 
- *         Checks if the CSRF token in the POST request is valid. If the token is 
+ *
+ * @method static void checkCSRFToken()
+ *         Checks if the CSRF token in the POST request is valid. If the token is
  *         invalid or not present, it terminates the script with an error message.
- * 
- * @method static string generateCSRFToken() 
- *         Generates a new CSRF token if one does not already exist in the session. 
+ *
+ * @method static string generateCSRFToken()
+ *         Generates a new CSRF token if one does not already exist in the session.
  *         Returns the current CSRF token.
  */
 class Helper
 {
     /**
      * Checks the validity of the CSRF token in the current request.
-     * 
+     *
      * @throws Exception If the CSRF token is invalid or not present.
      */
     public static function checkCSRFToken(): void
@@ -35,9 +35,9 @@ class Helper
     }
 
     /**
-     * Generates a new CSRF token and stores it in the session if one does not 
+     * Generates a new CSRF token and stores it in the session if one does not
      * already exist.
-     * 
+     *
      * @return string The current CSRF token.
      */
     public static function generateCSRFToken(): string
