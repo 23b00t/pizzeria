@@ -13,6 +13,28 @@ use PDOException;
  */
 class CardController
 {
+    private string $area;
+    private string $action;
+    private string $view;
+    private bool $redirect;
+    private string $msg;
+
+    /**
+     * @param string $area
+     * @param string $action
+     * @param string $view
+     * @param bool $redirect
+     * @param string $msg
+     */
+    public function __construct(string &$area, string &$action, string &$view, bool &$redirect, string &$msg)
+    {
+        $this->area = &$area;
+        $this->action = &$action;
+        $this->view = &$view;
+        $this->redirect = &$redirect;
+        $this->msg = &$msg;
+    }
+
     /**
      * Show detailed information about a specific card by purchase ID.
      *
@@ -40,8 +62,8 @@ class CardController
             return $c->purchase_id() == $id;
         });
 
-        // Include the card detail view, passing the card object for rendering
-        return ['view' => 'card/show', 'purchase' => $purchase, 'cards' => $cards];
+        $this->view = 'card/show';
+        return [ 'purchase' => $purchase, 'cards' => $cards ];
     }
 
     /**
@@ -50,7 +72,7 @@ class CardController
      * Checks if the user has a pending card in the session and displays
      * its details. If the associated purchase has been delivered, the
      * session is cleared.
-     * @return array<string,string>
+     * @return array
      */
     public function showOpenCard(): array
     {
@@ -69,8 +91,8 @@ class CardController
             $cards = [];
         }
 
-        // Include the card detail view and pass the card object
-        return ['view' => 'card/show', 'purchase' => $purchase, 'cards' => $cards];
+        $this->view = 'card/show';
+        return [ 'purchase' => $purchase, 'cards' => $cards ];
     }
 
     /**
@@ -81,9 +103,9 @@ class CardController
      * It also updates the session if necessary.
      *
      * @param array $formData The form data submitted for updating the card.
-     * @return array<string,string>
+     * @return void
      */
-    public function update(array $formData): array
+    public function update(array $formData): void
     {
         // Get the card ID from the form data
         $card_id = $formData['card_id'];
@@ -113,14 +135,17 @@ class CardController
                     $_SESSION['card'] = array_values($_SESSION['card']);
                 }
 
-                return [
-                    'redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard',
-                    'msg' => 'msg=Erfolgreich aktualisiert'
-                ];
+                $this->redirect = true;
+                $this->area = 'card';
+                $this->action = 'showOpenCard';
+                $this->msg = 'msg=Erfolgreich aktualisiert';
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'card', 'action' => 'showOpenCard', 'msg' => 'error=Fehler'];
+                $this->redirect = true;
+                $this->area = 'card';
+                $this->action = 'showOpenCard';
+                $this->msg = 'error=Fehler';
             }
         }
     }
@@ -133,9 +158,9 @@ class CardController
      * errors during the deletion process.
      *
      * @param int $id The card ID.
-     * @return array<string,string>
+     * @return void
      */
-    public function delete(int $id): array
+    public function delete(int $id): void
     {
         // Retrieve the card record by ID
         $card = Card::findBy($id, 'id');
@@ -146,14 +171,17 @@ class CardController
                 // Delete the card from the database
                 $card->delete();
 
-                // Redirect with a success message after deletion
-                return [
-                    'redirect' => 'true', 'area' => 'card', 'action' => 'index', 'msg' => 'msg=Erfolgreich gelöscht'
-                ];
+                $this->redirect = true;
+                $this->area = 'card';
+                $this->action = 'index';
+                $this->msg = 'msg=Erfolgreich gelöscht';
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                return ['redirect' => 'true', 'area' => 'card', 'action' => 'index', 'msg' => 'error=Fehler'];
+                $this->redirect = true;
+                $this->area = 'card';
+                $this->action = 'index';
+                $this->msg = 'error=Fehler';
             }
         }
     }

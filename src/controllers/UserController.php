@@ -20,14 +20,36 @@ use PDOException;
  */
 class UserController
 {
+    private string $area;
+    private string $action;
+    private string $view;
+    private bool $redirect;
+    private string $msg;
+
+    /**
+     * @param string $area
+     * @param string $action
+     * @param string $view
+     * @param bool $redirect
+     * @param string $msg
+     */
+    public function __construct(string &$area, string &$action, string &$view, bool &$redirect, string &$msg)
+    {
+        $this->area = &$area;
+        $this->action = &$action;
+        $this->view = &$view;
+        $this->redirect = &$redirect;
+        $this->msg = &$msg;
+    }
+
     /**
      * showLogin
      *
      * @return array
      */
-    public function showLogin(): array
+    public function showLogin(): void
     {
-        return ['view' => 'user/login_form'];
+        $this->view = 'user/login_form';
     }
 
     /**
@@ -35,9 +57,9 @@ class UserController
      *
      * @return array
      */
-    public function new(): array
+    public function new(): void
     {
-        return ['view' => 'user/register_form'];
+        $this->view = 'user/register_form';
     }
 
     /**
@@ -51,7 +73,7 @@ class UserController
      * @param array $formData The form data submitted for login.
      * @return array
      */
-    public function login(array $formData): array
+    public function login(array $formData): void
     {
         $formCheckHelper = new FormCheckHelper($formData);
         $email = $formCheckHelper->email();
@@ -60,11 +82,13 @@ class UserController
         if ($user && password_verify($formCheckHelper->password(), $user->hashed_password())) {
             // save user id to session to authenticate it
             $_SESSION['login'] = $user->id();
-            return [ 'redirect' => 'true', 'area' => 'pizza', 'action' => 'index'];
-            exit();
+            $this->redirect = true;
+            $this->area = 'pizza';
+            $this->action = 'index';
         } else {
             // Failed login
-            return ['view' => 'user/login_form', 'msg' => 'error=Login failed'];
+            $this->view = 'user/login_form';
+            $this->msg = 'error=Login failed';
         }
     }
 
@@ -79,14 +103,16 @@ class UserController
      * @param array $formData The form data submitted for registration.
      * @return array
      */
-    public function create(array $formData): array
+    public function create(array $formData): void
     {
         $formCheckHelper = new FormCheckHelper($formData);
 
         if (!$formCheckHelper->validatePasswordEquality()) {
-            return ['view' => 'user/register_form', 'msg' => 'error=Passwords% do not match'];
+            $this->view = 'user/register_form';
+            $this->msg = 'error=Passwords% do not match';
         } elseif (!$formCheckHelper->validatePasswordPolicy()) {
-            return ['view' => 'user/register_form', 'msg' => 'error=Weak password'];
+            $this->view = 'user/register_form';
+            $this->msg = 'error=Weak password';
         } else {
             // Create a new user object
             $user = new User(
@@ -102,7 +128,6 @@ class UserController
 
             // Save the new user to the database
             $this->store($user);
-            return [];
         }
     }
 
@@ -116,21 +141,24 @@ class UserController
      * @param User $user The user object to be stored.
      * @return array
      */
-    private function store(User $user): array
+    private function store(User $user): void
     {
         try {
             // Try to save the user
             $user->save();
 
             // Successful insertion
-            return ['view' => 'user/login_form', 'msg' => 'msg=Account successfully created'];
+            $this->view = 'user/login_form';
+            $this->msg = 'msg=Account successfully created';
         } catch (PDOException $e) {
             // Error 23000: Duplicate entry (database error for UNIQUE constraint)
             if ($e->getCode() === '23000') {
-                return ['view' => 'user/register_form', 'msg' => 'error=Username not available'];
+                $this->view = 'user/register_form';
+                $this->msg = 'error=Username not available';
             } else {
                 // Other errors
-                return ['view' => 'user/register_form', 'msg' => 'error=Unknown error '];
+                $this->view = 'user/register_form';
+                $this->msg = 'error=Unknown error';
             }
         }
     }
@@ -141,10 +169,10 @@ class UserController
      * This method clears the session and redirects the user to the index page.
      * @return array
      */
-    public function signOut(): array
+    public function signOut(): void
     {
         session_unset();
         session_destroy();
-        return ['view' => 'user/login_form'];
+        $this->view = 'user/login_form';
     }
 }

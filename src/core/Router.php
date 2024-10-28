@@ -14,6 +14,12 @@ class Router
     private int $id;
     private array $formData;
 
+    private string $view;
+
+    private bool $redirect;
+
+    private string $msg;
+
 
     /**
      * Constructor that starts a session if none is active.
@@ -22,13 +28,23 @@ class Router
      * @param int $id
      * @param array<int,mixed> $formData
      */
-    public function __construct(string $area, string $action, int $id, array $formData)
-    {
+    public function __construct(
+        string &$area,
+        string &$action,
+        string &$view,
+        bool &$redirect,
+        string &$msg,
+        int $id,
+        array $formData
+    ) {
         // Check if a session is active; otherwise, start one
         session_status() === PHP_SESSION_NONE && session_start();
 
-        $this->area = $area;
-        $this->action = $action;
+        $this->area = &$area;
+        $this->action = &$action;
+        $this->view = &$view;
+        $this->redirect = &$redirect;
+        $this->msg = &$msg;
         $this->id = $id;
         $this->formData = $formData;
     }
@@ -38,7 +54,7 @@ class Router
      *
      * @return array
      */
-    public function route(): array
+    public function route(): ?array
     {
         // get controller name including namespace from @param $area
         $controllerName = 'app\\controllers\\' . ucfirst($this->area) . 'Controller';
@@ -47,7 +63,7 @@ class Router
         // TODO: Implement in both if-blocks Error Handeling
         if (class_exists($controllerName)) {
             // Instanciate the controller
-            $controller = new $controllerName();
+            $controller = new $controllerName($this->area, $this->action, $this->view, $this->redirect, $this->msg);
 
             // Check if the method, given in @param $action, exists in the controller
             if (method_exists($controller, $this->action)) {
