@@ -19,23 +19,12 @@ $msg = '';
 
 /**
  * @var array $return
- * Gets data from Controllers via Router
+ * Gets objects in associative arrays from Controllers via Router
  */
 $return = (new Router($area, $action, $view, $redirect, $msg, $id, $data))->route();
 is_array($return) && extract($return);
 
-/**
- * @var string $view (extracted from $return)
- * @var string $redirect (extracted from $return)
- *
- * Examples of $return:
- * [ 'redirect' => 'true', 'area' => 'pizza', 'action' => 'index']
- * ($redirect is set; instanciate new Router and call PizzaController#index)
- * [ 'view' => 'pizza/index', 'pizzas' => $pizzas]
- * ($redirect isn't set, include pizza/index.php and make $pizzas available)
- */
 if ($redirect) {
-    /** @var array $return */
     $return = (new Router($area, $action, $view, $redirect, $msg, $id, $data))->route();
     is_array($return) && extract($return);
 
