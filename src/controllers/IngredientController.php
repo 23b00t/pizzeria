@@ -69,13 +69,7 @@ class IngredientController
      */
     public function edit(int $id): array
     {
-        if (!User::isAdmin()) {
-            $this->redirect = true;
-            $this->area = 'ingredient';
-            $this->action = 'index';
-            $this->msg = 'error=Nicht erlaubt';
-        }
-
+        $this->authorize();
         $ingredient = Ingredient::findBy($id, 'id');
 
         $this->view = 'ingredient/form';
@@ -92,12 +86,7 @@ class IngredientController
      */
     public function create(): void
     {
-        if (!User::isAdmin()) {
-            $this->redirect = true;
-            $this->area = 'ingredient';
-            $this->action = 'index';
-            $this->msg = 'error=Nicht erlaubt';
-        }
+        $this->authorize();
 
         $this->view = 'ingredient/form';
     }
@@ -110,16 +99,11 @@ class IngredientController
      * database. It handles redirection upon success or failure.
      *
      * @param array $formData The form data submitted for creating the ingredient.
-     * @return void
+     * @return  void
      */
     public function store(array $formData): void
     {
-        if (!User::isAdmin()) {
-            $this->redirect = true;
-            $this->area = 'ingredient';
-            $this->action = 'index';
-            $this->msg = 'error=Nicht erlaubt';
-        }
+        $this->authorize();
 
         // Validate form data
         $vegetarian = isset($formData['vegetarian']) ? 1 : 0;
@@ -130,16 +114,12 @@ class IngredientController
             $ingredient->save();
 
             // Redirect to the ingredient list with a success message
-            $this->redirect = true;
-            $this->area = 'ingredient';
-            $this->action = 'index';
+            $this->setRedirect();
             $this->msg = 'msg=Erfolgreich erstellt';
         } catch (PDOException $e) {
             error_log($e->getMessage());
             // Handle error and redirect back to the form
-            $this->redirect = true;
-            $this->area = 'ingredient';
-            $this->action = 'index';
+            $this->setRedirect();
             $this->msg = 'error=Fehler';
         }
     }
@@ -157,12 +137,7 @@ class IngredientController
      */
     public function update(int $id, array $formData): void
     {
-        if (!User::isAdmin()) {
-            $this->redirect = true;
-            $this->area = 'ingredient';
-            $this->action = 'index';
-            $this->msg = 'error=Nicht erlaubt';
-        }
+        $this->authorize();
 
         $ingredient = Ingredient::findBy($id, 'id');
 
@@ -175,16 +150,12 @@ class IngredientController
             try {
                 // Save the updated ingredient to the database
                 $ingredient->update();
-                $this->redirect = true;
-                $this->area = 'ingredient';
-                $this->action = 'index';
+                $this->setRedirect();
                 $this->msg = 'msg=Erfolgreich aktualisiert';
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                $this->redirect = true;
-                $this->area = 'ingredient';
-                $this->action = 'index';
+                $this->setRedirect();
                 $this->msg = 'error=Fehler';
             }
         }
@@ -202,12 +173,7 @@ class IngredientController
      */
     public function delete(int $id): void
     {
-        if (!User::isAdmin()) {
-            $this->redirect = true;
-            $this->area = 'ingredient';
-            $this->action = 'index';
-            $this->msg = 'error=Nicht erlaubt';
-        }
+        $this->authorize();
 
         $ingredient = Ingredient::findBy($id, 'id');
 
@@ -215,18 +181,36 @@ class IngredientController
             try {
                 // Delete the ingredient from the database
                 $ingredient->delete();
-                $this->redirect = true;
-                $this->area = 'ingredient';
-                $this->action = 'index';
+                $this->setRedirect();
                 $this->msg = 'msg=Erfolgreich gelöscht';
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                $this->redirect = true;
-                $this->area = 'ingredient';
-                $this->action = 'index';
+                $this->setRedirect();
                 $this->msg = 'error=Fehler';
             }
         }
+    }
+
+    /**
+     * @return void
+     */
+    private function authorize(): void
+    {
+        if (!User::isAdmin()) {
+            $this->setRedirect();
+            $this->msg = 'error=Nicht erlaubt';
+            exit;
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function setRedirect(): void
+    {
+        $this->redirect = true;
+        $this->area = 'ingredient';
+        $this->action = 'index';
     }
 }

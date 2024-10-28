@@ -93,13 +93,7 @@ class PizzaController
      */
     public function edit(int $id): array
     {
-        if (!User::isAdmin()) {
-            $this->redirect = true;
-            $this->area = 'pizza';
-            $this->action = 'index';
-            $this->msg = 'error=Nicht erlaubt';
-        }
-
+        $this->authorize();
         $pizza = Pizza::findBy($id, 'id');
         $ingredients = Ingredient::findAll();
 
@@ -118,13 +112,7 @@ class PizzaController
      */
     public function create(): array
     {
-        if (!User::isAdmin()) {
-            $this->redirect = true;
-            $this->area = 'pizza';
-            $this->action = 'index';
-            $this->msg = 'error=Nicht erlaubt';
-        }
-
+        $this->authorize();
         $ingredients = Ingredient::findAll();
         $this->view = 'pizza/form';
         return [ 'ingredients' => $ingredients ];
@@ -142,13 +130,7 @@ class PizzaController
      */
     public function store(array $formData): void
     {
-        if (!User::isAdmin()) {
-            $this->redirect = true;
-            $this->area = 'pizza';
-            $this->action = 'index';
-            $this->msg = 'error=Nicht erlaubt';
-        }
-
+        $this->authorize();
         // TODO: Validate form data
         $pizza = new Pizza($formData['name'], $formData['price']);
 
@@ -169,16 +151,12 @@ class PizzaController
                 $pizzaIngredient->save();
             }
 
-            $this->redirect = true;
-            $this->area = 'pizza';
-            $this->action = 'index';
+            $this->setRedirect();
             $this->msg = 'msg=Erstellen erfolgreich';
         } catch (PDOException $e) {
             // Handle the error and redirect back to the form
             error_log($e->getMessage());
-            $this->redirect = true;
-            $this->area = 'pizza';
-            $this->action = 'index';
+            $this->setRedirect();
             $this->msg = 'error=Fehler';
         }
     }
@@ -196,13 +174,7 @@ class PizzaController
      */
     public function update(int $id, array $formData): void
     {
-        if (!User::isAdmin()) {
-            $this->redirect = true;
-            $this->area = 'pizza';
-            $this->action = 'index';
-            $this->msg = 'error=Nicht erlaubt';
-        }
-
+        $this->authorize();
         $pizza = Pizza::findBy($id, 'id');
 
         if ($pizza) {
@@ -228,15 +200,11 @@ class PizzaController
                     $pizzaIngredient->update();
                 }
 
-                $this->redirect = true;
-                $this->area = 'pizza';
-                $this->action = 'index';
+                $this->setRedirect();
                 $this->msg = 'msg=Update erfolgreich';
             } catch (PDOException $e) {
                 error_log($e->getMessage());
-                $this->redirect = true;
-                $this->area = 'pizza';
-                $this->action = 'index';
+                $this->setRedirect();
                 $this->msg = 'error=Fehler';
             }
         }
@@ -254,31 +222,43 @@ class PizzaController
      */
     public function delete(int $id): void
     {
-        if (!User::isAdmin()) {
-            $this->redirect = true;
-            $this->area = 'pizza';
-            $this->action = 'index';
-            $this->msg = 'error=Nicht erlaubt';
-        }
-
+        $this->authorize();
         $pizza = Pizza::findBy($id, 'id');
 
         if ($pizza) {
             try {
                 // Delete the pizza from the database
                 $pizza->delete();
-                $this->redirect = true;
-                $this->area = 'pizza';
-                $this->action = 'index';
+                $this->setRedirect();
                 $this->msg = 'msg=Löschen erfolgreich';
             } catch (PDOException $e) {
                 error_log($e->getMessage());
                 // Handle errors as needed
-                $this->redirect = true;
-                $this->area = 'pizza';
-                $this->action = 'index';
+                $this->setRedirect();
                 $this->msg = 'error=Fehler';
             }
         }
+    }
+
+    /**
+     * @return void
+     */
+    private function authorize(): void
+    {
+        if (!User::isAdmin()) {
+            $this->setRedirect();
+            $this->msg = 'error=Nicht erlaubt';
+            exit;
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function setRedirect(): void
+    {
+        $this->redirect = true;
+        $this->area = 'pizza';
+        $this->action = 'index';
     }
 }

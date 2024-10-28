@@ -99,9 +99,7 @@ class PurchaseController
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                $this->redirect = true;
-                $this->area = 'pizza';
-                $this->action = 'index';
+                $this->setRedirectPizza();
                 $this->msg = 'error=Fehler';
             }
         }
@@ -117,9 +115,7 @@ class PurchaseController
         $card = Card::where('purchase_id = ? ORDER BY id DESC LIMIT 1', [$purchase_id])[0];
         $_SESSION['card'][] = $card;
 
-        $this->redirect = true;
-        $this->area = 'pizza';
-        $this->action = 'index';
+        $this->setRedirectPizza();
         $this->msg = 'msg=Warenkorb hinzugefügt';
     }
 
@@ -146,16 +142,12 @@ class PurchaseController
                 $purchase->update();
 
                 // Redirect with a success message
-                $this->redirect = true;
-                $this->area = 'card';
-                $this->action = 'showOpenCard';
+                $this->setRedirectCard();
                 $this->msg = 'msg=Bestellung erfolgreich';
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                $this->redirect = true;
-                $this->area = 'card';
-                $this->action = 'showOpenCard';
+                $this->setRedirectCard();
                 $this->msg = 'error=Fehler';
             }
         }
@@ -173,9 +165,7 @@ class PurchaseController
     public function update(int $id): void
     {
         if (!User::isAdmin()) {
-            $this->redirect = true;
-            $this->area = 'card';
-            $this->action = 'showOpenCard';
+            $this->setRedirectCard();
             $this->msg = 'error=Nicht erlaubt';
         }
 
@@ -191,16 +181,12 @@ class PurchaseController
                 $purchase->update();
 
                 // Redirect with a success message
-                $this->redirect = true;
-                $this->area = 'purchase';
-                $this->action = 'index';
+                $this->setRedirectPurchase();
                 $this->msg = 'msg=Erfolgreich aktualisiert';
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                $this->redirect = true;
-                $this->area = 'purchase';
-                $this->action = 'index';
+                $this->setRedirectPurchase();
                 $this->msg = 'error=Fehler';
             }
         }
@@ -232,18 +218,44 @@ class PurchaseController
                 unset($_SESSION['purchase_id']);
 
                 // Redirect with a success message after deletion
-                $this->redirect = true;
-                $this->area = 'purchase';
-                $this->action = 'index';
+                $this->setRedirectPurchase();
                 $this->msg = 'msg=Erfolgreich gelöscht';
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                $this->redirect = true;
-                $this->area = 'purchase';
-                $this->action = 'index';
+                $this->setRedirectPurchase();
                 $this->msg = 'error=Fehler';
             }
         }
+    }
+
+    /**
+     * @return void
+     */
+    private function setRedirectPizza(): void
+    {
+        $this->redirect = true;
+        $this->area = 'pizza';
+        $this->action = 'index';
+    }
+
+    /**
+     * @return void
+     */
+    private function setRedirectCard(): void
+    {
+        $this->redirect = true;
+        $this->area = 'card';
+        $this->action = 'showOpenCard';
+    }
+
+    /**
+     * @return void
+     */
+    private function setRedirectPurchase(): void
+    {
+        $this->redirect = true;
+        $this->area = 'purchase';
+        $this->action = 'index';
     }
 }

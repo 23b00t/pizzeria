@@ -9,14 +9,6 @@ use PDOException;
 /**
  * UserController class responsible for managing user-related actions, such as
  * displaying user profiles, handling user login, and processing user registration.
- *
- * Methods:
- *
- * - show(int $id): void: Displays the user profile based on the given ID.
- * - login(array $formData): void: Processes user login with the provided form data.
- * - create(array $formData): void: Validates and creates a new user from the provided form data.
- * - store(User $user): void: Saves the user object to the database.
- * - signOut(): void: Logs out the user by clearing the session.
  */
 class UserController
 {
@@ -109,7 +101,7 @@ class UserController
 
         if (!$formCheckHelper->validatePasswordEquality()) {
             $this->view = 'user/register_form';
-            $this->msg = 'error=Passwords% do not match';
+            $this->msg = 'error=Passwords do not match';
         } elseif (!$formCheckHelper->validatePasswordPolicy()) {
             $this->view = 'user/register_form';
             $this->msg = 'error=Weak password';

@@ -135,15 +135,13 @@ class CardController
                     $_SESSION['card'] = array_values($_SESSION['card']);
                 }
 
-                $this->redirect = true;
-                $this->area = 'card';
+                $this->setRedirect();
                 $this->action = 'showOpenCard';
                 $this->msg = 'msg=Erfolgreich aktualisiert';
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                $this->redirect = true;
-                $this->area = 'card';
+                $this->setRedirect();
                 $this->action = 'showOpenCard';
                 $this->msg = 'error=Fehler';
             }
@@ -171,18 +169,25 @@ class CardController
                 // Delete the card from the database
                 $card->delete();
 
-                $this->redirect = true;
-                $this->area = 'card';
+                $this->setRedirect();
                 $this->action = 'index';
                 $this->msg = 'msg=Erfolgreich gelöscht';
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                $this->redirect = true;
-                $this->area = 'card';
+                $this->setRedirect();
                 $this->action = 'index';
                 $this->msg = 'error=Fehler';
             }
         }
+    }
+
+    /**
+     * @return void
+     */
+    private function setRedirect(): void
+    {
+        $this->redirect = true;
+        $this->area = 'card';
     }
 }
