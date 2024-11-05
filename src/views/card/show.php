@@ -72,5 +72,3 @@ $csrf_token = Helper::generateCSRFToken();
 <?php else : ?>
   <p> Noch keine Artikel im Warenkorb </p>
 <?php endif ?>
-
-  <a href="./index.php?area=purchase&action=index" class="button">Zurück zur Übersicht</a>

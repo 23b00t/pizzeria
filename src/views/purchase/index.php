@@ -37,8 +37,6 @@ $pageTitle = 'Pizzen';
       </td>
       <td>
           <?php if (User::isAdmin()) : ?>
-        <a href="./index.php?area=card&action=edit&id=<?= htmlspecialchars($purchase->id()) ?>"
-          class="btn btn-warning btn-sm">Bearbeiten</a>
         <a href="./index.php?area=purchase&action=delete&id=<?= htmlspecialchars($purchase->id()) ?>"
           class="btn btn-danger btn-sm">Löschen</a>
         <a href="./index.php?area=purchase&action=update&id=<?= htmlspecialchars($purchase->id()) ?>"

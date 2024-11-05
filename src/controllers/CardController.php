@@ -170,13 +170,13 @@ class CardController
                 $card->delete();
 
                 $this->setRedirect();
-                $this->action = 'index';
+                $this->action = 'showOpenCard';
                 $this->msg = 'msg=Erfolgreich gelöscht';
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
                 $this->setRedirect();
-                $this->action = 'index';
+                $this->action = 'showOpenCard';
                 $this->msg = 'error=Fehler';
             }
         }
