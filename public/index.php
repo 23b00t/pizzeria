@@ -5,12 +5,13 @@
  * All request come in here.
  */
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
 use app\core\Router;
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
+
 $area = $_REQUEST['area'] ?? 'user';
-$action = $_REQUEST['action'] ?? 'showLogin';
+$action = $_REQUEST['action'] ?? 'index';
 $id = $_REQUEST['id'] ?? 0;
 $view = '';
 $msg = '';
@@ -30,7 +31,7 @@ $response = (new Router($area, $action, $id, $data))->route();
  * If the value is not set by the controller, it defaults to the pre-set value.
  * In this case, the value should not be changed.
  */
-$view = empty($response->getView()) ? $view : $response->getView();
+$view = $response->getView();
 $action = empty($response->getAction()) ? $action : $response->getAction();
 $area = empty($response->getArea()) ? $area : $response->getArea();
 $msg = $response->getMsg();

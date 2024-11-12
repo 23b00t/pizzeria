@@ -11,14 +11,14 @@ use PDOException;
  * UserController class responsible for managing user-related actions, such as
  * displaying user profiles, handling user login, and processing user registration.
  */
-class UserController
+class UserController extends BaseController
 {
     /**
-     * showLogin
+     * index
      *
      * @return Response
      */
-    public function showLogin(): Response
+    public function index(): Response
     {
         return new Response([], 'user/login_form');
     }
@@ -56,7 +56,7 @@ class UserController
             $response = (new PizzaController())->index();
         } else {
             // Failed login
-            $response = $this->showLogin();
+            $response = $this->index();
             $response->setMsg('error=Login failed');
         }
         return $response;
@@ -119,7 +119,7 @@ class UserController
             $user->save();
 
             // Successful insertion
-            $response = $this->showLogin();
+            $response = $this->index();
             $response->setMsg('msg=Account successfully created');
         } catch (PDOException $e) {
             // Error 23000: Duplicate entry (database error for UNIQUE constraint)
@@ -128,7 +128,7 @@ class UserController
                 $response->setMsg('error=Username not available');
             } else {
                 // Other errors
-                $response = $this->showLogin();
+                $response = $this->index();
                 $response->setMsg('error=Unknown error');
             }
         }
@@ -145,6 +145,6 @@ class UserController
     {
         session_unset();
         session_destroy();
-        return $this->showLogin();
+        return $this->index();
     }
 }

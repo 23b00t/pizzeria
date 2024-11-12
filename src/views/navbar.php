@@ -27,7 +27,7 @@ use app\models\User;
           </li>
           <?php if (!User::isAdmin()) : ?>
           <li class="nav-item">
-            <a class="nav-link" href="./index.php?area=card&action=showOpenCard">Warenkorb</a>
+            <a class="nav-link" href="./index.php?area=card&action=index">Warenkorb</a>
           </li>
           <?php endif; ?>
         </ul>

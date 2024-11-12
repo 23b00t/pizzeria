@@ -6,13 +6,12 @@ use app\core\Response;
 use app\models\User;
 use app\models\Card;
 use app\models\Purchase;
-use PDOException;
 
 /**
  * CardController class responsible for managing card-related actions,
  * such as displaying card details, handling card updates, and deletions.
  */
-class CardController
+class CardController extends BaseController
 {
     /**
      * Show detailed information about a specific card by purchase ID.
@@ -52,7 +51,7 @@ class CardController
      * session is cleared.
      * @return Response
      */
-    public function showOpenCard(): Response
+    public function index(): Response
     {
         // Retrieve the card and purchase ID from the session
         $purchase_id = $_SESSION['purchase_id'] ?? 0;
@@ -82,37 +81,25 @@ class CardController
      */
     public function update(array $formData): Response
     {
-        $card_id = $formData['card_id'];
-        $card = Card::findBy($card_id, 'id');
+        // Use handleDatabaseOperation to handle the database operation and error handling
+        return $this->handleDatabaseOperation(function () use ($formData) {
+            $card_id = $formData['card_id'];
+            $card = Card::findBy($card_id, 'id');
 
-        if ($card) {
+            // Update the card's quantity
             $card->quantity($formData['quantity']);
 
-            try {
-                $card->update();
+            // Save the updated card in the database
+            $card->update();
 
-                if (isset($_SESSION['card'])) {
-                    foreach ($_SESSION['card'] as &$sessionCard) {
-                        if ($sessionCard->id() == $card_id) {
-                            $sessionCard->quantity($formData['quantity']);
-                            break;
-                        }
-                    }
-                    $_SESSION['card'] = array_values($_SESSION['card']);
-                }
+            // Update the card in the session if it exists
+            $this->updateCardInSession($card_id, $formData['quantity']);
 
-                $response = $this->showOpenCard();
-                $response->setMsg('msg=Erfolgreich aktualisiert');
-            } catch (PDOException $e) {
-                error_log($e->getMessage());
-                $response = $this->showOpenCard();
-                $response->setMsg('error=Fehler');
-            }
-
+            // Return the updated response
+            $response = $this->index();
+            $response->setMsg('msg=Successfully updated');
             return $response;
-        }
-
-        return new Response([], 'card/show', 'error=Karte nicht gefunden');
+        }, $this);
     }
 
     /**
@@ -127,24 +114,40 @@ class CardController
      */
     public function delete(int $id): Response
     {
-        // Retrieve the card record by ID
-        $card = Card::findBy($id, 'id');
-
         // If the card exists, proceed with the deletion process
-        if ($card) {
-            try {
-                // Delete the card from the database
-                $card->delete();
+        return $this->handleDatabaseOperation(function () use ($id) {
+            // Retrieve the card record by ID
+            $card = Card::findBy($id, 'id');
 
-                $response = $this->showOpenCard();
-                $response->setMsg('msg=Erfolgreich gelöscht');
-            } catch (PDOException $e) {
-                // Log the error and redirect with an error message
-                error_log($e->getMessage());
-                $response = $this->showOpenCard();
-                $response->setMsg('error=Fehler beim löschen');
+            // Delete the card from the database
+            $card->delete();
+
+            $response = $this->index();
+            $response->setMsg('msg=Erfolgreich gelöscht');
+        }, $this);
+    }
+
+    /**
+     * updateCardInSession
+     *
+     * This method handles the logic of updating the card in the session
+     *
+     * @param int $card_id
+     * @param int $quantity
+     * @return void
+     */
+    private function updateCardInSession(int $card_id, int $quantity): void
+    {
+        if (isset($_SESSION['card'])) {
+            // Loop through session cards to find the card by ID and update its quantity
+            foreach ($_SESSION['card'] as &$sessionCard) {
+                if ($sessionCard->id() == $card_id) {
+                    $sessionCard->quantity($quantity);
+                    break;
+                }
             }
+            // Re-index the session cards array
+            $_SESSION['card'] = array_values($_SESSION['card']);
         }
-        return $response;
     }
 }

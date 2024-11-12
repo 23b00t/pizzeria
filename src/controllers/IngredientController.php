@@ -3,10 +3,7 @@
 namespace app\controllers;
 
 use app\core\Response;
-use app\models\User;
 use app\models\Ingredient;
-use Exception;
-use PDOException;
 
 /**
  * IngredientController class responsible for managing ingredient-related actions,
@@ -21,7 +18,7 @@ use PDOException;
  * - update(int $id, array $formData): array: Validates form data and updates the specified ingredient in the database.
  * - delete(int $id): array: Deletes the ingredient identified by the specified ID from the database.
  */
-class IngredientController
+class IngredientController extends BaseController
 {
     /**
      * Display a list of all ingredients.
@@ -80,24 +77,17 @@ class IngredientController
     {
         $this->authorize();
 
-        // Validate form data
-        $vegetarian = isset($formData['vegetarian']) ? 1 : 0;
-        $ingredient = new Ingredient($formData['name'], $formData['price'], $vegetarian);
+        return $this->handleDatabaseOperation(function () use ($formData) {
+            $vegetarian = isset($formData['vegetarian']) ? 1 : 0;
+            $ingredient = new Ingredient($formData['name'], $formData['price'], $vegetarian);
 
-        try {
             // Save the new ingredient
             $ingredient->save();
 
             // Redirect to the ingredient list with a success message
             $response = $this->index();
             $response->setMsg('msg=Erfolgreich erstellt');
-        } catch (PDOException $e) {
-            error_log($e->getMessage());
-            // Handle error and redirect back to the form
-            $response = $this->index();
-            $response->setMsg('error=Fehler beim Speichern');
-        }
-        return $response;
+        }, $this);
     }
 
     /**
@@ -115,27 +105,19 @@ class IngredientController
     {
         $this->authorize();
 
-        $ingredient = Ingredient::findBy($id, 'id');
+        return $this->handleDatabaseOperation(function () use ($formData, $id) {
+            $ingredient = Ingredient::findBy($id, 'id');
 
-        if ($ingredient) {
             // Update the ingredient's properties
             $ingredient->name($formData['name']);
             $ingredient->price($formData['price']);
             $ingredient->vegetarian(isset($formData['vegetarian']) ? 1 : 0);
 
-            try {
-                // Save the updated ingredient to the database
-                $ingredient->update();
-                $response = $this->index();
-                $response->setMsg('msg=Erfolgreich aktualisiert');
-            } catch (PDOException $e) {
-                error_log($e->getMessage());
-                // Handle error and redirect back to the form
-                $response = $this->index();
-                $response->setMsg('error=Fehler beim Aktualisieren');
-            }
-        }
-        return $response;
+            // Save the updated ingredient to the database
+            $ingredient->update();
+            $response = $this->index();
+            $response->setMsg('msg=Erfolgreich aktualisiert');
+        }, $this);
     }
 
     /**
@@ -152,31 +134,13 @@ class IngredientController
     {
         $this->authorize();
 
-        $ingredient = Ingredient::findBy($id, 'id');
+        return $this->handleDatabaseOperation(function () use ($id) {
+            $ingredient = Ingredient::findBy($id, 'id');
 
-        if ($ingredient) {
-            try {
-                // Delete the ingredient from the database
-                $ingredient->delete();
-                $response = $this->index();
-                $response->setMsg('msg=Erfolgreich gelöscht');
-            } catch (PDOException $e) {
-                error_log($e->getMessage());
-                // Handle error and redirect back to the form
-                $response = $this->index();
-                $response->setMsg('error=Fehler beim Löschen');
-            }
-        }
-        return $response;
-    }
-
-    /**
-     * @return void
-     */
-    private function authorize(): void
-    {
-        if (!User::isAdmin()) {
-            throw new Exception('Aktion nicht erlaubt');
-        }
+            // Delete the ingredient from the database
+            $ingredient->delete();
+            $response = $this->index();
+            $response->setMsg('msg=Erfolgreich gelöscht');
+        }, $this);
     }
 }
