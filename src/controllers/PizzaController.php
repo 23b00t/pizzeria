@@ -2,10 +2,12 @@
 
 namespace app\controllers;
 
+use app\core\Response;
 use app\models\User;
 use app\models\Pizza;
 use app\models\PizzaIngredient;
 use app\models\Ingredient;
+use Exception;
 use PDOException;
 
 /**
@@ -25,41 +27,18 @@ use PDOException;
  */
 class PizzaController
 {
-    private string $area;
-    private string $action;
-    private string $view;
-    private bool $redirect;
-    private string $msg;
-
-    /**
-     * @param string $area
-     * @param string $action
-     * @param string $view
-     * @param bool $redirect
-     * @param string $msg
-     */
-    public function __construct(string &$area, string &$action, string &$view, bool &$redirect, string &$msg)
-    {
-        $this->area = &$area;
-        $this->action = &$action;
-        $this->view = &$view;
-        $this->redirect = &$redirect;
-        $this->msg = &$msg;
-    }
-
     /**
      * Display a list of all pizzas.
      *
      * This method retrieves all pizzas from the database and includes
      * the view to display them in a list format.
-     * @return array
+     * @return Response
      */
-    public function index(): array
+    public function index(): Response
     {
         $pizzas = Pizza::findAll();
 
-        $this->view = 'pizza/index';
-        return [ 'pizzas' => $pizzas];
+        return new Response([ 'pizzas' => $pizzas], 'pizza/index');
     }
 
     /**
@@ -69,17 +48,14 @@ class PizzaController
      * then includes the pizza detail view to display the information.
      *
      * @param int $id The pizza ID.
-     * @return array
+     * @return Response
      */
-    public function show(int $id): array
+    public function show(int $id): Response
     {
         $pizza = Pizza::findBy($id, 'id');
         $ingredients = Pizza::findIngredientsByPizzaId($id);
 
-        $this->view = 'pizza/show';
-        if ($pizza) {
-            return [ 'ingredients' => $ingredients, 'pizza' => $pizza ];
-        }
+        return new Response([ 'ingredients' => $ingredients, 'pizza' => $pizza ], 'pizza/show');
     }
 
     /**
@@ -89,18 +65,15 @@ class PizzaController
      * form view for editing the pizza's details.
      *
      * @param int $id The ID of the pizza to edit.
-     * @return array
+     * @return Response
      */
-    public function edit(int $id): array
+    public function edit(int $id): Response
     {
         $this->authorize();
         $pizza = Pizza::findBy($id, 'id');
         $ingredients = Ingredient::findAll();
 
-        $this->view = 'pizza/form';
-        if ($pizza) {
-            return [ 'pizza' => $pizza, 'ingredients' => $ingredients ];
-        }
+        return new Response([ 'pizza' => $pizza, 'ingredients' => $ingredients ], 'pizza/form');
     }
 
     /**
@@ -108,14 +81,13 @@ class PizzaController
      *
      * This method includes the form view for the creation of a new pizza
      * without any pre-filled data.
-     * @return array
+     * @return Response
      */
-    public function create(): array
+    public function create(): Response
     {
         $this->authorize();
         $ingredients = Ingredient::findAll();
-        $this->view = 'pizza/form';
-        return [ 'ingredients' => $ingredients ];
+        return new Response([ 'ingredients' => $ingredients ], 'pizza/form');
     }
 
     /**
@@ -126,9 +98,9 @@ class PizzaController
      * database. It handles redirection upon success or failure.
      *
      * @param array $formData The form data submitted for creating the pizza.
-     * @return void
+     * @return Response
      */
-    public function store(array $formData): void
+    public function store(array $formData): Response
     {
         $this->authorize();
         // TODO: Validate form data
@@ -151,14 +123,15 @@ class PizzaController
                 $pizzaIngredient->save();
             }
 
-            $this->setRedirect();
-            $this->msg = 'msg=Erstellen erfolgreich';
+            $response = $this->index();
+            $response->setMsg('msg=Erstellen erfolgreich');
         } catch (PDOException $e) {
             // Handle the error and redirect back to the form
             error_log($e->getMessage());
-            $this->setRedirect();
-            $this->msg = 'error=Fehler';
+            $response = $this->index();
+            $response->setMsg('error=Fehler');
         }
+        return $response;
     }
 
     /**
@@ -170,9 +143,9 @@ class PizzaController
      *
      * @param int   $id       The pizza ID to update.
      * @param array $formData The form data submitted for updating the pizza.
-     * @return void
+     * @return Response
      */
-    public function update(int $id, array $formData): void
+    public function update(int $id, array $formData): Response
     {
         $this->authorize();
         $pizza = Pizza::findBy($id, 'id');
@@ -193,21 +166,28 @@ class PizzaController
                     }
 
                     $pizzaIngredient = PizzaIngredient::where(
-                        'ingredient_id = ? && pizza_id = ?',
+                        'ingredient_id = ? AND pizza_id = ?',
                         [$pizzaIngredientId, $pizza->id()]
-                    )[0];
-                    $pizzaIngredient->quantity($quantity);
-                    $pizzaIngredient->update();
+                    );
+
+                    if ($pizzaIngredient) {
+                        $pizzaIngredient[0]->quantity($quantity);
+                        $pizzaIngredient[0]->update();
+                    } else {
+                        (new PizzaIngredient($pizza->id(), $pizzaIngredientId, $quantity))->save();
+                    }
                 }
 
-                $this->setRedirect();
-                $this->msg = 'msg=Update erfolgreich';
+                $response = $this->index();
+                $response->setMsg('msg=Pizza aktualisiert');
             } catch (PDOException $e) {
+                // Handle the error and redirect back to the form
                 error_log($e->getMessage());
-                $this->setRedirect();
-                $this->msg = 'error=Fehler';
+                $response = $this->index();
+                $response->setMsg('error=Fehler beim Aktualisieren');
             }
         }
+        return $response;
     }
 
     /**
@@ -218,9 +198,9 @@ class PizzaController
      * that may occur during the deletion process.
      *
      * @param int $id The pizza ID.
-     * @return void
+     * @return Response
      */
-    public function delete(int $id): void
+    public function delete(int $id): Response
     {
         $this->authorize();
         $pizza = Pizza::findBy($id, 'id');
@@ -229,15 +209,16 @@ class PizzaController
             try {
                 // Delete the pizza from the database
                 $pizza->delete();
-                $this->setRedirect();
-                $this->msg = 'msg=Löschen erfolgreich';
+                $response = $this->index();
+                $response->setMsg('msg=Löschen erfolgreich');
             } catch (PDOException $e) {
+                // Handle the error and redirect back to the form
                 error_log($e->getMessage());
-                // Handle errors as needed
-                $this->setRedirect();
-                $this->msg = 'error=Fehler';
+                $response = $this->index();
+                $response->setMsg('error=Fehler');
             }
         }
+        return $response;
     }
 
     /**
@@ -246,19 +227,7 @@ class PizzaController
     private function authorize(): void
     {
         if (!User::isAdmin()) {
-            $this->setRedirect();
-            $this->msg = 'error=Nicht erlaubt';
-            exit;
+            throw new Exception('Aktion nicht erlaubt!');
         }
-    }
-
-    /**
-     * @return void
-     */
-    private function setRedirect(): void
-    {
-        $this->redirect = true;
-        $this->area = 'pizza';
-        $this->action = 'index';
     }
 }

@@ -42,7 +42,7 @@ class PizzaIngredient extends BaseModel
      */
     public function __construct($pizza_id, $ingredient_id, $quantity, $id = null)
     {
-        $this->id = $id; 
+        $this->id = $id;
         $this->pizza_id = $pizza_id;
         $this->ingredient_id = $ingredient_id;
         $this->quantity = $quantity;

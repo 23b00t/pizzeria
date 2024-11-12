@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\core\Response;
 use app\models\User;
 use app\models\Card;
 use app\models\Purchase;
@@ -13,28 +14,6 @@ use PDOException;
  */
 class CardController
 {
-    private string $area;
-    private string $action;
-    private string $view;
-    private bool $redirect;
-    private string $msg;
-
-    /**
-     * @param string $area
-     * @param string $action
-     * @param string $view
-     * @param bool $redirect
-     * @param string $msg
-     */
-    public function __construct(string &$area, string &$action, string &$view, bool &$redirect, string &$msg)
-    {
-        $this->area = &$area;
-        $this->action = &$action;
-        $this->view = &$view;
-        $this->redirect = &$redirect;
-        $this->msg = &$msg;
-    }
-
     /**
      * Show detailed information about a specific card by purchase ID.
      *
@@ -43,9 +22,9 @@ class CardController
      *
      * @param int $id The purchase ID.
      *
-     * @return array
+     * @return Response
      */
-    public function show(int $id): array
+    public function show(int $id): Response
     {
         // Retrieve the purchase record using the provided ID
         if (User::isAdmin()) {
@@ -62,8 +41,7 @@ class CardController
             return $c->purchase_id() == $id;
         });
 
-        $this->view = 'card/show';
-        return [ 'purchase' => $purchase, 'cards' => $cards ];
+        return new Response([ 'purchase' => $purchase, 'cards' => $cards ], 'card/show');
     }
 
     /**
@@ -72,13 +50,13 @@ class CardController
      * Checks if the user has a pending card in the session and displays
      * its details. If the associated purchase has been delivered, the
      * session is cleared.
-     * @return array
+     * @return Response
      */
-    public function showOpenCard(): array
+    public function showOpenCard(): Response
     {
         // Retrieve the card and purchase ID from the session
-        $cards = $_SESSION['card'] ?? [];
         $purchase_id = $_SESSION['purchase_id'] ?? 0;
+        $cards = Card::where('purchase_id = ?', [$purchase_id]);
 
         // Retrieve the purchase record using the session's purchase ID
         $purchase = Purchase::findBy($purchase_id, 'id');
@@ -86,13 +64,10 @@ class CardController
         // If the purchase is delivered, clear the session and reset variables
         if (isset($purchase) && $purchase->status() === 'delivered') {
             unset($_SESSION['purchase_id']);
-            unset($_SESSION['card']);
             $purchase = null;
-            $cards = [];
         }
 
-        $this->view = 'card/show';
-        return [ 'purchase' => $purchase, 'cards' => $cards ];
+        return new Response([ 'purchase' => $purchase, 'cards' => $cards ], 'card/show');
     }
 
     /**
@@ -103,49 +78,41 @@ class CardController
      * It also updates the session if necessary.
      *
      * @param array $formData The form data submitted for updating the card.
-     * @return void
+     * @return Response
      */
-    public function update(array $formData): void
+    public function update(array $formData): Response
     {
-        // Get the card ID from the form data
         $card_id = $formData['card_id'];
-
-        // Retrieve the card record by ID
         $card = Card::findBy($card_id, 'id');
 
-        // If the card exists, proceed with the update process
         if ($card) {
-            // Update the card's quantity using the form data
             $card->quantity($formData['quantity']);
 
             try {
-                // Save the updated card to the database
                 $card->update();
 
-                // Update the card in the session if it exists
                 if (isset($_SESSION['card'])) {
                     foreach ($_SESSION['card'] as &$sessionCard) {
                         if ($sessionCard->id() == $card_id) {
-                            // Update the session object directly with the new quantity
                             $sessionCard->quantity($formData['quantity']);
                             break;
                         }
                     }
-                    // Reassign the session with the updated card data
                     $_SESSION['card'] = array_values($_SESSION['card']);
                 }
 
-                $this->setRedirect();
-                $this->action = 'showOpenCard';
-                $this->msg = 'msg=Erfolgreich aktualisiert';
+                $response = $this->showOpenCard();
+                $response->setMsg('msg=Erfolgreich aktualisiert');
             } catch (PDOException $e) {
-                // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                $this->setRedirect();
-                $this->action = 'showOpenCard';
-                $this->msg = 'error=Fehler';
+                $response = $this->showOpenCard();
+                $response->setMsg('error=Fehler');
             }
+
+            return $response;
         }
+
+        return new Response([], 'card/show', 'error=Karte nicht gefunden');
     }
 
     /**
@@ -156,9 +123,9 @@ class CardController
      * errors during the deletion process.
      *
      * @param int $id The card ID.
-     * @return void
+     * @return Response
      */
-    public function delete(int $id): void
+    public function delete(int $id): Response
     {
         // Retrieve the card record by ID
         $card = Card::findBy($id, 'id');
@@ -169,25 +136,15 @@ class CardController
                 // Delete the card from the database
                 $card->delete();
 
-                $this->setRedirect();
-                $this->action = 'showOpenCard';
-                $this->msg = 'msg=Erfolgreich gelöscht';
+                $response = $this->showOpenCard();
+                $response->setMsg('msg=Erfolgreich gelöscht');
             } catch (PDOException $e) {
                 // Log the error and redirect with an error message
                 error_log($e->getMessage());
-                $this->setRedirect();
-                $this->action = 'showOpenCard';
-                $this->msg = 'error=Fehler';
+                $response = $this->showOpenCard();
+                $response->setMsg('error=Fehler beim löschen');
             }
         }
-    }
-
-    /**
-     * @return void
-     */
-    private function setRedirect(): void
-    {
-        $this->redirect = true;
-        $this->area = 'card';
+        return $response;
     }
 }

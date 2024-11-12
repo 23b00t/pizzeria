@@ -12,7 +12,6 @@ $csrf_token = Helper::generateCSRFToken();
 // @var controllers\PurchaseController $purchase
 // @var controllers\CardController $cards
 ?>
-
 <?php $pageTitle = 'Bestellung'; ?>
 <?php if (!empty($cards)) : ?>
   <h1>Bestellung #
