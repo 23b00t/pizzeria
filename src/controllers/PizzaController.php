@@ -103,34 +103,26 @@ class PizzaController
     public function store(array $formData): Response
     {
         $this->authorize();
-        // TODO: Validate form data
+
+        // TODO: Form validation
         $pizza = new Pizza($formData['name'], $formData['price']);
 
-        try {
-            // Save the new pizza
+        // Handle database operations with try-catch in a separate method
+        $response = $this->handleDatabaseOperation(function () use ($pizza, $formData) {
+            // Save the pizza
             $pizza->save();
 
-            // Get the last saved pizza
+            // Retrieve the latest saved pizza
             $pizza = Pizza::where('id ORDER BY id DESC LIMIT 1', [])[0];
 
-            $pizzaIngredients = $formData['quantities'];
-            foreach ($pizzaIngredients as $pizzaIngredientId => $quantity) {
-                if (empty($quantity)) {
-                    continue;
-                }
+            // Process pizza ingredients after pizza creation
+            $this->savePizzaIngredients($pizza->id(), $formData['quantities']);
 
-                $pizzaIngredient = new PizzaIngredient($pizza->id(), $pizzaIngredientId, $quantity);
-                $pizzaIngredient->save();
-            }
+            return $this->index();
+        });
 
-            $response = $this->index();
-            $response->setMsg('msg=Erstellen erfolgreich');
-        } catch (PDOException $e) {
-            // Handle the error and redirect back to the form
-            error_log($e->getMessage());
-            $response = $this->index();
-            $response->setMsg('error=Fehler');
-        }
+        // Set the response message
+        $response->setMsg('msg=Erstellen erfolgreich');
         return $response;
     }
 
@@ -148,45 +140,27 @@ class PizzaController
     public function update(int $id, array $formData): Response
     {
         $this->authorize();
-        $pizza = Pizza::findBy($id, 'id');
 
-        if ($pizza) {
+        // Handle the database operation with error handling and authorization
+        $response = $this->handleDatabaseOperation(function () use ($id, $formData) {
+            $pizza = Pizza::findBy($id, 'id');
+
             // Update the pizza properties
             $pizza->name($formData['name']);
             $pizza->price($formData['price']);
 
-            try {
-                // Save the updated pizza to the database
-                $pizza->update();
+            // Update the pizza in the database
+            $pizza->update();
 
-                $pizzaIngredients = $formData['quantities'];
-                foreach ($pizzaIngredients as $pizzaIngredientId => $quantity) {
-                    if (empty($quantity)) {
-                        continue;
-                    }
+            // Handle pizza ingredients
+            $this->updatePizzaIngredients($pizza, $formData['quantities']);
 
-                    $pizzaIngredient = PizzaIngredient::where(
-                        'ingredient_id = ? AND pizza_id = ?',
-                        [$pizzaIngredientId, $pizza->id()]
-                    );
+            // Return success response
+            $response = $this->index();
+            $response->setMsg('msg=Pizza erfolgreich aktualisiert');
+            return $response;
+        });
 
-                    if ($pizzaIngredient) {
-                        $pizzaIngredient[0]->quantity($quantity);
-                        $pizzaIngredient[0]->update();
-                    } else {
-                        (new PizzaIngredient($pizza->id(), $pizzaIngredientId, $quantity))->save();
-                    }
-                }
-
-                $response = $this->index();
-                $response->setMsg('msg=Pizza aktualisiert');
-            } catch (PDOException $e) {
-                // Handle the error and redirect back to the form
-                error_log($e->getMessage());
-                $response = $this->index();
-                $response->setMsg('error=Fehler beim Aktualisieren');
-            }
-        }
         return $response;
     }
 
@@ -205,19 +179,13 @@ class PizzaController
         $this->authorize();
         $pizza = Pizza::findBy($id, 'id');
 
-        if ($pizza) {
-            try {
-                // Delete the pizza from the database
-                $pizza->delete();
-                $response = $this->index();
-                $response->setMsg('msg=Löschen erfolgreich');
-            } catch (PDOException $e) {
-                // Handle the error and redirect back to the form
-                error_log($e->getMessage());
-                $response = $this->index();
-                $response->setMsg('error=Fehler');
-            }
-        }
+        $response = $this->handleDatabaseOperation(function () use ($pizza) {
+            $pizza->delete();
+            $response = $this->index();
+            $response->setMsg('msg=Löschen erfolgreich');
+            return $response;
+        });
+
         return $response;
     }
 
@@ -228,6 +196,57 @@ class PizzaController
     {
         if (!User::isAdmin()) {
             throw new Exception('Aktion nicht erlaubt!');
+        }
+    }
+
+    /**
+     * savePizzaIngredients
+     *
+     * Separate method to handle saving pizza ingredients
+     *
+     * @param int $pizzaId
+     * @param array $quantities
+     * @return void
+     */
+    private function savePizzaIngredients(int $pizzaId, array $quantities): void
+    {
+        foreach ($quantities as $pizzaIngredientId => $quantity) {
+            if (empty($quantity)) {
+                continue;
+            }
+
+            $pizzaIngredient = new PizzaIngredient($pizzaId, $pizzaIngredientId, $quantity);
+            $pizzaIngredient->save();
+        }
+    }
+
+    /**
+     * updatePizzaIngredients
+     *
+     * @param Pizza $pizza
+     * @param array $pizzaIngredients
+     * @return void
+     */
+    private function updatePizzaIngredients(Pizza $pizza, array $pizzaIngredients): void
+    {
+        foreach ($pizzaIngredients as $pizzaIngredientId => $quantity) {
+            if (empty($quantity)) {
+                continue;
+            }
+
+            $pizzaIngredient = PizzaIngredient::where(
+                'ingredient_id = ? AND pizza_id = ?',
+                [$pizzaIngredientId, $pizza->id()]
+            );
+
+            if ($pizzaIngredient) {
+                // Update the existing pizza ingredient
+                $pizzaIngredient[0]->quantity($quantity);
+                $pizzaIngredient[0]->update();
+            } else {
+                // Add new pizza ingredient
+                (new PizzaIngredient($pizza->id(), $pizzaIngredientId, $quantity))->save();
+            }
         }
     }
 }
