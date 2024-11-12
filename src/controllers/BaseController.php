@@ -2,25 +2,41 @@
 
 namespace app\controllers;
 
+use Exception;
+use PDOException;
+use app\core\Response;
+use app\models\User;
+
 abstract class BaseController
 {
     /**
      * handleDatabaseOperation
      *
-     * Extract the database operation and error handling into a separate method
+     * Centralized method for database operations with error handling and dynamic controller
      *
      * @param callable $operation
+     * @param mixed $controller
      * @return Response
      */
-    private function handleDatabaseOperation(callable $operation): Response
+    protected function handleDatabaseOperation(callable $operation, $controller): Response
     {
         try {
             return $operation();
         } catch (PDOException $e) {
             error_log($e->getMessage());
-            $response = $this->index();
-            $response->setMsg('error=Fehler');
+            $response = $controller->index();
+            $response->setMsg('error=Upps... Es ist ein Fehler aufgetreten!');
             return $response;
+        }
+    }
+
+    /**
+     * @return void
+     */
+    protected function authorize(): void
+    {
+        if (!User::isAdmin()) {
+            throw new Exception('Aktion nicht erlaubt!');
         }
     }
 }

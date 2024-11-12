@@ -101,7 +101,7 @@
   }
   package controllers as controllers {
     class "UserController\n<b>UserController class responsible for managing user-related actions, such as</b>" as controllers_UserController {
-      +showLogin()
+      +index()
       +new()
       +login(formData)
       +create(formData)
@@ -134,7 +134,7 @@
     }
     class "CardController\n<b>CardController class responsible for managing card-related actions,</b>" as controllers_CardController {
       +show(id)
-      +showOpenCard()
+      +index()
       +update(formData)
       +delete(id)
     }

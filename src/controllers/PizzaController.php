@@ -3,12 +3,9 @@
 namespace app\controllers;
 
 use app\core\Response;
-use app\models\User;
 use app\models\Pizza;
 use app\models\PizzaIngredient;
 use app\models\Ingredient;
-use Exception;
-use PDOException;
 
 /**
  * PizzaController class responsible for managing pizza-related actions,
@@ -25,7 +22,7 @@ use PDOException;
  * - update(int $id, array $formData): void: Validates the provided form data and updates the pizza with the given ID.
  * - delete(int $id): void: Deletes the pizza identified by the specified ID from the database.
  */
-class PizzaController
+class PizzaController extends BaseController
 {
     /**
      * Display a list of all pizzas.
@@ -104,11 +101,11 @@ class PizzaController
     {
         $this->authorize();
 
-        // TODO: Form validation
-        $pizza = new Pizza($formData['name'], $formData['price']);
-
         // Handle database operations with try-catch in a separate method
-        $response = $this->handleDatabaseOperation(function () use ($pizza, $formData) {
+        return $this->handleDatabaseOperation(function () use ($formData) {
+            // TODO: Form validation
+            $pizza = new Pizza($formData['name'], $formData['price']);
+
             // Save the pizza
             $pizza->save();
 
@@ -118,12 +115,11 @@ class PizzaController
             // Process pizza ingredients after pizza creation
             $this->savePizzaIngredients($pizza->id(), $formData['quantities']);
 
-            return $this->index();
-        });
-
-        // Set the response message
-        $response->setMsg('msg=Erstellen erfolgreich');
-        return $response;
+            $response = $this->index();
+            // Set the response message
+            $response->setMsg('msg=Erstellen erfolgreich');
+            return $response;
+        }, $this);
     }
 
     /**
@@ -142,7 +138,7 @@ class PizzaController
         $this->authorize();
 
         // Handle the database operation with error handling and authorization
-        $response = $this->handleDatabaseOperation(function () use ($id, $formData) {
+        return $this->handleDatabaseOperation(function () use ($id, $formData) {
             $pizza = Pizza::findBy($id, 'id');
 
             // Update the pizza properties
@@ -159,9 +155,7 @@ class PizzaController
             $response = $this->index();
             $response->setMsg('msg=Pizza erfolgreich aktualisiert');
             return $response;
-        });
-
-        return $response;
+        }, $this);
     }
 
     /**
@@ -177,26 +171,14 @@ class PizzaController
     public function delete(int $id): Response
     {
         $this->authorize();
-        $pizza = Pizza::findBy($id, 'id');
+        return $this->handleDatabaseOperation(function () use ($id) {
+            $pizza = Pizza::findBy($id, 'id');
 
-        $response = $this->handleDatabaseOperation(function () use ($pizza) {
             $pizza->delete();
             $response = $this->index();
             $response->setMsg('msg=Löschen erfolgreich');
             return $response;
-        });
-
-        return $response;
-    }
-
-    /**
-     * @return void
-     */
-    private function authorize(): void
-    {
-        if (!User::isAdmin()) {
-            throw new Exception('Aktion nicht erlaubt!');
-        }
+        }, $this);
     }
 
     /**

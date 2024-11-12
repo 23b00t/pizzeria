@@ -10,7 +10,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use app\core\Router;
 
 $area = $_REQUEST['area'] ?? 'user';
-$action = $_REQUEST['action'] ?? 'showLogin';
+$action = $_REQUEST['action'] ?? 'index';
 $id = $_REQUEST['id'] ?? 0;
 $view = '';
 $msg = '';
