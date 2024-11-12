@@ -87,6 +87,7 @@ class IngredientController extends BaseController
             // Redirect to the ingredient list with a success message
             $response = $this->index();
             $response->setMsg('msg=Erfolgreich erstellt');
+            return $response;
         }, $this);
     }
 
@@ -117,6 +118,7 @@ class IngredientController extends BaseController
             $ingredient->update();
             $response = $this->index();
             $response->setMsg('msg=Erfolgreich aktualisiert');
+            return $response;
         }, $this);
     }
 
@@ -141,6 +143,7 @@ class IngredientController extends BaseController
             $ingredient->delete();
             $response = $this->index();
             $response->setMsg('msg=Erfolgreich gelöscht');
+            return $response;
         }, $this);
     }
 }

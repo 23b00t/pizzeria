@@ -23,7 +23,8 @@ abstract class BaseController
         try {
             return $operation();
         } catch (PDOException $e) {
-            error_log($e->getMessage());
+            $timestamp = (new \DateTime())->format('Y-m-d H:i:s ');
+            file_put_contents('/opt/lampp/logs/pizzeria.log', $timestamp . $e->getMessage() . "\n", FILE_APPEND);
             $response = $controller->index();
             $response->setMsg('error=Upps... Es ist ein Fehler aufgetreten!');
             return $response;
