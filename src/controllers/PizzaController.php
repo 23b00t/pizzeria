@@ -7,6 +7,7 @@ use app\models\User;
 use app\models\Pizza;
 use app\models\PizzaIngredient;
 use app\models\Ingredient;
+use Exception;
 use PDOException;
 
 /**
@@ -165,15 +166,20 @@ class PizzaController
                     }
 
                     $pizzaIngredient = PizzaIngredient::where(
-                        'ingredient_id = ? && pizza_id = ?',
+                        'ingredient_id = ? AND pizza_id = ?',
                         [$pizzaIngredientId, $pizza->id()]
-                    )[0];
-                    $pizzaIngredient->quantity($quantity);
-                    $pizzaIngredient->update();
+                    );
+
+                    if ($pizzaIngredient) {
+                        $pizzaIngredient[0]->quantity($quantity);
+                        $pizzaIngredient[0]->update();
+                    } else {
+                        (new PizzaIngredient($pizza->id(), $pizzaIngredientId, $quantity))->save();
+                    }
                 }
 
                 $response = $this->index();
-                $response->setMsg('msg=Erstellen aktualisiert');
+                $response->setMsg('msg=Pizza aktualisiert');
             } catch (PDOException $e) {
                 // Handle the error and redirect back to the form
                 error_log($e->getMessage());
@@ -216,14 +222,12 @@ class PizzaController
     }
 
     /**
-     * @return Response
+     * @return void
      */
-    private function authorize(): Response
+    private function authorize(): void
     {
         if (!User::isAdmin()) {
-            $response = $this->index();
-            $response->setMsg('error=Nicht erlaubt!');
-            return $response;
+            throw new Exception('Aktion nicht erlaubt!');
         }
     }
 }

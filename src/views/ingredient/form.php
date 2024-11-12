@@ -31,7 +31,6 @@ $pageTitle = isset($ingredient) ? 'Zutaten bearbeiten' : 'Neue Zutaten erstellen
   </div>
 
   <div class="form-group mb-3">
-    <label for="vegetarian">Vegetarisch</label>
     <input type="checkbox" name="vegetarian" id="vegetarian" class="form-check-input" <?=(isset($ingredient) &&
       $ingredient->vegetarian()) ? 'checked' : '' ?>>
     <label class="form-check-label" for="vegetarian">Diese Zutat ist vegetarisch</label>

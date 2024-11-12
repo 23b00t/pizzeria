@@ -6,6 +6,7 @@ use app\core\Response;
 use app\models\User;
 use app\models\Purchase;
 use app\models\Card;
+use Exception;
 use PDOException;
 
 /**
@@ -145,9 +146,7 @@ class PurchaseController
     public function update(int $id): Response
     {
         if (!User::isAdmin()) {
-            $response = (new CardController())->showOpenCard();
-            $response->setMsg('error=Nicht erlaubt');
-            return $response;
+            throw new Exception('Aktion nicht erlaubt!');
         }
 
         // Retrieve the purchase record by ID

@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\core\Response;
 use app\models\User;
 use app\models\Ingredient;
+use Exception;
 use PDOException;
 
 /**
@@ -170,14 +171,12 @@ class IngredientController
     }
 
     /**
-     * @return Response
+     * @return void
      */
-    private function authorize(): Response
+    private function authorize(): void
     {
         if (!User::isAdmin()) {
-            $response = $this->index();
-            $response->setMsg('error=Nicht erlaubt');
-            return $response;
+            throw new Exception('Aktion nicht erlaubt');
         }
     }
 }

@@ -55,8 +55,8 @@ class CardController
     public function showOpenCard(): Response
     {
         // Retrieve the card and purchase ID from the session
-        $cards = $_SESSION['card'] ?? [];
         $purchase_id = $_SESSION['purchase_id'] ?? 0;
+        $cards = Card::where('purchase_id = ?', [$purchase_id]);
 
         // Retrieve the purchase record using the session's purchase ID
         $purchase = Purchase::findBy($purchase_id, 'id');
@@ -64,9 +64,7 @@ class CardController
         // If the purchase is delivered, clear the session and reset variables
         if (isset($purchase) && $purchase->status() === 'delivered') {
             unset($_SESSION['purchase_id']);
-            unset($_SESSION['card']);
             $purchase = null;
-            $cards = [];
         }
 
         return new Response([ 'purchase' => $purchase, 'cards' => $cards ], 'card/show');
