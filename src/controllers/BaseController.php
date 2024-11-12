@@ -39,4 +39,11 @@ abstract class BaseController
             throw new Exception('Aktion nicht erlaubt!');
         }
     }
+
+    /**
+     * index
+     *
+     * @return Response
+     */
+    abstract public function index(): Response;
 }
