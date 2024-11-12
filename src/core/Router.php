@@ -10,12 +10,9 @@ use ReflectionMethod;
 class Router
 {
     private string $area;
-    private string $action;
-    private string $view;
-    private bool $redirect;
-    private string $msg;
     private int $id;
     private array $formData;
+    private string $action;
 
 
     /**
@@ -26,22 +23,16 @@ class Router
      * @param array<int,mixed> $formData
      */
     public function __construct(
-        string &$area,
-        string &$action,
-        string &$view,
-        bool &$redirect,
-        string &$msg,
+        string $area,
+        string $action,
         int $id,
         array $formData
     ) {
         // Check if a session is active; otherwise, start one
         session_status() === PHP_SESSION_NONE && session_start();
 
-        $this->area = &$area;
-        $this->action = &$action;
-        $this->view = &$view;
-        $this->redirect = &$redirect;
-        $this->msg = &$msg;
+        $this->area = $area;
+        $this->action = $action;
         $this->id = $id;
         $this->formData = $formData;
     }
@@ -49,9 +40,9 @@ class Router
     /**
      * route
      *
-     * @return array|void
+     * @return Response
      */
-    public function route(): ?array
+    public function route(): Response
     {
         // get controller name including namespace from @param $area
         $controllerName = 'app\\controllers\\' . ucfirst($this->area) . 'Controller';
@@ -60,7 +51,7 @@ class Router
         // TODO: Implement in both if-blocks Error Handeling
         if (class_exists($controllerName)) {
             // Instanciate the controller
-            $controller = new $controllerName($this->area, $this->action, $this->view, $this->redirect, $this->msg);
+            $controller = new $controllerName();
 
             // Check if the method, given in @param $action, exists in the controller
             if (method_exists($controller, $this->action)) {

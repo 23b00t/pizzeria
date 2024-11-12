@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\core\Response;
 use app\models\User;
 use app\helpers\FormCheckHelper;
 use PDOException;
@@ -12,46 +13,24 @@ use PDOException;
  */
 class UserController
 {
-    private string $area;
-    private string $action;
-    private string $view;
-    private bool $redirect;
-    private string $msg;
-
-    /**
-     * @param string $area
-     * @param string $action
-     * @param string $view
-     * @param bool $redirect
-     * @param string $msg
-     */
-    public function __construct(string &$area, string &$action, string &$view, bool &$redirect, string &$msg)
-    {
-        $this->area = &$area;
-        $this->action = &$action;
-        $this->view = &$view;
-        $this->redirect = &$redirect;
-        $this->msg = &$msg;
-    }
-
     /**
      * showLogin
      *
-     * @return array
+     * @return Response
      */
-    public function showLogin(): void
+    public function showLogin(): Response
     {
-        $this->view = 'user/login_form';
+        return new Response([], 'user/login_form');
     }
 
     /**
      * showRegister
      *
-     * @return array
+     * @return Response
      */
-    public function new(): void
+    public function new(): Response
     {
-        $this->view = 'user/register_form';
+        return new Response([], 'user/register_form');
     }
 
     /**
@@ -63,9 +42,9 @@ class UserController
      * is displayed on the login form.
      *
      * @param array $formData The form data submitted for login.
-     * @return array
+     * @return Response
      */
-    public function login(array $formData): void
+    public function login(array $formData): Response
     {
         $formCheckHelper = new FormCheckHelper($formData);
         $email = $formCheckHelper->email();
@@ -74,14 +53,13 @@ class UserController
         if ($user && password_verify($formCheckHelper->password(), $user->hashed_password())) {
             // save user id to session to authenticate it
             $_SESSION['login'] = $user->id();
-            $this->redirect = true;
-            $this->area = 'pizza';
-            $this->action = 'index';
+            $response = (new PizzaController())->index();
         } else {
             // Failed login
-            $this->view = 'user/login_form';
-            $this->msg = 'error=Login failed';
+            $response = $this->showLogin();
+            $response->setMsg('error=Login failed');
         }
+        return $response;
     }
 
     /**
@@ -93,18 +71,18 @@ class UserController
      * TODO: Inconsistent use of create method
      *
      * @param array $formData The form data submitted for registration.
-     * @return array
+     * @return Response
      */
-    public function create(array $formData): void
+    public function create(array $formData): Response
     {
         $formCheckHelper = new FormCheckHelper($formData);
 
         if (!$formCheckHelper->validatePasswordEquality()) {
-            $this->view = 'user/register_form';
-            $this->msg = 'error=Passwords do not match';
+            $response = $this->new();
+            $response->setMsg('error=Passwörter stimmen nicht überein');
         } elseif (!$formCheckHelper->validatePasswordPolicy()) {
-            $this->view = 'user/register_form';
-            $this->msg = 'error=Weak password';
+            $response = $this->new();
+            $response->setMsg('error=Passwort zu schwach');
         } else {
             // Create a new user object
             $user = new User(
@@ -119,8 +97,9 @@ class UserController
             );
 
             // Save the new user to the database
-            $this->store($user);
+            $response = $this->store($user);
         }
+        return $response;
     }
 
     /**
@@ -131,40 +110,41 @@ class UserController
      * If an error occurs, it handles database exceptions, particularly for unique constraints.
      *
      * @param User $user The user object to be stored.
-     * @return array
+     * @return Response
      */
-    private function store(User $user): void
+    private function store(User $user): Response
     {
         try {
             // Try to save the user
             $user->save();
 
             // Successful insertion
-            $this->view = 'user/login_form';
-            $this->msg = 'msg=Account successfully created';
+            $response = $this->showLogin();
+            $response->setMsg('msg=Account successfully created');
         } catch (PDOException $e) {
             // Error 23000: Duplicate entry (database error for UNIQUE constraint)
             if ($e->getCode() === '23000') {
-                $this->view = 'user/register_form';
-                $this->msg = 'error=Username not available';
+                $response = $this->new();
+                $response->setMsg('error=Username not available');
             } else {
                 // Other errors
-                $this->view = 'user/register_form';
-                $this->msg = 'error=Unknown error';
+                $response = $this->showLogin();
+                $response->setMsg('error=Unknown error');
             }
         }
+        return $response;
     }
 
     /**
      * Log out the user.
      *
      * This method clears the session and redirects the user to the index page.
-     * @return array
+     * @return Response
      */
-    public function signOut(): void
+    public function signOut(): Response
     {
         session_unset();
         session_destroy();
-        $this->view = 'user/login_form';
+        return $this->showLogin();
     }
 }
